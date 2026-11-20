@@ -38,10 +38,10 @@ HyperOSS apps are web pages in a GitHub repository. The SDK gives them notificat
 ## Community
 
 - Website: [HyperOSS.github.io](https://HyperOSS.github.io)
-- TikTok: [@_mariowos_](https://www.tiktok.com/@_mariowos_)
+- TikTok: [@_hyadeoss_](https://www.tiktok.com/@_hyadeoss_)
 - Report a bug or suggest a feature on our Discord, or open an issue here.
 
 ## License
 
-Apache License 2.0. mariowOS uses open-source fonts from Google Fonts and community
+Apache License 2.0. hyadeOSS uses open-source fonts from Google Fonts and community
 npm packages; all credit goes to their authors.

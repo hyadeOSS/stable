@@ -1,4 +1,4 @@
-// mariowOS accent color, shared by the desktop and every system app. See Settings › Wallpaper & Style.
+// hyadeOSS accent color, shared by the desktop and every system app. See Settings › Wallpaper & Style.
 //
 // Load it in <head>, right after i18n.js, so the first paint already has the right colors.
 // It sets these on :root, and keeps them updated when the accent changes:
@@ -59,5 +59,5 @@
 
   apply();
   window.addEventListener('storage', e => { if (e.key === 'desktopStyle' || e.key === null) apply(); });
-  window.mariowOSAccent = { derive, apply };
+  window.hyadeOSSAccent = { derive, apply };
 })();

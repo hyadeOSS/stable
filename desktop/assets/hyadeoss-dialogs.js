@@ -1,4 +1,4 @@
-// mariowOS dialogs: in-page replacements for alert/confirm/prompt.
+// hyadeOSS dialogs: in-page replacements for alert/confirm/prompt.
 // Native dialogs in Electron on Windows steal keyboard focus from the page, leaving inputs
 // unusable afterwards, and they don't match the OS look. These return Promises:
 //   await mDialog.alert("Saved!")             -> undefined
@@ -56,10 +56,10 @@
   const ICONS = { info: 'i', success: '✓', error: '!', warning: '!' };
   // Read when a dialog opens, so they follow the page language (i18n.js may be missing).
   const TITLES = {
-    info: () => (window.mariowOSI18n ? mariowOSI18n.t("dialogs.title.info", "Notice") : "Notice"),
-    success: () => (window.mariowOSI18n ? mariowOSI18n.t("common.done", "Done") : "Done"),
-    error: () => (window.mariowOSI18n ? mariowOSI18n.t("dialogs.title.error", "Something went wrong") : "Something went wrong"),
-    warning: () => (window.mariowOSI18n ? mariowOSI18n.t("dialogs.title.warning", "Are you sure?") : "Are you sure?")
+    info: () => (window.hyadeOSSI18n ? hyadeOSSI18n.t("dialogs.title.info", "Notice") : "Notice"),
+    success: () => (window.hyadeOSSI18n ? hyadeOSSI18n.t("common.done", "Done") : "Done"),
+    error: () => (window.hyadeOSSI18n ? hyadeOSSI18n.t("dialogs.title.error", "Something went wrong") : "Something went wrong"),
+    warning: () => (window.hyadeOSSI18n ? hyadeOSSI18n.t("dialogs.title.warning", "Are you sure?") : "Are you sure?")
   };
 
   const queue = [];
@@ -115,8 +115,8 @@
         return b;
       };
       const cancelValue = opts.mode === 'confirm' ? false : null;
-      if (opts.mode !== 'alert') addBtn(opts.cancelText || (window.mariowOSI18n ? mariowOSI18n.t('common.cancel', 'Cancel') : 'Cancel'), '', cancelValue);
-      const okBtn = addBtn(opts.okText || (window.mariowOSI18n ? mariowOSI18n.t('common.ok', 'OK') : 'OK'), opts.danger ? 'danger' : 'primary',
+      if (opts.mode !== 'alert') addBtn(opts.cancelText || (window.hyadeOSSI18n ? hyadeOSSI18n.t('common.cancel', 'Cancel') : 'Cancel'), '', cancelValue);
+      const okBtn = addBtn(opts.okText || (window.hyadeOSSI18n ? hyadeOSSI18n.t('common.ok', 'OK') : 'OK'), opts.danger ? 'danger' : 'primary',
         opts.mode === 'prompt' ? () => input.value : opts.mode === 'confirm' ? true : undefined);
 
       let closed = false;

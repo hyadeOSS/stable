@@ -24,11 +24,11 @@ function fakeApp() {
 function setup({ fetchImpl } = {}) {
   const appsDir = fs.mkdtempSync(path.join(os.tmpdir(), "mw-sdk-"));
   fs.mkdirSync(path.join(appsDir, "todo"));
-  fs.writeFileSync(path.join(appsDir, "todo", "mariowos.json"), JSON.stringify({ permissions: ["theme", "files.documents"], category: "productivity" }));
+  fs.writeFileSync(path.join(appsDir, "todo", "hyadeoss.json"), JSON.stringify({ permissions: ["theme", "files.documents"], category: "productivity" }));
   fs.mkdirSync(path.join(appsDir, "plain"));
   const config = { installedApps: [
     { appId: "todo", title: "Todo", repoUrl: "https://github.com/someone/todo.git", grantedPermissions: ["theme"] },
-    { appId: "plain", title: "Plain", repoUrl: "https://github.com/mariowOS/plain.git" }
+    { appId: "plain", title: "Plain", repoUrl: "https://github.com/hyadeOSS/plain.git" }
   ] };
   let saves = 0;
   const app = fakeApp();
@@ -42,14 +42,14 @@ function setup({ fetchImpl } = {}) {
 
 const response = (status, text) => ({ ok: status === 200, status, text: async () => text });
 
-test("manifest route fetches mariowos.json from main, then master, and caches it", async () => {
+test("manifest route fetches hyadeoss.json from main, then master, and caches it", async () => {
   const seen = [];
   const env = setup({ fetchImpl: url => { seen.push(url); return url.includes("/main/") ? response(404, "") : response(200, '{"permissions":["theme","system"],"category":"games"}'); } });
   const first = await env.app.call("GET", "/api/store/manifest", { query: { repo: "https://github.com/someone/app.git" } });
   assert.equal(first.status, 200);
   assert.deepEqual(first.body.manifest.permissions, ["theme"]);
   assert.equal(first.body.manifest.category, "games");
-  assert.deepEqual(seen, ["https://raw.githubusercontent.com/someone/app/main/mariowos.json", "https://raw.githubusercontent.com/someone/app/master/mariowos.json"]);
+  assert.deepEqual(seen, ["https://raw.githubusercontent.com/someone/app/main/hyadeoss.json", "https://raw.githubusercontent.com/someone/app/master/hyadeoss.json"]);
   await env.app.call("GET", "/api/store/manifest", { query: { repo: "https://github.com/someone/app.git" } });
   assert.equal(env.fetchCalls(), 2, "second call served from the cache");
 });
@@ -103,8 +103,8 @@ test("install grants are limited to the installed app's own manifest", () => {
 });
 
 test("trusted repositories follow the kernel's isolation rule", () => {
-  assert.equal(isTrustedRepo("https://github.com/mariowOS/x.git"), true);
+  assert.equal(isTrustedRepo("https://github.com/hyadeOSS/x.git"), true);
   assert.equal(isTrustedRepo("https://github.com/mariowstech/x.git"), true);
   assert.equal(isTrustedRepo("https://github.com/someone/x.git"), false);
-  assert.equal(isTrustedRepo("https://github.com.evil/mariowOS/x.git"), false);
+  assert.equal(isTrustedRepo("https://github.com.evil/hyadeOSS/x.git"), false);
 });

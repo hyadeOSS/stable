@@ -1,6 +1,6 @@
-// mariowOS builder note: This file is part of the runtime that powers the OS. It defines how the desktop, login flow, or app behavior is built for contributors.
+// hyadeOSS builder note: This file is part of the runtime that powers the OS. It defines how the desktop, login flow, or app behavior is built for contributors.
 
-// mariowOS Backend (kernel/server.js) - (C) 2026 mariowstech and the mariowOS team 
+// hyadeOSS Backend (kernel/server.js) - (C) 2026 mariowstech and the hyadeOSS team 
 // Licensed under the Apache License, Version 2.0; you can use this file if you give credits to the original creators and you may not use this file except in compliance with the License. 
 // Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 
@@ -24,7 +24,7 @@ const spawn = (command, args, options) => {
   return childProcess.spawn(command, args, { windowsHide: true, ...(options || {}) });
 };
 
-// Load local overrides (e.g. MARIOWOS_MAIL_RELAY_URL) from system/.env without overriding real env vars.
+// Load local overrides (e.g. HYADEOSS_MAIL_RELAY_URL) from system/.env without overriding real env vars.
 (function loadEnvFile() {
   const envPath = path.join(__dirname, ".env");
   if (!fs.existsSync(envPath)) return;
@@ -35,7 +35,7 @@ const spawn = (command, args, options) => {
   });
 })();
 
-// This is the brain of mariowOS when it is running in development mode.
+// This is the brain of hyadeOSS when it is running in development mode.
 // The backend owns the config file, login flow, desktop routes, and the app store.
 // If you are building on top of the OS, this is the file to understand first.
 const app = express();
@@ -58,8 +58,8 @@ const app = express();
 //
 // Third-party Store apps are the exception: they are served from a SEPARATE origin
 // (APPS_ORIGIN, see "THIRD-PARTY APP ISOLATION" below) so they cannot reach this one.
-const APPS_HOST = process.env.MARIOWOS_BIND_HOST || "127.0.0.1";
-const APPS_PORT = Number(process.env.MARIOWOS_APPS_PORT || Number(process.env.MARIOWOS_PORT || 3000) + 1);
+const APPS_HOST = process.env.HYADEOSS_BIND_HOST || "127.0.0.1";
+const APPS_PORT = Number(process.env.HYADEOSS_APPS_PORT || Number(process.env.HYADEOSS_PORT || 3000) + 1);
 const APPS_ORIGIN = `http://${APPS_HOST}:${APPS_PORT}`;
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
@@ -90,17 +90,17 @@ app.use((req, res, next) => {
   next();
 });
 
-const PORT = Number(process.env.MARIOWOS_PORT || 3000);
+const PORT = Number(process.env.HYADEOSS_PORT || 3000);
 if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
-  throw new Error('MARIOWOS_PORT must be a valid TCP port');
+  throw new Error('HYADEOSS_PORT must be a valid TCP port');
 }
 const currentOS = process.platform;
 const SERVER_EXIT_CODES = Object.freeze({ SHUTDOWN: 20, UPDATE_RESTART: 21, KERNEL_REBOOT: 22 });
-const BACKEND_INSTANCE_ID = process.env.MARIOWOS_BACKEND_INSTANCE_ID || null;
+const BACKEND_INSTANCE_ID = process.env.HYADEOSS_BACKEND_INSTANCE_ID || null;
 let httpServer = null;
 let serverExitStarted = false;
-const SOTA_VERSION_URL = process.env.MARIOWOS_SOTA_VERSION_URL ||
-  "https://api.github.com/repos/mariowOS/SOTA/contents/version.json?ref=main";
+const SOTA_VERSION_URL = process.env.HYADEOSS_SOTA_VERSION_URL ||
+  "https://api.github.com/repos/hyadeOSS/SOTA/contents/version.json?ref=main";
 const SOTA_COMPONENTS = new Set([
   "calculator", "explorer", "feedback", "help", "music", "notes", "settings",
   "store", "terminal", "desktop"
@@ -189,7 +189,7 @@ function getUpdatePublicKey() {
 // The recovery screen offers "verify filesystem integrity". This backs it with a real
 // check: a signed manifest (system/integrity-manifest.json, map of path -> sha256)
 // records the hashes of the files that make up a stock build. We re-hash those files
-// and report any that were modified, replaced or removed. This is the mariowOS analog
+// and report any that were modified, replaced or removed. This is the hyadeOSS analog
 // of Android verified boot: if a locked system (flashing NOT unlocked) has been
 // tampered with, the UI should refuse and prompt the user to reflash clean stock.
 //
@@ -263,7 +263,7 @@ function exitAfterServerClose(exitCode) {
 }
 
 function hasValidShutdownToken(req) {
-  const expected = process.env.MARIOWOS_SHUTDOWN_TOKEN;
+  const expected = process.env.HYADEOSS_SHUTDOWN_TOKEN;
   if (!expected) return false;
 
   const supplied = req.get('authorization') || '';
@@ -325,9 +325,9 @@ if (fs.existsSync(configFile)) {
   };
 }
 
-// Emails go through the mariowOS mail relay (lib/mail.js): no mail password on the device.
+// Emails go through the hyadeOSS mail relay (lib/mail.js): no mail password on the device.
 const mail = createMailClient({
-  relayUrl: process.env.MARIOWOS_MAIL_RELAY_URL || "https://mariowos-mail.mariowos.workers.dev",
+  relayUrl: process.env.HYADEOSS_MAIL_RELAY_URL || "https://mariowos-mail.mariowos.workers.dev",
   errorLogFile: path.join(__dirname, "mail-error.log")
 });
 
@@ -354,7 +354,7 @@ const LEAKED_SESSION_KEY_HASHES = new Set([
 const { issueSession, clearSession, hasValidSession, readSession, signAppToken, verifyAppToken } = createSessions({
   keyFile: path.join(__dirname, "session.key"),
   leakedKeyHashes: LEAKED_SESSION_KEY_HASHES,
-  secureCookie: process.env.MARIOWOS_SECURE_COOKIE === "1"
+  secureCookie: process.env.HYADEOSS_SECURE_COOKIE === "1"
 });
 const { comparePassword, lockSeconds: passwordLockSeconds } = createPasswordGuard((candidate, hash) => bcrypt.compare(candidate, hash));
 const users = createUsers({ baseDir: __dirname, getConfig: () => config, saveConfig });
@@ -430,14 +430,14 @@ function enforceAppPermissions(req, res, next) {
 }
 
 // --- THIRD-PARTY APP ISOLATION ---
-// Store apps from developers other than the mariowOS team run on their own origin
+// Store apps from developers other than the hyadeOSS team run on their own origin
 // (APPS_ORIGIN, a second port), not as same-origin iframes of the shell. The browser
 // then keeps them away from the shell's DOM, cookies and storage, and:
 //  - they cannot READ this API: no CORS headers are ever sent to them;
 //  - they cannot WRITE to it: every state-changing request carrying a foreign Origin
 //    is refused below (this also stops any other web page from posting here);
 //  - they cannot sneak back onto this origin: their files are not served here.
-const TRUSTED_APP_OWNERS = new Set(["mariowos", "mariowstech"]);
+const TRUSTED_APP_OWNERS = new Set(["hyadeoss", "mariowstech"]);
 function isThirdPartyApp(installed) {
   if (!installed || !installed.repoUrl) return false; // built into the OS
   const owner = String(installed.repoUrl).match(/^https:\/\/(?:raw\.githubusercontent\.com|github\.com)\/([^/]+)\//i);
@@ -467,7 +467,7 @@ app.use(requireSession);
 app.use(users.middleware(readSession, clearSession));
 app.use(requireAdminFor);
 app.use(enforceAppPermissions);
-// Store SDK: app manifests (mariowos.json) and the permissions granted to each installed app.
+// Store SDK: app manifests (hyadeoss.json) and the permissions granted to each installed app.
 const { registerStoreSdkRoutes, resolveGrantedPermissions } = require("./lib/store-sdk-routes");
 registerStoreSdkRoutes(app, { getConfig: () => config, saveConfig, appsDir: path.join(__dirname, "desktop/apps") });
 
@@ -488,7 +488,7 @@ app.get('/api/system/health', (req, res) => {
 // --- SYSTEM HEALTH (Settings › General › System health) ---
 // One read-only report: version and update state, memory, disk, and the recent problems
 // from the log, each tagged with a `kind` the page explains in plain words.
-const HEALTH_LOG_FILE = path.join(__dirname, "mariowos.log");
+const HEALTH_LOG_FILE = path.join(__dirname, "hyadeoss.log");
 const HEALTH_PROBLEMS = [
   ["file-in-use", /\bEPERM\b|\bEBUSY\b|resource busy|operation not permitted/i],
   ["restart-needed", /No handler registered/i],
@@ -576,7 +576,7 @@ app.get('/api/system/boot-assets', (req, res) => {
 });
 
 app.post('/api/system/shutdown', (req, res) => {
-  if (process.env.MARIOWOS_MANAGED_BACKEND !== '1' || !hasValidShutdownToken(req)) {
+  if (process.env.HYADEOSS_MANAGED_BACKEND !== '1' || !hasValidShutdownToken(req)) {
     return res.status(403).json({ success: false, error: 'Shutdown is only available to the trusted Electron shell' });
   }
 
@@ -585,7 +585,7 @@ app.post('/api/system/shutdown', (req, res) => {
 });
 
 app.post('/api/system/reboot', (req, res) => {
-  if (process.env.MARIOWOS_MANAGED_BACKEND !== '1' || !hasValidShutdownToken(req)) {
+  if (process.env.HYADEOSS_MANAGED_BACKEND !== '1' || !hasValidShutdownToken(req)) {
     return res.status(403).json({ success: false, error: 'Kernel reboot is only available to the trusted Electron shell' });
   }
 
@@ -669,7 +669,7 @@ app.get("/desktop/assets/i18n-data.js", (req, res) => {
   }
   const data = JSON.stringify({ preference, language, languages: readLanguages(), dictionary }).replace(/</g, "\\u003c");
   res.set({ "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
-  res.send(`window.__mariowOSI18nData = ${data};\n`);
+  res.send(`window.__hyadeOSSI18nData = ${data};\n`);
 });
 
 // Static files are the actual desktop shell. The login screen, settings pages, and app folders
@@ -786,10 +786,10 @@ app.get("/api/system/desktops", (req, res) => {
   try {
     const desktopDir = path.join(__dirname, "desktop");
     const files = fs.readdirSync(desktopDir);
-    const desktops = files.filter(f => f.startsWith("com.mariowos.") && f.endsWith(".html") && !f.includes("loginui"));
+    const desktops = files.filter(f => f.startsWith("com.hyadeoss.") && f.endsWith(".html") && !f.includes("loginui"));
     res.json({ success: true, desktops });
   } catch (err) {
-    res.json({ success: false, desktops: ["com.mariowos.desktop.html"] });
+    res.json({ success: false, desktops: ["com.hyadeoss.desktop.html"] });
   }
 });
 
@@ -987,7 +987,7 @@ app.get("/api/system/battery", async (req, res) => {
 
 
 // --- CROSS-PLATFORM NETWORK & BLUETOOTH SCANNERS ---
-// These routes are the OS compatibility layer. mariowOS tries to detect what hardware is present
+// These routes are the OS compatibility layer. hyadeOSS tries to detect what hardware is present
 // on the host machine and then exposes a consistent Wi‑Fi/Bluetooth API to the desktop UI.
 app.get("/api/system/ethernet-stats", (req, res) => {
   const interfaces = os.networkInterfaces();
@@ -1120,7 +1120,7 @@ app.post("/api/system/connect-wifi", (req, res) => {
     if (typeof ssid !== "string" || typeof password !== "string") {
       return res.status(400).json({ success: false, error: "Invalid SSID or password." });
     }
-    return runWindowsRadios(["-Action", "connect", "-Ssid", ssid], { MARIOWOS_WIFI_PASSWORD: password }).then(() => {
+    return runWindowsRadios(["-Action", "connect", "-Ssid", ssid], { HYADEOSS_WIFI_PASSWORD: password }).then(() => {
       config.quickSettings.connectedWifi = ssid;
       config.quickSettings.wifi = true;
       fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
@@ -1254,7 +1254,7 @@ if (currentOS === "linux") {
 
 // --- BACKUP & RESTORE ---
 // This section protects user config and makes it easy to save and restore a machine state.
-// In practice, it is one of the most important pieces for anyone building a custom mariowOS image.
+// In practice, it is one of the most important pieces for anyone building a custom hyadeOSS image.
 const backupUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 } }); // M-04
 
 app.get("/api/system/backup", requireAuthJson, (req, res) => {
@@ -1304,7 +1304,7 @@ app.get("/", (req, res) => {
   if (config.frpLock) {
     return res.sendFile(path.join(__dirname, "desktop/frp.html"));
   }
-  res.sendFile(path.join(__dirname, !config.passwordHash ? "desktop/welcome.html" : "loginui/com.mariowos.loginui.html"));
+  res.sendFile(path.join(__dirname, !config.passwordHash ? "desktop/welcome.html" : "loginui/com.hyadeoss.loginui.html"));
 });
 
 // 2. Recovery Factory Reset (Triggers FRP)
@@ -1422,7 +1422,7 @@ app.post("/api/recovery/debug", async (req, res) => {
 // These are the main entry points for the interface: the app decides whether to show
 // a welcome flow, a login, or the desktop based on whether a password is configured.
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, !config.passwordHash ? "desktop/welcome.html" : "loginui/com.mariowos.loginui.html"));
+  res.sendFile(path.join(__dirname, !config.passwordHash ? "desktop/welcome.html" : "loginui/com.hyadeoss.loginui.html"));
 });
 
 // --- GESTIONE CANALI DI AGGIORNAMENTO ---
@@ -1558,11 +1558,11 @@ app.get("/api/widgets/weather", requireAuthJson, async (req, res) => {
 
 // --- ANONYMOUS USAGE COUNT (opt-in) ---
 // Only when the owner turned it on (setup or Settings › General). Once a day the kernel
-// sends the mariowOS version and update channel, nothing else: no install id, no name,
+// sends the hyadeOSS version and update channel, nothing else: no install id, no name,
 // no hardware. The counter (tools/stats-worker) adds 1 to that day's total and does not
 // keep the address the request came from. One ping per install per day, so a day's total
-// is the number of mariowOS systems that were on that day.
-const STATS_URL = process.env.MARIOWOS_STATS_URL || "https://mariowos-stats.mariowos.workers.dev/ping";
+// is the number of hyadeOSS systems that were on that day.
+const STATS_URL = process.env.HYADEOSS_STATS_URL || "https://hyadeoss-stats.hyadeoss.workers.dev/ping";
 let statsSending = false;
 async function sendAnonymousStats() {
   if (!STATS_URL || config.anonymousStats !== true || statsSending) return;
@@ -1599,7 +1599,7 @@ app.post("/login", async (req, res) => {
     // The guest has no password and always starts from an empty home.
     users.resetGuest();
     issueSession(res, account.id);
-    return res.sendFile(path.join(__dirname, "desktop/com.mariowos.desktop.html"));
+    return res.sendFile(path.join(__dirname, "desktop/com.hyadeoss.desktop.html"));
   }
   if (typeof password !== "string" || password.length === 0) {
     return res.status(400).send("Password is required.");
@@ -1612,7 +1612,7 @@ app.post("/login", async (req, res) => {
   if (!match) return res.status(401).send("Incorrect password.");
   users.ensureHome(account);
   issueSession(res, account.id); // A-02: start an authenticated session for subsequent API calls.
-  res.sendFile(path.join(__dirname, "desktop/com.mariowos.desktop.html"));
+  res.sendFile(path.join(__dirname, "desktop/com.hyadeoss.desktop.html"));
 });
 
 // Personalisation from Settings → Wallpaper & Style. Every field is validated so the
@@ -1754,8 +1754,8 @@ app.get("/api/users/me.js", (req, res) => {
   res.set({ "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   const user = req.user || {};
   const data = JSON.stringify({ id: user.id || OWNER_ID, owner: user.owner !== false, admin: user.admin !== false, guest: !!user.guest, limits: user.limits || null }).replace(/</g, "\\u003c");
-  res.send(`window.mariowOSUser = ${data};
-window.mariowOSUserKey = key => window.mariowOSUser.owner ? key : key + "@" + window.mariowOSUser.id;
+  res.send(`window.hyadeOSSUser = ${data};
+window.hyadeOSSUserKey = key => window.hyadeOSSUser.owner ? key : key + "@" + window.hyadeOSSUser.id;
 `);
 });
 app.get("/api/users", requireAuthJson, (req, res) => res.json({ success: true, users: users.all().map(users.toPublic), me: req.user, guestEnabled: config.guestEnabled === true }));
@@ -1856,21 +1856,21 @@ app.get("/api/users/backup", (req, res) => {
   if (fs.existsSync(avatar) && !avatar.startsWith(home + path.sep)) entries.push({ name: "avatar.png", data: fs.readFileSync(avatar) });
   let version = null;
   try { version = JSON.parse(fs.readFileSync(path.join(__dirname, "version.json"), "utf8")).version; } catch {}
-  entries.push({ name: "account.json", data: Buffer.from(JSON.stringify({ mariowOSBackup: 1, username: account.username, exportedAt: new Date().toISOString(), version, desktopStyle: accountStyle(account) }, null, 2)) });
+  entries.push({ name: "account.json", data: Buffer.from(JSON.stringify({ hyadeOSSBackup: 1, username: account.username, exportedAt: new Date().toISOString(), version, desktopStyle: accountStyle(account) }, null, 2)) });
   const stamp = new Date().toISOString().slice(0, 10);
   const safeName = String(account.username).replace(/[^\p{L}\p{N}._-]+/gu, "-");
-  res.set({ "Content-Type": "application/zip", "Content-Disposition": `attachment; filename="mariowOS-backup-${safeName}-${stamp}.zip"`, "Cache-Control": "no-store" });
+  res.set({ "Content-Type": "application/zip", "Content-Disposition": `attachment; filename="hyadeOSS-backup-${safeName}-${stamp}.zip"`, "Cache-Control": "no-store" });
   res.send(createZip(entries));
 });
 app.post("/api/users/restore", express.raw({ type: "*/*", limit: BACKUP_LIMIT }), (req, res) => {
   const account = users.find(req.user?.id) || users.find(OWNER_ID);
   let entries;
   try { entries = readZip(Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0)); }
-  catch (error) { return res.status(400).json({ success: false, error: "This is not a mariowOS backup (" + error.message + ")." }); }
+  catch (error) { return res.status(400).json({ success: false, error: "This is not a hyadeOSS backup (" + error.message + ")." }); }
   const manifest = entries.find(entry => entry.name === "account.json");
   let info = null;
   try { info = manifest && JSON.parse(manifest.data.toString("utf8")); } catch {}
-  if (!info || info.mariowOSBackup !== 1) return res.status(400).json({ success: false, error: "This is not a mariowOS backup." });
+  if (!info || info.hyadeOSSBackup !== 1) return res.status(400).json({ success: false, error: "This is not a hyadeOSS backup." });
   const home = path.resolve(users.ensureHome(account));
   let restored = 0;
   for (const entry of entries) {
@@ -1966,7 +1966,7 @@ app.post("/api/system/factory-reset", async (req, res) => {
   (config.installedApps || []).forEach(app => {
     if (isValidAppId(app.appId)) removePath(path.join(__dirname, "desktop", "apps", app.appId));
   });
-  removePath(path.join(__dirname, "desktop", "com.mariowos.twm.html"));
+  removePath(path.join(__dirname, "desktop", "com.hyadeoss.twm.html"));
   const assetsDir = path.join(__dirname, "desktop", "assets");
   try {
     fs.readdirSync(assetsDir)
@@ -2048,7 +2048,7 @@ app.post('/api/system/boot-logo', (req, res, next) => {
     const bootLogoPath = path.join(__dirname, 'desktop', 'assets', 'bootlogo.user.png');
     fs.writeFile(bootLogoPath, req.file.buffer, writeError => {
       if (writeError) return next(writeError);
-      res.json({ success: true, message: 'Boot logo saved. It will appear the next time mariowOS starts.' });
+      res.json({ success: true, message: 'Boot logo saved. It will appear the next time hyadeOSS starts.' });
     });
   });
 });
@@ -2080,10 +2080,10 @@ app.post("/api/system/reset-desktop", (req, res) => {
   res.json({ success: true, message: "Desktop ripristinato" });
 });
 
-const REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/mariowOS/store-catalog/main/store-catalog.json";
+const REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/hyadeOSS/store-catalog/main/store-catalog.json";
 const localCatalogFile = path.join(__dirname, "store-catalog.json");
 
-// The app store is the public software layer of mariowOS.
+// The app store is the public software layer of hyadeOSS.
 // It blends a remote catalog with local packages so the desktop can stay fresh without
 // losing custom apps that are built specifically for a branch or device.
 app.get("/api/store/catalog", async (req, res) => {
@@ -2159,7 +2159,7 @@ app.get("/api/store/check-upgrades", async (req, res) => {
 app.post("/api/store/do-upgrade", async (req, res) => {
   res.json({ success: true, ...await upgradeInstalledApps() });
 });
-// Store apps come from GitHub as a ZIP (no Git needed, as on installed mariowOS), or with
+// Store apps come from GitHub as a ZIP (no Git needed, as on installed hyadeOSS), or with
 // `git clone` when the ZIP cannot be fetched. The new copy is prepared next to the app and
 // only then swapped in, so a failed download never leaves a half-installed app.
 function githubOwnerRepo(repoUrl) {
@@ -2258,7 +2258,7 @@ app.get("/api/store/app-info", async (req, res) => {
   const match = repoUrl.replace(/\.git$/, "").match(/github\.com\/([\w.-]+)\/([\w.-]+)/);
   if (match) {
     try {
-      const response = await fetch(`https://api.github.com/repos/${match[1]}/${match[2]}`, { headers: { "User-Agent": "mariowOS-Store", Accept: "application/vnd.github+json" } });
+      const response = await fetch(`https://api.github.com/repos/${match[1]}/${match[2]}`, { headers: { "User-Agent": "hyadeOSS-Store", Accept: "application/vnd.github+json" } });
       if (response.ok) { const repo = await response.json(); info.stars = repo.stargazers_count; info.updatedAt = repo.pushed_at; }
     } catch {}
   }
@@ -2337,7 +2337,7 @@ function isValidAppId(appId) {
 app.post("/api/store/install", async (req, res) => {
   // This is the installation pipeline used by the app store.
   // It accepts GitHub repos or direct file URLs, downloads the app bundle, and registers
-  // it inside the desktop shell so it behaves like a native mariowOS app.
+  // it inside the desktop shell so it behaves like a native hyadeOSS app.
   const { appId, title, icon, repoUrl } = req.body;
   if (!isValidAppId(appId)) return res.status(400).json({ success: false, error: "Invalid app ID" });
   // SECURITY (A-07 adjacent): only install from an https github.com URL.
@@ -2365,7 +2365,7 @@ app.post("/api/store/install", async (req, res) => {
   }
 
   const absolutePath = path.join(__dirname, "desktop/apps", appId);
-  const relativeUrl = appId === "tiles" ? "com.mariowos.twm.html" : `apps/${appId}/index.html`;
+  const relativeUrl = appId === "tiles" ? "com.hyadeoss.twm.html" : `apps/${appId}/index.html`;
 
   function finishInstall() {
     installProgress[appId] = { progress: 100, status: 'done' };
@@ -2373,7 +2373,7 @@ app.post("/api/store/install", async (req, res) => {
     if (appId === "tiles") {
       try {
         const sourceHtml = path.join(absolutePath, "index.html");
-        const targetHtml = path.join(__dirname, "desktop", "com.mariowos.twm.html");
+        const targetHtml = path.join(__dirname, "desktop", "com.hyadeoss.twm.html");
         if (fs.existsSync(sourceHtml)) fs.copyFileSync(sourceHtml, targetHtml);
       } catch(e) { console.error("Could not copy tiles DE to root."); }
     }
@@ -2384,7 +2384,7 @@ app.post("/api/store/install", async (req, res) => {
     const installedVersion = readInstalledAppVersion(appId);
     // Tiles is a desktop, not an app: it lives in desktop/ only, never in desktop/apps.
     if (appId === "tiles") fs.rmSync(absolutePath, { recursive: true, force: true });
-    // Only what the user ticked in the Store and the app's own mariowos.json declares.
+    // Only what the user ticked in the Store and the app's own hyadeoss.json declares.
     const grantedPermissions = resolveGrantedPermissions(req.body.grantedPermissions, absolutePath);
     const existing = config.installedApps.find(app => app.appId === appId);
     if (existing) {
@@ -2436,7 +2436,7 @@ app.post("/api/store/uninstall", (req, res) => {
   if (fs.existsSync(targetPath)) fs.rmSync(targetPath, { recursive: true, force: true });
 
   if (appId === "tiles") {
-    const rootPath = path.join(__dirname, "desktop", "com.mariowos.twm.html");
+    const rootPath = path.join(__dirname, "desktop", "com.hyadeoss.twm.html");
     if (fs.existsSync(rootPath)) fs.unlinkSync(rootPath);
   }
 
@@ -2558,9 +2558,9 @@ const addDays = (date, n) => { const d = new Date(date + "T00:00:00Z"); d.setUTC
 
 app.get("/api/calendar/export.ics", (req, res) => {
   const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//mariowOS//Calendar//EN", "CALSCALE:GREGORIAN"];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//hyadeOSS//Calendar//EN", "CALSCALE:GREGORIAN"];
   for (const ev of config.calendarEvents) {
-    lines.push("BEGIN:VEVENT", `UID:${ev.uid || ev.id + "@mariowos"}`, `DTSTAMP:${stamp}`, `SUMMARY:${icsEscape(ev.title)}`);
+    lines.push("BEGIN:VEVENT", `UID:${ev.uid || ev.id + "@hyadeoss"}`, `DTSTAMP:${stamp}`, `SUMMARY:${icsEscape(ev.title)}`);
     if (ev.allDay) {
       lines.push(`DTSTART;VALUE=DATE:${compactDate(ev.date)}`, `DTEND;VALUE=DATE:${compactDate(addDays(ev.endDate || ev.date, 1))}`);
     } else {
@@ -2583,7 +2583,7 @@ app.get("/api/calendar/export.ics", (req, res) => {
   }
   lines.push("END:VCALENDAR");
   res.set("Content-Type", "text/calendar; charset=utf-8");
-  res.set("Content-Disposition", 'attachment; filename="mariowOS-calendar.ics"');
+  res.set("Content-Disposition", 'attachment; filename="hyadeOSS-calendar.ics"');
   res.send(lines.map(icsFold).join("\r\n") + "\r\n");
 });
 
@@ -2603,8 +2603,8 @@ app.post("/api/calendar/import", express.text({ type: "*/*", limit: "5mb" }), (r
     return { date: `${m[1]}-${m[2]}-${m[3]}`, time: `${m[4]}:${m[5]}`, allDay: false };
   };
   let current = null, inAlarm = false, imported = 0, skipped = 0;
-  // Events made here are exported as "<id>@mariowos": treat those as already present too.
-  const existingUids = new Set(config.calendarEvents.flatMap(e => [e.uid, e.id + "@mariowos"]).filter(Boolean));
+  // Events made here are exported as "<id>@hyadeoss": treat those as already present too.
+  const existingUids = new Set(config.calendarEvents.flatMap(e => [e.uid, e.id + "@hyadeoss"]).filter(Boolean));
   for (const line of unfolded) {
     const idx = line.indexOf(":");
     if (idx < 0) continue;
@@ -2768,7 +2768,7 @@ function executeRuleAction(action, params) {
     case 'shutdown': {
       const command = currentOS === 'win32' ? 'shutdown.exe' : 'shutdown';
       const args = currentOS === 'win32'
-        ? ['/s', '/t', '60', '/c', 'Scheduled by a mariowOS rule']
+        ? ['/s', '/t', '60', '/c', 'Scheduled by a hyadeOSS rule']
         : ['-h', '+1'];
       const shutdownProcess = spawn(command, args, { detached: true, stdio: 'ignore', windowsHide: true });
       shutdownProcess.on('error', error => console.error('Rule shutdown error:', error.message));
@@ -3001,7 +3001,7 @@ function readStagedIndex(stagePath) {
   return runGit(["-C", stagePath, "ls-files", "-s", "-z"], stagePath);
 }
 
-// Download a release of github.com/mariowOS/<repo> into stagePath: the ZIP first, Git if
+// Download a release of github.com/hyadeOSS/<repo> into stagePath: the ZIP first, Git if
 // the ZIP cannot be fetched (an older GitHub mirror, a proxy that blocks codeload).
 // A GitHub repository's main (or master) branch as files in stagePath, without Git.
 // Returns the staged file index (`git ls-files -s -z` format, see lib/release-zip.js).
@@ -3022,14 +3022,14 @@ async function fetchGithubZip(owner, repo, stagePath, onProgress, branches = ["m
 
 async function fetchRelease(repo, stagePath, onProgress) {
   try {
-    stagedZipIndexes.set(stagePath, await fetchGithubZip("mariowOS", repo, stagePath, onProgress));
+    stagedZipIndexes.set(stagePath, await fetchGithubZip("hyadeOSS", repo, stagePath, onProgress));
     return "zip";
   } catch (zipError) {
     fs.rmSync(stagePath, { recursive: true, force: true });
     stagedZipIndexes.delete(stagePath);
     console.warn(`[update] ZIP download of ${repo} failed (${zipError.message}); trying Git.`);
     try {
-      await runGit(["clone", "--quiet", "--depth", "1", "--branch", "main", `https://github.com/mariowOS/${repo}.git`, stagePath], os.tmpdir());
+      await runGit(["clone", "--quiet", "--depth", "1", "--branch", "main", `https://github.com/hyadeOSS/${repo}.git`, stagePath], os.tmpdir());
       return "git";
     } catch (gitError) {
       throw new Error(gitError.code === "ENOENT" ? zipError.message : `${zipError.message}; Git: ${gitError.message}`);
@@ -3117,7 +3117,7 @@ async function fetchSotaManifest() {
     headers: {
       Accept: "application/vnd.github+json",
       "Cache-Control": "no-cache",
-      "User-Agent": "mariowOS-SOTA-Updater"
+      "User-Agent": "hyadeOSS-SOTA-Updater"
     },
     cache: "no-store"
   });
@@ -3320,7 +3320,7 @@ function launchServerReplacement(stagePath, serverMode) {
     const target = path.join(root, "server.js");
     const backup = path.join(root, ".server.js.update-backup");
     const temporary = path.join(root, ".server.js.update-temp");
-    const updateMarker = process.env.MARIOWOS_UPDATE_MARKER;
+    const updateMarker = process.env.HYADEOSS_UPDATE_MARKER;
     const writeUpdateResult = result => {
       if (!updateMarker) return;
       const markerTemp = updateMarker + ".tmp";
@@ -3344,7 +3344,7 @@ function launchServerReplacement(stagePath, serverMode) {
         if (fs.existsSync(backup)) fs.renameSync(backup, target);
         throw error;
       }
-      if (process.env.MARIOWOS_MANAGED_BACKEND !== "1") {
+      if (process.env.HYADEOSS_MANAGED_BACKEND !== "1") {
         const backend = spawn(process.execPath, [target], {
           cwd: root, detached: true, stdio: "ignore", windowsHide: true
         });
@@ -3438,7 +3438,7 @@ app.get('/api/system/check-update', async (req, res) => {
       : "1.0.0";
       
     const channel = getUpdateChannel();
-    const remoteUrl = `https://raw.githubusercontent.com/mariowOS/${channel}/main/version.json?t=${Date.now()}`; 
+    const remoteUrl = `https://raw.githubusercontent.com/hyadeOSS/${channel}/main/version.json?t=${Date.now()}`; 
     const response = await fetch(remoteUrl);
     
     if (!response.ok) {
@@ -3482,7 +3482,7 @@ app.get('/api/system/ota-update', (req, res) => {
     try { res.write(msg); } catch (e) {}
   };
 
-  const stagePath = path.join(os.tmpdir(), `mariowos-update-${process.pid}-${Date.now()}`);
+  const stagePath = path.join(os.tmpdir(), `hyadeoss-update-${process.pid}-${Date.now()}`);
   send(0, "Preparing update...");
   (async () => {
     try {
@@ -3578,7 +3578,7 @@ app.get("/api/system/sota-update", (req, res) => {
     try { res.write(`data: ${JSON.stringify({ percent, status, finished })}\n\n`); }
     catch (error) { console.error("Could not send SOTA update progress:", error); }
   };
-  const stagePath = path.join(os.tmpdir(), `mariowos-sota-${process.pid}-${Date.now()}`);
+  const stagePath = path.join(os.tmpdir(), `hyadeoss-sota-${process.pid}-${Date.now()}`);
   send(0, "Preparing component update...");
 
   (async () => {
@@ -3639,7 +3639,7 @@ app.get("/api/system/sota-update", (req, res) => {
 app.get("/sysinfo", (req, res) => {
   const cpus = os.cpus();
   res.json({
-    OS: `mariowOS (${currentOS})`, Kernel: `${os.type()} ${os.release()}`, Uptime: os.uptime(),
+    OS: `hyadeOSS (${currentOS})`, Kernel: `${os.type()} ${os.release()}`, Uptime: os.uptime(),
     CPU: `${cpus[0].model}`, RAM: `${Math.round(os.totalmem() / 1048576)} MB`,
     FreeRAM: `${Math.round(os.freemem() / 1048576)} MB`, Cores: cpus.length, Platform: `${os.platform()} ${os.arch()}`
   });
@@ -3825,7 +3825,7 @@ app.post("/api/remote/exec", (req, res) => {
   });
 });
 
-// "/device" is the window onto the machine mariowOS is running on. Everything below
+// "/device" is the window onto the machine hyadeOSS is running on. Everything below
 // it mirrors the host filesystem exactly as the OS lays it out: drive letters on
 // Windows, the single "/" tree on macOS and Linux. It is always read-only, so the
 // desktop can show the real hierarchy without ever being able to damage the host.
@@ -4259,7 +4259,7 @@ app.get("/api/system/files/content", requireAuthJson, (req, res) => {
   // SECURITY (A-03): the /device tree mirrors the entire host filesystem. Listing it
   // is acceptable, but streaming the CONTENT of arbitrary host files over HTTP turns
   // this into a file-exfiltration endpoint (SSH keys, browser data, credentials).
-  // Reading file content is limited to the mariowOS home area.
+  // Reading file content is limited to the hyadeOSS home area.
   if (resolved.isReadOnly) return res.status(403).json({ success: false, error: "Reading file content outside the home area is not allowed." });
 
   try {
@@ -4299,9 +4299,9 @@ app.post("/api/system/files/content", (req, res) => {
 // SECURITY (A-01): bind only to the loopback interface. The backend is a local
 // companion to the Electron shell, not a network service. Binding to all
 // interfaces previously exposed every API route to the whole LAN. A deployment
-// that genuinely needs remote access must set MARIOWOS_BIND_HOST explicitly and
+// that genuinely needs remote access must set HYADEOSS_BIND_HOST explicitly and
 // is expected to add TLS + authentication in front of it.
-const BIND_HOST = process.env.MARIOWOS_BIND_HOST || '127.0.0.1';
+const BIND_HOST = process.env.HYADEOSS_BIND_HOST || '127.0.0.1';
 // Storage limitation (GDPR art. 5.1.e): error logs are deleted after 30 days and capped at 256 KB.
 function pruneLogs() {
   const maxAge = 30 * 24 * 60 * 60 * 1000, maxSize = 256 * 1024;

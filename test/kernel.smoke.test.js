@@ -20,7 +20,7 @@ let root;
 let output = "";
 
 test.before(async () => {
-  root = fs.mkdtempSync(path.join(os.tmpdir(), "mariowos-kernel-test-"));
+  root = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-kernel-test-"));
   fs.cpSync(SYSTEM, root, {
     recursive: true,
     filter: source => {
@@ -28,20 +28,20 @@ test.before(async () => {
       return !relative || !SKIP.some(pattern => pattern.test(relative));
     }
   });
-  // One third-party Store app and one from the mariowOS team.
+  // One third-party Store app and one from the hyadeOSS team.
   fs.mkdirSync(path.join(root, "desktop", "apps", "evilapp"), { recursive: true });
   fs.writeFileSync(path.join(root, "desktop", "apps", "evilapp", "index.html"), "<h1>third party</h1>");
   fs.writeFileSync(path.join(root, "config.json"), JSON.stringify({ installedApps: [
     { appId: "evilapp", title: "Evil", url: "apps/evilapp/index.html", repoUrl: "https://github.com/someone/evilapp.git" },
-    { appId: "sandbox", title: "Sandbox", url: "apps/sandbox/index.html", repoUrl: "https://github.com/mariowOS/sandbox.git" }
+    { appId: "sandbox", title: "Sandbox", url: "apps/sandbox/index.html", repoUrl: "https://github.com/hyadeOSS/sandbox.git" }
   ] }));
   kernel = spawn(process.execPath, ["server.js"], {
     cwd: root,
     env: {
       ...process.env,
-      MARIOWOS_PORT: String(PORT),
+      HYADEOSS_PORT: String(PORT),
       NODE_PATH: path.join(SYSTEM, "node_modules"),
-      MARIOWOS_MAIL_RELAY_URL: "http://127.0.0.1:9" // never reach the real mail relay
+      HYADEOSS_MAIL_RELAY_URL: "http://127.0.0.1:9" // never reach the real mail relay
     },
     stdio: ["ignore", "pipe", "pipe"]
   });
