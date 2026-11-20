@@ -26,5 +26,5 @@
   "devDependencies": {
     "electron": "^44.4.3"
   },
-  "_comment": "This configuration file belongs to the mariowOS project and is used by contributors building and running the OS."
+  "_comment": "This configuration file belongs to the hyadeOSS project and is used by contributors building and running the OS."
 }

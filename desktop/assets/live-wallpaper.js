@@ -1,7 +1,7 @@
-// mariowOS live wallpapers: an MP4/WebM video or an animated GIF as the background of the
+// hyadeOSS live wallpapers: an MP4/WebM video or an animated GIF as the background of the
 // desktop, the lock screen and the login (Settings › Wallpaper & Style › Live).
 //
-//   const live = mariowOSLiveWallpaper.mount(element);  // element: the wallpaper layer
+//   const live = hyadeOSSLiveWallpaper.mount(element);  // element: the wallpaper layer
 //   mount(element, { paused: () => bool })               // also still while paused() is true
 //   live.play();       // after paused() may have changed
 //   live.update();     // after the style changed (mode, fit)
@@ -116,5 +116,5 @@
     };
   }
 
-  window.mariowOSLiveWallpaper = Object.freeze({ mount, isAnimated });
+  window.hyadeOSSLiveWallpaper = Object.freeze({ mount, isAnimated });
 })();

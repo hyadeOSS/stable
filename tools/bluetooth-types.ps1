@@ -1,4 +1,4 @@
-# mariowOS - what kind of device a paired Bluetooth device says it is, from the standard
+# hyadeOSS - what kind of device a paired Bluetooth device says it is, from the standard
 # class of device (classic) and appearance (LE) values it reports. Never from its name.
 function Get-ClassicDeviceType($device) {
   $minor = [int]$device.ClassOfDevice.MinorClass

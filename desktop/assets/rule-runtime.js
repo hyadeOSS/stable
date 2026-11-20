@@ -1,4 +1,4 @@
-// mariowOS builder note: This file is part of the runtime that powers the OS. It defines how the desktop, login flow, or app behavior is built for contributors.
+// hyadeOSS builder note: This file is part of the runtime that powers the OS. It defines how the desktop, login flow, or app behavior is built for contributors.
 
 (() => {
   // This file is the rule engine heartbeat for the desktop shell.

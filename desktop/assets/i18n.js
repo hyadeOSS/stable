@@ -1,4 +1,4 @@
-// mariowOS translations for system apps. See TRANSLATING.md.
+// hyadeOSS translations for system apps. See TRANSLATING.md.
 //
 // Load it at the top of <head>, after the server-made language data:
 //   <script src="/desktop/assets/i18n-data.js"></script>
@@ -10,9 +10,9 @@
 // /desktop/assets/locales/languages.json ({ "<lang>": "Native name" }).
 //  - HTML: data-i18n="key" (text), data-i18n-placeholder / -title / -aria-label (attributes).
 //    Elements added later (innerHTML, templates) are translated automatically.
-//  - Scripts: mariowOSI18n.t("key", "English text") or, with values,
-//    mariowOSI18n.t("key", "Hello {name}", { name }).
-//  - Dates and numbers: pass mariowOSI18n.locale to toLocaleString / Intl.
+//  - Scripts: hyadeOSSI18n.t("key", "English text") or, with values,
+//    hyadeOSSI18n.t("key", "Hello {name}", { name }).
+//  - Dates and numbers: pass hyadeOSSI18n.locale to toLocaleString / Intl.
 // The language is Settings › General › Language (default English; "auto" follows the computer).
 (function () {
   const ATTRIBUTES = [["placeholder", "placeholder"], ["title", "title"], ["aria-label", "aria-label"]];
@@ -87,7 +87,7 @@
     }).observe(document.documentElement, { childList: true, subtree: true });
   }
 
-  const preloaded = window.__mariowOSI18nData;
+  const preloaded = window.__hyadeOSSI18nData;
   if (preloaded) useData(preloaded);
   const ready = (preloaded ? Promise.resolve() : fetchData()).then(() => {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
@@ -95,7 +95,7 @@
     return language;
   });
 
-  window.mariowOSI18n = Object.freeze({
+  window.hyadeOSSI18n = Object.freeze({
     ready,
     t,
     apply,
