@@ -1,4 +1,4 @@
-<img width="1167" height="360" alt="mariowOS" src="https://github.com/user-attachments/assets/75bb4aad-f059-44b1-9c6e-77df29639fc2" />
+<img width="1167" height="360" alt="HyadeOSS" src="[https://github.com/user-attachments/assets/75bb4aad-f059-44b1-9c6e-77df29639fc2](https://github.com/user-attachments/assets/41c7b3f5-6e0e-47d4-8984-e549f3be257e)" />
 
 # HyperOSS
 
