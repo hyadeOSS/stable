@@ -7,7 +7,7 @@ and safe automatic updates. Open source, no ads, no data collected.
 
 ## Download
 
-**[Download hyadeOSS for Windows](https://github.com)** —
+**[Download hyadeOSS for Windows](https://github.com/HyadeOSS/stable/releases)** —
 the installer needs nothing else (no Git, no Node.js). Your data lives in your Windows user
 folder, so updates and reinstalls never touch it.
 
