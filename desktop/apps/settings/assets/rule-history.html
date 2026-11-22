@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rule History</title>
@@ -149,12 +149,12 @@ html::-webkit-scrollbar {
 const historyContainer = document.getElementById('historyContainer');
 // History entries store English action names; show them in the current language.
 const ACTION_LABELS = {
-  'Created': hyadeOSSI18n.t('settings.rule-history.action-created', 'Created'),
-  'Edited': hyadeOSSI18n.t('settings.rule-history.action-edited', 'Edited'),
-  'Deleted': hyadeOSSI18n.t('settings.rule-history.action-deleted', 'Deleted'),
-  'Created from template': hyadeOSSI18n.t('settings.rule-history.action-from-template', 'Created from template'),
-  'Enabled': hyadeOSSI18n.t('settings.rule-history.action-enabled', 'Enabled'),
-  'Disabled': hyadeOSSI18n.t('settings.rule-history.action-disabled', 'Disabled')
+  'Created': hyadeOSI18n.t('settings.rule-history.action-created', 'Created'),
+  'Edited': hyadeOSI18n.t('settings.rule-history.action-edited', 'Edited'),
+  'Deleted': hyadeOSI18n.t('settings.rule-history.action-deleted', 'Deleted'),
+  'Created from template': hyadeOSI18n.t('settings.rule-history.action-from-template', 'Created from template'),
+  'Enabled': hyadeOSI18n.t('settings.rule-history.action-enabled', 'Enabled'),
+  'Disabled': hyadeOSI18n.t('settings.rule-history.action-disabled', 'Disabled')
 };
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
@@ -173,7 +173,7 @@ function loadHistory() {
   history.forEach(item => {
     const historyItem = document.createElement('div');
     historyItem.className = 'history-item';
-    const date = new Date(item.timestamp).toLocaleString(hyadeOSSI18n.locale);
+    const date = new Date(item.timestamp).toLocaleString(hyadeOSI18n.locale);
     const icon = document.createElement('div');
     icon.className = 'icon-badge';
     icon.innerHTML = '<span class="material-symbols-outlined">history</span>';
@@ -181,11 +181,11 @@ function loadHistory() {
     details.className = 'text-group';
     const title = document.createElement('div');
     title.className = 'history-title';
-    const ruleName = item.ruleName === 'All Rules' ? hyadeOSSI18n.t('settings.rule-history.all-rules', 'All Rules') : item.ruleName;
+    const ruleName = item.ruleName === 'All Rules' ? hyadeOSI18n.t('settings.rule-history.all-rules', 'All Rules') : item.ruleName;
     title.textContent = `${ruleName} - ${ACTION_LABELS[item.action] || item.action}`;
     const description = document.createElement('div');
     description.className = 'history-desc';
-    description.textContent = hyadeOSSI18n.t('settings.rule-history.performed', 'Action performed');
+    description.textContent = hyadeOSI18n.t('settings.rule-history.performed', 'Action performed');
     const timestamp = document.createElement('div');
     timestamp.className = 'history-time';
     timestamp.textContent = date;
@@ -196,7 +196,7 @@ function loadHistory() {
 }
 
 clearHistoryBtn.addEventListener('click', async () => {
-  if (await mDialog.confirm(hyadeOSSI18n.t('settings.rule-history.clear-confirm', 'Are you sure you want to clear all history?'), { danger: true, okText: hyadeOSSI18n.t('settings.rule-history.clear-ok', 'Clear') })) {
+  if (await mDialog.confirm(hyadeOSI18n.t('settings.rule-history.clear-confirm', 'Are you sure you want to clear all history?'), { danger: true, okText: hyadeOSI18n.t('settings.rule-history.clear-ok', 'Clear') })) {
     localStorage.removeItem('ruleHistory');
     loadHistory();
   }

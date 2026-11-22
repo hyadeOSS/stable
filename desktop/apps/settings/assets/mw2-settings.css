@@ -1,4 +1,4 @@
-/* hyadeOSS 2: the common look of every Settings page, drawn with the tokens in mw-design.css.
+/* hyadeOS 2: the common look of every Settings page, drawn with the tokens in mw-design.css.
  * Each page links it as the last thing in <head>, after its own <style>, so at equal
  * specificity these rules win. It only normalises shape, type, color roles and motion;
  * the layout of every page stays its own.

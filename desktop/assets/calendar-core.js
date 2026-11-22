@@ -1,4 +1,4 @@
-// hyadeOSS calendar core - shared by the Calendar app and the desktop tray/reminders,
+// hyadeOS calendar core - shared by the Calendar app and the desktop tray/reminders,
 // so both agree on when an event happens. Dates are "YYYY-MM-DD" strings (floating time).
 (function () {
   if (window.CalendarCore) return;

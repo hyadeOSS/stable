@@ -1,4 +1,4 @@
-# hyadeOSS builder note: Wi-Fi and Bluetooth control on Windows, called by server.js.
+# hyadeOS builder note: Wi-Fi and Bluetooth control on Windows, called by server.js.
 # Uses the Windows Runtime radio and Wi-Fi APIs because, unlike netsh and PnP device
 # commands, they work without administrator rights. It needs Windows PowerShell
 # (powershell.exe), since PowerShell 7 cannot load these APIs. Prints one line of JSON.
@@ -6,7 +6,7 @@
 #   -Action status                         radio states
 #   -Action scan                           radio states and a fresh list of networks
 #   -Action set -Kind WiFi|Bluetooth -On 0|1
-#   -Action connect -Ssid <name>           the password comes from HYADEOSS_WIFI_PASSWORD
+#   -Action connect -Ssid <name>           the password comes from HYADEOS_WIFI_PASSWORD
 #   -Action bluetooth                      paired devices and whether each is connected now
 param(
   [ValidateSet('status', 'scan', 'set', 'connect', 'bluetooth')][string]$Action = 'status',
@@ -101,7 +101,7 @@ if ($Action -eq 'scan' -or $Action -eq 'connect') {
       $target = $adapter.NetworkReport.AvailableNetworks | Where-Object { $_.Ssid -eq $Ssid } | Sort-Object NetworkRssiInDecibelMilliwatts -Descending | Select-Object -First 1
       if (-not $target) { Finish @{ success = $false; error = 'Network not found' } }
       $credential = New-Object Windows.Security.Credentials.PasswordCredential
-      $credential.Password = $env:HYADEOSS_WIFI_PASSWORD
+      $credential.Password = $env:HYADEOS_WIFI_PASSWORD
       $connection = Await ($adapter.ConnectAsync($target, [Windows.Devices.WiFi.WiFiReconnectionKind]::Automatic, $credential)) ([Windows.Devices.WiFi.WiFiConnectionResult])
       $status = $connection.ConnectionStatus.ToString()
       Finish @{ success = ($status -eq 'Success'); status = $status }

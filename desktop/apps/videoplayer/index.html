@@ -1,5 +1,5 @@
 <!--
-hyadeOSS Video Player - (C) 2026 mariowstech and the hyadeOSS team
+hyadeOS Video Player - (C) 2026 mariowstech and the hyadeOS team
 Licensed under the Apache License, Version 2.0
 -->
 <!DOCTYPE html>
@@ -111,7 +111,7 @@ Licensed under the Apache License, Version 2.0
   .rate { height: 28px; padding: 0 10px; border: 0; border-radius: 999px; background: rgba(var(--mw-ink), .08); color: rgba(var(--mw-ink), .85); font: 600 12px 'Poppins', sans-serif; cursor: pointer; transition: background .15s; }
   .rate:hover { background: rgba(var(--mw-ink), .16); }
   @media (max-width: 860px) { .vol input { display: none; } .vol { width: auto; } .now { width: 150px; } }
-/* ---- hyadeOSS 2 ---- shared selection, calm motion, focus rings. */
+/* ---- hyadeOS 2 ---- shared selection, calm motion, focus rings. */
   /* Sidebar selection, as in Settings and Files: a soft accent wash with a short accent bar. */
   .list-item { position: relative; }
   .list-item.active { background: var(--mw-accent-soft); color: var(--mw-text); font-weight: 600; }
@@ -120,7 +120,7 @@ Licensed under the Apache License, Version 2.0
   .ib { transition: background var(--mw-duration-fast) ease, color var(--mw-duration-fast) ease; }
   .open-btn { border-radius: var(--mw-radius-full); }
   button:focus-visible { outline: none; box-shadow: var(--mw-focus-ring); }
-  /* ---- end hyadeOSS 2 ---- */
+  /* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -181,7 +181,7 @@ Licensed under the Apache License, Version 2.0
   const $ = id => document.getElementById(id);
   const video = $('video'), stage = $('stage'), empty = $('empty'), controls = $('controls'),
         centerPlay = $('centerPlay'), fileInput = $('fileInput');
-  $('title').textContent = hyadeOSSI18n.t("video.empty.title", "No video open");
+  $('title').textContent = hyadeOSI18n.t("video.empty.title", "No video open");
   const paintRange = input => input.style.setProperty('--fill', (input.value - input.min) / (input.max - input.min) * 100 + '%');
   paintRange($('vol'));
   let items = [];     // { url, name }
@@ -216,7 +216,7 @@ Licensed under the Apache License, Version 2.0
     video.play().catch(() => {});
     const it = items[i];
     $('title').textContent = it.name;
-    $('subtitle').textContent = items.length > 1 ? hyadeOSSI18n.t("video.position", "{current} of {total}", { current: i + 1, total: items.length }) : '';
+    $('subtitle').textContent = items.length > 1 ? hyadeOSI18n.t("video.position", "{current} of {total}", { current: i + 1, total: items.length }) : '';
     $('stage').classList.add('has-video');
     renderQueue();
     $('btnPrev').style.display = items.length > 1 ? '' : 'none';

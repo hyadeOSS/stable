@@ -8,7 +8,7 @@
   <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="settings.nav.functions">Functions Lab</title>
@@ -319,9 +319,9 @@ function toggleLab(key, inputEl) {
         body: JSON.stringify({ [key]: desiredState })
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || hyadeOSSI18n.t("settings.lab.save-error", "Save failed"));
+      if (!data.success) throw new Error(data.error || hyadeOSI18n.t("settings.lab.save-error", "Save failed"));
     } catch (e) {
-      await mDialog.alert(hyadeOSSI18n.t("settings.lab.save-failed", "Could not save this option: {message}", { message: e.message }));
+      await mDialog.alert(hyadeOSI18n.t("settings.lab.save-failed", "Could not save this option: {message}", { message: e.message }));
       return;
     }
     inputEl.checked = desiredState;
@@ -330,19 +330,19 @@ function toggleLab(key, inputEl) {
     try { window.top.postMessage({ type: 'apply-lab-flags' }, '*'); } catch (e) {}
 
     const names = {
-      darkMode: hyadeOSSI18n.t("settings.lab.dark-mode", "Dark Mode Experiments"),
-      performance: hyadeOSSI18n.t("settings.lab.performance", "Performance Tuning"),
-      animations: hyadeOSSI18n.t("settings.lab.animations", "New Animations"),
-      developer: hyadeOSSI18n.t("settings.lab.developer", "Developer Options"),
-      allowFlashing: hyadeOSSI18n.t("settings.lab.allow-flashing", "Allow Flashing")
+      darkMode: hyadeOSI18n.t("settings.lab.dark-mode", "Dark Mode Experiments"),
+      performance: hyadeOSI18n.t("settings.lab.performance", "Performance Tuning"),
+      animations: hyadeOSI18n.t("settings.lab.animations", "New Animations"),
+      developer: hyadeOSI18n.t("settings.lab.developer", "Developer Options"),
+      allowFlashing: hyadeOSI18n.t("settings.lab.allow-flashing", "Allow Flashing")
     };
     const name = names[key] || key;
     window.parent.postMessage({
       type: 'show-notification',
-      title: hyadeOSSI18n.t("settings.lab.notification-title", "Lab"),
+      title: hyadeOSI18n.t("settings.lab.notification-title", "Lab"),
       msg: desiredState
-        ? hyadeOSSI18n.t("settings.lab.enabled", "{name}: Enabled", { name })
-        : hyadeOSSI18n.t("settings.lab.disabled", "{name}: Disabled", { name }),
+        ? hyadeOSI18n.t("settings.lab.enabled", "{name}: Enabled", { name })
+        : hyadeOSI18n.t("settings.lab.disabled", "{name}: Disabled", { name }),
       icon: 'science'
     }, '*');
   }, () => {
@@ -350,14 +350,14 @@ function toggleLab(key, inputEl) {
   });
 }
 
-// The desktop measures (window.hyadeOSSDevStats); this page only shows the numbers.
+// The desktop measures (window.hyadeOSDevStats); this page only shows the numbers.
 function showDevStats() {
   document.getElementById('devStats').hidden = !document.getElementById('tog-developer').checked;
 }
 setInterval(() => {
   if (document.getElementById('devStats').hidden) return;
   let s = null;
-  try { s = window.top.hyadeOSSDevStats; } catch (e) {}
+  try { s = window.top.hyadeOSDevStats; } catch (e) {}
   if (!s) return;
   const set = (id, text, bad) => { const b = document.getElementById(id); b.textContent = text; b.classList.toggle('bad', !!bad); };
   set('statFps', s.fps + ' fps', s.fps < 30);
@@ -376,7 +376,7 @@ async function refreshBootLogoPreview() {
   const response = await fetch('/api/system/boot-assets', { cache: 'no-store' });
   const assets = await response.json();
   if (!response.ok || typeof assets.bootLogo !== 'string') {
-    throw new Error(assets.error || hyadeOSSI18n.t("settings.lab.boot-logo.current-failed", "Could not load the current boot logo"));
+    throw new Error(assets.error || hyadeOSI18n.t("settings.lab.boot-logo.current-failed", "Could not load the current boot logo"));
   }
 
   const previewUrl = new URL(assets.bootLogo, location.origin);
@@ -392,9 +392,9 @@ bootLogoInput.addEventListener('change', async () => {
 
   uploadBootLogoButton.disabled = true;
   resetBootLogoButton.disabled = true;
-  bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.uploading", "Uploading boot logo…");
+  bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.uploading", "Uploading boot logo…");
   try {
-    if (file.size > 5 * 1024 * 1024) throw new Error(hyadeOSSI18n.t("settings.lab.boot-logo.too-big", "Choose an image smaller than 5 MB"));
+    if (file.size > 5 * 1024 * 1024) throw new Error(hyadeOSI18n.t("settings.lab.boot-logo.too-big", "Choose an image smaller than 5 MB"));
     const localPreview = new Image();
     const localPreviewUrl = URL.createObjectURL(file);
     try {
@@ -408,15 +408,15 @@ bootLogoInput.addEventListener('change', async () => {
     formData.append('bootLogo', file);
     const response = await fetch('/api/system/boot-logo', { method: 'POST', body: formData });
     const result = await response.json();
-    if (!response.ok || !result.success) throw new Error(result.error || hyadeOSSI18n.t("settings.lab.boot-logo.upload-error", "Boot logo upload failed"));
-    bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.restart", "{message} Restart hyadeOSS to see it.", { message: result.message });
+    if (!response.ok || !result.success) throw new Error(result.error || hyadeOSI18n.t("settings.lab.boot-logo.upload-error", "Boot logo upload failed"));
+    bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.restart", "{message} Restart hyadeOS to see it.", { message: result.message });
     try {
       await refreshBootLogoPreview();
     } catch (error) {
-      bootLogoStatus.textContent += ' ' + hyadeOSSI18n.t("settings.lab.boot-logo.preview-failed", "Preview could not be refreshed: {message}", { message: error.message });
+      bootLogoStatus.textContent += ' ' + hyadeOSI18n.t("settings.lab.boot-logo.preview-failed", "Preview could not be refreshed: {message}", { message: error.message });
     }
   } catch (error) {
-    bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.upload-failed", "Could not upload boot logo: {message}", { message: error.message });
+    bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.upload-failed", "Could not upload boot logo: {message}", { message: error.message });
   } finally {
     bootLogoInput.value = '';
     uploadBootLogoButton.disabled = false;
@@ -425,23 +425,23 @@ bootLogoInput.addEventListener('change', async () => {
 });
 
 resetBootLogoButton.addEventListener('click', async () => {
-  if (!await mDialog.confirm(hyadeOSSI18n.t("settings.lab.boot-logo.reset-confirm", "Restore the default hyadeOSS boot logo?"))) return;
+  if (!await mDialog.confirm(hyadeOSI18n.t("settings.lab.boot-logo.reset-confirm", "Restore the default hyadeOS boot logo?"))) return;
 
   uploadBootLogoButton.disabled = true;
   resetBootLogoButton.disabled = true;
-  bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.restoring", "Restoring default boot logo…");
+  bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.restoring", "Restoring default boot logo…");
   try {
     const response = await fetch('/api/system/boot-logo', { method: 'DELETE' });
     const result = await response.json();
-    if (!response.ok || !result.success) throw new Error(result.error || hyadeOSSI18n.t("settings.lab.boot-logo.reset-error", "Could not restore the default boot logo"));
-    bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.restart", "{message} Restart hyadeOSS to see it.", { message: result.message });
+    if (!response.ok || !result.success) throw new Error(result.error || hyadeOSI18n.t("settings.lab.boot-logo.reset-error", "Could not restore the default boot logo"));
+    bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.restart", "{message} Restart hyadeOS to see it.", { message: result.message });
     try {
       await refreshBootLogoPreview();
     } catch (error) {
-      bootLogoStatus.textContent += ' ' + hyadeOSSI18n.t("settings.lab.boot-logo.preview-failed", "Preview could not be refreshed: {message}", { message: error.message });
+      bootLogoStatus.textContent += ' ' + hyadeOSI18n.t("settings.lab.boot-logo.preview-failed", "Preview could not be refreshed: {message}", { message: error.message });
     }
   } catch (error) {
-    bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.reset-failed", "Could not restore boot logo: {message}", { message: error.message });
+    bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.reset-failed", "Could not restore boot logo: {message}", { message: error.message });
   } finally {
     uploadBootLogoButton.disabled = false;
     resetBootLogoButton.disabled = false;
@@ -449,7 +449,7 @@ resetBootLogoButton.addEventListener('click', async () => {
 });
 
 refreshBootLogoPreview().catch(error => {
-  bootLogoStatus.textContent = hyadeOSSI18n.t("settings.lab.boot-logo.load-failed", "Could not load boot logo preview: {message}", { message: error.message });
+  bootLogoStatus.textContent = hyadeOSI18n.t("settings.lab.boot-logo.load-failed", "Could not load boot logo preview: {message}", { message: error.message });
 });
 
 // Boot animation: read by the launcher from config.json on the next startup.
@@ -462,7 +462,7 @@ bootAnimationSelect.addEventListener('change', async () => {
     const response = await fetch('/save-settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bootAnimation: bootAnimationSelect.value }) });
     if (!response.ok) throw new Error(response.status);
   } catch (error) {
-    mDialog.alert(hyadeOSSI18n.t("settings.lab.boot-animation.failed", "Could not save the boot animation."));
+    mDialog.alert(hyadeOSI18n.t("settings.lab.boot-animation.failed", "Could not save the boot animation."));
   }
 });
 </script>

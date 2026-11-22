@@ -1,4 +1,4 @@
-// hyadeOSS light/dark theme, shared by the desktop and every system page. See docs/design.md.
+// hyadeOS light/dark theme, shared by the desktop and every system page. See docs/design.md.
 //
 // Load it in <head>, right after accent.js and before any stylesheet, so the first paint is
 // already in the right theme:
@@ -10,7 +10,7 @@
 //  - every same-origin page and frame hears a change through the storage event;
 //  - a window can also be told directly: postMessage({ type: 'mw-theme', theme }) — a page
 //    passes it on to its own frames, so nested Settings pages follow too.
-// API: hyadeOSSTheme.get() → the saved choice, .resolved() → "dark"|"light",
+// API: hyadeOSTheme.get() → the saved choice, .resolved() → "dark"|"light",
 //      .set(choice) saves and applies everywhere, .apply(choice) applies here only.
 (function () {
   const KEY = 'mwTheme';
@@ -82,5 +82,5 @@
       .catch(() => {});
   }
 
-  window.hyadeOSSTheme = { get: () => current, resolved: () => resolve(current), set, apply };
+  window.hyadeOSTheme = { get: () => current, resolved: () => resolve(current), set, apply };
 })();

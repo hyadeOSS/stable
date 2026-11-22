@@ -48,7 +48,7 @@
     function startTitle() {
         const title = document.querySelector(".setup-title");
         const words = title.dataset.words.split("|");
-        const language = (window.hyadeOSSI18n && hyadeOSSI18n.language) || "en";
+        const language = (window.hyadeOSI18n && hyadeOSI18n.language) || "en";
         let index = language === "it" ? 1 : 0;
         title.textContent = "";
         title.setAttribute("aria-label", words[index]);
@@ -165,7 +165,7 @@
         const steps = document.createElement("div");
         steps.className = "setup-steps";
         steps.setAttribute("role", "img");
-        steps.setAttribute("aria-label", hyadeOSSI18n.t("setup.step", "Step {current} of {total}", { current: step, total: TOTAL_STEPS }));
+        steps.setAttribute("aria-label", hyadeOSI18n.t("setup.step", "Step {current} of {total}", { current: step, total: TOTAL_STEPS }));
         for (let i = 1; i <= TOTAL_STEPS; i++) {
             steps.insertAdjacentHTML("beforeend", svgStar(STAR_PATHS[2], "100 18 368 379"));
             if (i <= step) steps.lastChild.classList.add(i === step ? "current" : "done");

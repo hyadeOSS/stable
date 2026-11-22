@@ -1,4 +1,4 @@
-# hyadeOSS - watches paired Bluetooth devices connect and disconnect (Windows).
+# hyadeOS - watches paired Bluetooth devices connect and disconnect (Windows).
 # Kept running by bluetooth-watch.js. One JSON object per line on stdout:
 #   { event: "connected" | "disconnected" | "battery", name, mac, type, battery }
 # battery is 0-100, or null when the device does not report one. Devices that were already

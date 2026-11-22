@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const checks = require("../lib/update-checks");
 
 function makeRelease(files) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-release-test-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeos-release-test-"));
   for (const [file, contents] of Object.entries(files)) {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     fs.writeFileSync(path.join(root, file), contents);

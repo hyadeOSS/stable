@@ -1,3 +1,7 @@
+// Legacy name: right after an update the open window still runs the old preload.js, which exposes
+// window.hyadeOSSElectron (the name before the rename) until the shell restarts.
+if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron = window.hyadeOSSElectron;
+
 // Shared by every "factory reset" button in Settings.
 
 // The kernel re-checks the account password before wiping anything.
@@ -19,9 +23,9 @@ async function askFactoryResetPassword() {
   if (needs === false) return '';
   const password = await mDialog.prompt(
     needs === null
-      ? (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.factory-reset.prompt-optional', 'Enter your account password to confirm. Leave it empty if you never set one.') : 'Enter your account password to confirm. Leave it empty if you never set one.')
-      : (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.factory-reset.prompt', 'Enter your account password to confirm the factory reset.') : 'Enter your account password to confirm the factory reset.'),
-    { type: 'password', title: (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.factory-reset.prompt-title', 'Confirm with password') : 'Confirm with password'), okText: (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.security.erase-everything', 'Erase everything') : 'Erase everything'), danger: true, kind: 'warning' }
+      ? (window.hyadeOSI18n ? hyadeOSI18n.t('settings.factory-reset.prompt-optional', 'Enter your account password to confirm. Leave it empty if you never set one.') : 'Enter your account password to confirm. Leave it empty if you never set one.')
+      : (window.hyadeOSI18n ? hyadeOSI18n.t('settings.factory-reset.prompt', 'Enter your account password to confirm the factory reset.') : 'Enter your account password to confirm the factory reset.'),
+    { type: 'password', title: (window.hyadeOSI18n ? hyadeOSI18n.t('settings.factory-reset.prompt-title', 'Confirm with password') : 'Confirm with password'), okText: (window.hyadeOSI18n ? hyadeOSI18n.t('settings.security.erase-everything', 'Erase everything') : 'Erase everything'), danger: true, kind: 'warning' }
   );
   return password === null ? null : password;
 }
@@ -35,7 +39,7 @@ async function runFactoryReset(password) {
   let data = null;
   try { data = await res.json(); } catch (e) {}
   if (!res.ok || !data || !data.success) {
-    throw new Error(data ? (data.error || (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.factory-reset.server-error', 'Server error') : 'Server error')) : (window.hyadeOSSI18n ? hyadeOSSI18n.t('settings.factory-reset.kernel-outdated', 'The system kernel is outdated: restart hyadeOSS and try again.') : 'The system kernel is outdated: restart hyadeOSS and try again.'));
+    throw new Error(data ? (data.error || (window.hyadeOSI18n ? hyadeOSI18n.t('settings.factory-reset.server-error', 'Server error') : 'Server error')) : (window.hyadeOSI18n ? hyadeOSI18n.t('settings.factory-reset.kernel-outdated', 'The system kernel is outdated: restart hyadeOS and try again.') : 'The system kernel is outdated: restart hyadeOS and try again.'));
   }
 
   try { localStorage.clear(); } catch (e) {}
@@ -52,7 +56,7 @@ async function runFactoryReset(password) {
 
   // Inside the Electron shell also wipe cookies, cache and storage of the built-in browser.
   try {
-    const bridge = window.top.hyadeOSSElectron;
+    const bridge = window.top.hyadeOSElectron;
     if (bridge && bridge.clearBrowserData) await bridge.clearBrowserData();
   } catch (e) { console.warn('Could not clear browser data:', e); }
 

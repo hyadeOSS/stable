@@ -60,7 +60,7 @@
       document.getElementById('btToggle').checked = qs.bluetooth;
 
       if (!qs.bluetooth) {
-        document.getElementById('btPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.bluetooth.disabled", "Bluetooth is disabled.")}</div></div>`;
+        document.getElementById('btPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.bluetooth.disabled", "Bluetooth is disabled.")}</div></div>`;
         return;
       }
 
@@ -86,17 +86,17 @@
                   <span class="material-symbols-outlined" style="color: ${dev.connected ? 'var(--sys-accent-text)' : 'white'}">${icon}</span>
                   <div>
                     <div class="title" style="color: ${dev.connected ? 'var(--sys-accent-text)' : 'white'}">${escapeHtml(dev.name)}</div>
-                    <div class="subtitle" id="status-${safeId}">${dev.connected ? hyadeOSSI18n.t("settings.bluetooth.connected", "Connected") : hyadeOSSI18n.t("settings.bluetooth.not-connected", "Not connected")}</div>
+                    <div class="subtitle" id="status-${safeId}">${dev.connected ? hyadeOSI18n.t("settings.bluetooth.connected", "Connected") : hyadeOSI18n.t("settings.bluetooth.not-connected", "Not connected")}</div>
                   </div>
                 </div>
               </div>
             `;
           });
         } else {
-          html = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.bluetooth.no-user-devices", "No user devices found.")}</div></div>`;
+          html = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.bluetooth.no-user-devices", "No user devices found.")}</div></div>`;
         }
       } else {
-        html = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.bluetooth.no-devices", "No devices found.")}</div></div>`;
+        html = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.bluetooth.no-devices", "No devices found.")}</div></div>`;
       }
       document.getElementById('btPanel').innerHTML = html;
     }
@@ -112,7 +112,7 @@
 
     async function connectBt(safeId, name, mac) {
       const statusEl = document.getElementById(`status-${safeId}`);
-      if (statusEl) statusEl.innerText = hyadeOSSI18n.t("settings.bluetooth.connecting", "Connecting…");
+      if (statusEl) statusEl.innerText = hyadeOSI18n.t("settings.bluetooth.connecting", "Connecting…");
 
       const res = await fetch('/api/system/connect-bt', {
         method: 'POST',
@@ -120,7 +120,7 @@
         body: JSON.stringify({ name, mac })
       });
       if (res.status === 501) {
-        if (statusEl) statusEl.innerText = hyadeOSSI18n.t("settings.bluetooth.connect-from-device", "Connect it from the device or from Windows");
+        if (statusEl) statusEl.innerText = hyadeOSI18n.t("settings.bluetooth.connect-from-device", "Connect it from the device or from Windows");
         return;
       }
       loadBt();

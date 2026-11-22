@@ -1,5 +1,5 @@
 <!--
-hyadeOSS Pictures - (C) 2026 mariowstech and the hyadeOSS team
+hyadeOS Pictures - (C) 2026 mariowstech and the hyadeOS team
 Licensed under the Apache License, Version 2.0
 -->
 <!DOCTYPE html>
@@ -96,7 +96,7 @@ Licensed under the Apache License, Version 2.0
   .zoom { display: flex; align-items: center; gap: 2px; padding: 2px; border-radius: 999px; background: rgba(var(--mw-ink), .06); }
   .zoom .ib { width: 32px; height: 32px; flex-basis: 32px; }
   .zoom-label { min-width: 46px; text-align: center; font-size: 12px; color: rgba(var(--mw-ink), .75); font-variant-numeric: tabular-nums; }
-/* ---- hyadeOSS 2 ---- shared selection, calm motion, focus rings. */
+/* ---- hyadeOS 2 ---- shared selection, calm motion, focus rings. */
   /* Sidebar selection, as in Settings and Files: a soft accent wash with a short accent bar. */
   .list-item { position: relative; }
   .list-item.active { background: var(--mw-accent-soft); color: var(--mw-text); font-weight: 600; }
@@ -105,7 +105,7 @@ Licensed under the Apache License, Version 2.0
   .ib { transition: background var(--mw-duration-fast) ease, color var(--mw-duration-fast) ease; }
   .open-btn { border-radius: var(--mw-radius-full); }
   button:focus-visible { outline: none; box-shadow: var(--mw-focus-ring); }
-  /* ---- end hyadeOSS 2 ---- */
+  /* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -153,7 +153,7 @@ Licensed under the Apache License, Version 2.0
   "use strict";
   const $ = id => document.getElementById(id);
   const stage = $('stage'), empty = $('empty'), filmstrip = $('filmstrip'), fileInput = $('fileInput');
-  $('title').textContent = hyadeOSSI18n.t("pictures.empty.title", "No image open");
+  $('title').textContent = hyadeOSI18n.t("pictures.empty.title", "No image open");
   let items = [];          // { url, name }
   let index = -1;
   let imgEl = null;
@@ -201,7 +201,7 @@ Licensed under the Apache License, Version 2.0
     rotation = 0;
     const it = items[i];
     $('title').textContent = it.name;
-    $('subtitle').textContent = items.length > 1 ? hyadeOSSI18n.t("pictures.position", "{current} of {total}", { current: i + 1, total: items.length }) : '';
+    $('subtitle').textContent = items.length > 1 ? hyadeOSI18n.t("pictures.position", "{current} of {total}", { current: i + 1, total: items.length }) : '';
     $('nowArt').style.backgroundImage = `url("${it.url.replace(/"/g, '%22')}")`;
     $('nowArt').classList.add('has-image');
     $('navPrev').hidden = items.length < 2;

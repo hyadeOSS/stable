@@ -6,7 +6,7 @@ const path = require("path");
 const rollback = require("../lib/rollback");
 
 function makeInstall() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-rollback-test-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeos-rollback-test-"));
   const write = (file, contents) => {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     fs.writeFileSync(path.join(root, file), contents);

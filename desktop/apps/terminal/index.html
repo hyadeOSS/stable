@@ -1,7 +1,7 @@
 
 
 <!-- 
-hyadeOSS Terminal - (C) 2026 mariowstech and the hyadeOSS team 
+hyadeOS Terminal - (C) 2026 mariowstech and the hyadeOS team 
 Licensed under the Apache License, Version 2.0; you can use this file if you give credits to the original creators and you may not use this file except in compliance with the License. 
 Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 This project use open source and free fonts sourced from Google Fonts. Google Fonts is a trademark of Google LCC, privacy docs are at https://developers.google.com/fonts/faq/privacy 
@@ -197,7 +197,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       <div class="dmgr-title red" data-i18n="terminal.dmgr.switching">!! SWITCHING DE !!</div>
       <div class="dmgr-subtitle" data-i18n="terminal.dmgr.summary">SUMMARY:</div>
       <div class="dmgr-text" id="dmgr-summary-text"></div>
-      <div class="dmgr-text" data-i18n="terminal.dmgr.loginui-unchanged">com.hyadeoss.loginui -> unchanged</div>
+      <div class="dmgr-text" data-i18n="terminal.dmgr.loginui-unchanged">com.hyadeos.loginui -> unchanged</div>
       <div class="dmgr-buttons" style="margin-top: 40px;">
         <div class="dmgr-btn" id="dmgr-btn-no" data-i18n="terminal.dmgr.no">[ NO ]</div>
         <div class="dmgr-btn" id="dmgr-btn-yes" data-i18n="terminal.dmgr.yes">[ YES ]</div>
@@ -295,7 +295,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 
     // DMGR State Machine 
     let dmgrActive = false, dmgrScreen = 1, availableDEs = [], selectedDEIndex = 0, focusIndex = 0, confirmFocusIndex = 0;
-    let currentActiveDE = "com.hyadeoss.desktop.html";
+    let currentActiveDE = "com.hyadeos.desktop.html";
 
 
     // --- TAB & UI INJECTION LOGIC ---
@@ -337,14 +337,14 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           const cm = window.parent.document.createElement('div');
           cm.id = 'term-tab-context-menu';
           cm.innerHTML = `
-            <div style="font-size: 10px; margin-bottom: 8px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.5px;">${hyadeOSSI18n.t("terminal.tabs.group-color", "GROUP COLOR")}</div>
+            <div style="font-size: 10px; margin-bottom: 8px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.5px;">${hyadeOSI18n.t("terminal.tabs.group-color", "GROUP COLOR")}</div>
             <div style="display: flex; gap: 8px;">
-              <div class="color-dot" data-color="transparent" style="border: 1px solid rgba(255,255,255,0.3);" title="${hyadeOSSI18n.t("terminal.tabs.color.none", "None")}"></div>
-              <div class="color-dot" data-color="#ff5f56" style="background: #ff5f56;" title="${hyadeOSSI18n.t("terminal.tabs.color.red", "Red")}"></div>
-              <div class="color-dot" data-color="#ffbd2e" style="background: #ffbd2e;" title="${hyadeOSSI18n.t("terminal.tabs.color.yellow", "Yellow")}"></div>
-              <div class="color-dot" data-color="#27c93f" style="background: #27c93f;" title="${hyadeOSSI18n.t("terminal.tabs.color.green", "Green")}"></div>
-              <div class="color-dot" data-color="#92d9ff" style="background: #92d9ff;" title="${hyadeOSSI18n.t("terminal.tabs.color.blue", "Blue")}"></div>
-              <div class="color-dot" data-color="#c864fa" style="background: #c864fa;" title="${hyadeOSSI18n.t("terminal.tabs.color.purple", "Purple")}"></div>
+              <div class="color-dot" data-color="transparent" style="border: 1px solid rgba(255,255,255,0.3);" title="${hyadeOSI18n.t("terminal.tabs.color.none", "None")}"></div>
+              <div class="color-dot" data-color="#ff5f56" style="background: #ff5f56;" title="${hyadeOSI18n.t("terminal.tabs.color.red", "Red")}"></div>
+              <div class="color-dot" data-color="#ffbd2e" style="background: #ffbd2e;" title="${hyadeOSI18n.t("terminal.tabs.color.yellow", "Yellow")}"></div>
+              <div class="color-dot" data-color="#27c93f" style="background: #27c93f;" title="${hyadeOSI18n.t("terminal.tabs.color.green", "Green")}"></div>
+              <div class="color-dot" data-color="#92d9ff" style="background: #92d9ff;" title="${hyadeOSI18n.t("terminal.tabs.color.blue", "Blue")}"></div>
+              <div class="color-dot" data-color="#c864fa" style="background: #c864fa;" title="${hyadeOSI18n.t("terminal.tabs.color.purple", "Purple")}"></div>
             </div>
           `;
           window.parent.document.body.appendChild(cm);
@@ -365,7 +365,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         const termActions = window.parent.document.createElement('div');
         termActions.id = 'os-term-actions';
         termActions.style.cssText = 'display: flex; align-items: center; gap: 5px; flex-shrink: 0; margin-right: 8px; margin-top: 4px;';
-        termActions.innerHTML = `<button class="browser-nav-btn" id="os-term-new" title="${hyadeOSSI18n.t("terminal.tabs.new", "New Tab")}" style="background:transparent; border:none; color:rgba(255,255,255,0.7); cursor:pointer; padding:4px; display:flex; align-items:center; border-radius:4px;"><span class="material-symbols-outlined" style="font-size: 18px;">add</span></button>`;
+        termActions.innerHTML = `<button class="browser-nav-btn" id="os-term-new" title="${hyadeOSI18n.t("terminal.tabs.new", "New Tab")}" style="background:transparent; border:none; color:rgba(255,255,255,0.7); cursor:pointer; padding:4px; display:flex; align-items:center; border-radius:4px;"><span class="material-symbols-outlined" style="font-size: 18px;">add</span></button>`;
         
         if (actionsDiv) {
           osHeader.insertBefore(tabsContainer, actionsDiv);
@@ -518,7 +518,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         tab.currentDirectory = directoryPath;
         updatePromptPath(tab);
       } catch (error) {
-        appendFileCommandError(tab, hyadeOSSI18n.t("terminal.error.open-directory", "Unable to open directory: {error}", { error: error.message }));
+        appendFileCommandError(tab, hyadeOSI18n.t("terminal.error.open-directory", "Unable to open directory: {error}", { error: error.message }));
         newPrompt(tab);
       }
     });
@@ -544,7 +544,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         if (config.currentUser && !config.currentUser.admin) {
             terminalsContainer.innerHTML = `
                 <div style="padding: 20px; font-size: 14px;">
-                    ${escapeHtml(hyadeOSSI18n.t("terminal.admin-only", "Terminal is only available to administrators. Ask an administrator to change your account type in Settings > Users."))}
+                    ${escapeHtml(hyadeOSI18n.t("terminal.admin-only", "Terminal is only available to administrators. Ask an administrator to change your account type in Settings > Users."))}
                 </div>
             `;
             return;
@@ -553,8 +553,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         if (config.developer === false) {
             terminalsContainer.innerHTML = `
                 <div style="padding: 20px; font-size: 14px;">
-                    ${escapeHtml(hyadeOSSI18n.t("terminal.devoptions.required", "For your security, Terminal requires developer options to be enabled to work."))}<br>
-                    ${hyadeOSSI18n.t("terminal.devoptions.enable", "You can enable them in {link}.", { link: `<a href="#" style="color: #92d9ff;" onclick="window.parent.postMessage({type: 'open-app-from-store', appId: 'popup1'}, window.location.origin); return false;">${escapeHtml(hyadeOSSI18n.t("terminal.devoptions.link", "settings > lab"))}</a>` })}
+                    ${escapeHtml(hyadeOSI18n.t("terminal.devoptions.required", "For your security, Terminal requires developer options to be enabled to work."))}<br>
+                    ${hyadeOSI18n.t("terminal.devoptions.enable", "You can enable them in {link}.", { link: `<a href="#" style="color: #92d9ff;" onclick="window.parent.postMessage({type: 'open-app-from-store', appId: 'popup1'}, window.location.origin); return false;">${escapeHtml(hyadeOSI18n.t("terminal.devoptions.link", "settings > lab"))}</a>` })}
                 </div>
             `;
             return;
@@ -676,7 +676,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           if (e.key === "ArrowRight" || e.key === "ArrowLeft") confirmFocusIndex = confirmFocusIndex === 0 ? 1 : 0;
           if (e.key === "Enter" || e.key === " ") {
             if (confirmFocusIndex === 1) {
-              if (availableDEs[selectedDEIndex] === currentActiveDE) closeDmgr(hyadeOSSI18n.t("terminal.dmgr.no-changes", "dmgr: No changes made. Target DE is already active."));
+              if (availableDEs[selectedDEIndex] === currentActiveDE) closeDmgr(hyadeOSI18n.t("terminal.dmgr.no-changes", "dmgr: No changes made. Target DE is already active."));
               else { dmgrActive = false; dmgrOverlay.style.display = "none"; window.parent.location.href = `/desktop/${availableDEs[selectedDEIndex]}`; }
             } else { closeDmgr(); }
           }
@@ -762,7 +762,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     });
 
     // --- LINE HANDLING ---
-    const HISTORY_STORAGE_KEY = "hyadeoss.terminal.history";
+    const HISTORY_STORAGE_KEY = "hyadeoss.terminal.history"; // legacy name, kept so the saved history survives the rename
     const HISTORY_LIMIT = 200;
     function loadStoredHistory() {
       try {
@@ -831,7 +831,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           });
           data = await response.json();
         } catch (error) {}
-        if (!data.success) { printError(tab, hyadeOSSI18n.t("terminal.auth.failure", "su: Authentication failure")); return; }
+        if (!data.success) { printError(tab, hyadeOSI18n.t("terminal.auth.failure", "su: Authentication failure")); return; }
         return callback ? callback() : undefined;
       }, label);
     }
@@ -870,7 +870,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       
       let pfxHtml = prefix;
       if (prefix === null) {
-          pfxHtml = `<span class="posh-arrow-start"></span><span class="posh-block-user"> ${sysUsername}@hyadeoss</span><span class="posh-arrow-user"></span><span class="posh-block-path"></span><span class="posh-arrow-path"></span>`;
+          pfxHtml = `<span class="posh-arrow-start"></span><span class="posh-block-user"> ${sysUsername}@hyadeos</span><span class="posh-arrow-user"></span><span class="posh-block-path"></span><span class="posh-arrow-path"></span>`;
       }
       
       line.innerHTML = `${pfxHtml}<div class="input-wrapper"><span class="prediction"></span><span class="input"></span></div><span class="cursor"></span>`;
@@ -912,7 +912,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     async function getDirectoryContents(directoryPath) {
       const response = await fetch(`/api/system/files?path=${encodeURIComponent(directoryPath)}`);
       const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t("terminal.error.read-directory", "Unable to read directory"));
+      if (!response.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t("terminal.error.read-directory", "Unable to read directory"));
       return data;
     }
 
@@ -1071,7 +1071,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       let data = {};
       try { data = await response.json(); } catch (error) {}
       if (!response.ok || (data && data.success === false)) {
-        throw new Error((data && data.error) || hyadeOSSI18n.t("terminal.error.request-failed", "request failed (HTTP {status})", { status: response.status }));
+        throw new Error((data && data.error) || hyadeOSI18n.t("terminal.error.request-failed", "request failed (HTTP {status})", { status: response.status }));
       }
       return data;
     }
@@ -1093,11 +1093,11 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     // --- FILE COMMANDS ---
     function splitHomeTarget(targetPath) {
       if (targetPath === "/home") return null;
-      if (!targetPath.startsWith("/home/")) throw new Error(hyadeOSSI18n.t("terminal.error.home-only-change", "only items in your home partition can be changed"));
+      if (!targetPath.startsWith("/home/")) throw new Error(hyadeOSI18n.t("terminal.error.home-only-change", "only items in your home partition can be changed"));
       const separator = targetPath.lastIndexOf("/");
       const parentPath = separator === 0 ? "/" : targetPath.slice(0, separator);
       const name = targetPath.slice(separator + 1);
-      if (!name || name === "." || name === "..") throw new Error(hyadeOSSI18n.t("terminal.error.invalid-path", "invalid path"));
+      if (!name || name === "." || name === "..") throw new Error(hyadeOSI18n.t("terminal.error.invalid-path", "invalid path"));
       return { parentPath, name };
     }
 
@@ -1115,7 +1115,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 
     async function changeDirectory(tab, target) {
       if (target === "-") {
-        if (!tab.previousDirectory) throw new Error(hyadeOSSI18n.t("terminal.error.no-previous-directory", "no previous directory"));
+        if (!tab.previousDirectory) throw new Error(hyadeOSI18n.t("terminal.error.no-previous-directory", "no previous directory"));
         target = tab.previousDirectory;
       }
       const directoryPath = normalizeVirtualPath(target || "/home", tab.currentDirectory);
@@ -1148,7 +1148,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 
     async function makeDirectory(tab, requestedPath, parents) {
       const targetPath = normalizeVirtualPath(requestedPath, tab.currentDirectory);
-      if (!splitHomeTarget(targetPath)) throw new Error(hyadeOSSI18n.t("terminal.error.mkdir-home", "cannot create a directory over /home"));
+      if (!splitHomeTarget(targetPath)) throw new Error(hyadeOSI18n.t("terminal.error.mkdir-home", "cannot create a directory over /home"));
       const segments = targetPath.slice("/home/".length).split("/");
       let current = "/home";
       for (let i = 0; i < segments.length; i++) {
@@ -1156,37 +1156,37 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         const last = i === segments.length - 1;
         const existing = await statPath(next);
         if (existing) {
-          if (existing.type !== "folder") throw new Error(hyadeOSSI18n.t("terminal.error.exists-not-directory", "{path} exists and is not a directory", { path: next }));
-          if (last && !parents) throw new Error(hyadeOSSI18n.t("terminal.error.already-exists", "{path} already exists", { path: next }));
+          if (existing.type !== "folder") throw new Error(hyadeOSI18n.t("terminal.error.exists-not-directory", "{path} exists and is not a directory", { path: next }));
+          if (last && !parents) throw new Error(hyadeOSI18n.t("terminal.error.already-exists", "{path} already exists", { path: next }));
         } else {
-          if (!last && !parents) throw new Error(hyadeOSSI18n.t("terminal.error.parent-missing", "{path} does not exist (use mkdir -p)", { path: `${current}/${segments[i]}` }));
+          if (!last && !parents) throw new Error(hyadeOSI18n.t("terminal.error.parent-missing", "{path} does not exist (use mkdir -p)", { path: `${current}/${segments[i]}` }));
           await api("/api/system/files/create-folder", { path: current, name: segments[i] });
         }
         current = next;
       }
-      printLine(tab, hyadeOSSI18n.t("terminal.files.created-directory", "Created directory: {path}", { path: targetPath }), "color-green");
+      printLine(tab, hyadeOSI18n.t("terminal.files.created-directory", "Created directory: {path}", { path: targetPath }), "color-green");
     }
 
     async function removePath(tab, requestedPath, recursive) {
       const targetPath = normalizeVirtualPath(requestedPath, tab.currentDirectory);
       const target = splitHomeTarget(targetPath);
-      if (!target) throw new Error(hyadeOSSI18n.t("terminal.error.remove-home", "refusing to remove /home"));
+      if (!target) throw new Error(hyadeOSI18n.t("terminal.error.remove-home", "refusing to remove /home"));
       if (tab.currentDirectory === targetPath || tab.currentDirectory.startsWith(`${targetPath}/`)) {
-        throw new Error(hyadeOSSI18n.t("terminal.error.remove-current", "refusing to remove the current directory (cd somewhere else first)"));
+        throw new Error(hyadeOSI18n.t("terminal.error.remove-current", "refusing to remove the current directory (cd somewhere else first)"));
       }
       const parent = await getDirectoryContents(target.parentPath);
       const item = parent.contents.find(entry => entry.name === target.name);
-      if (!item) throw new Error(hyadeOSSI18n.t("terminal.error.no-such-file", "{path}: no such file or directory", { path: targetPath }));
-      if (item.type === "folder" && !recursive) throw new Error(hyadeOSSI18n.t("terminal.error.is-directory-rm", "{path} is a directory (use rm -r)", { path: targetPath }));
+      if (!item) throw new Error(hyadeOSI18n.t("terminal.error.no-such-file", "{path}: no such file or directory", { path: targetPath }));
+      if (item.type === "folder" && !recursive) throw new Error(hyadeOSI18n.t("terminal.error.is-directory-rm", "{path} is a directory (use rm -r)", { path: targetPath }));
       await api("/api/system/files/delete", { path: target.parentPath, name: target.name, recursive });
-      printLine(tab, hyadeOSSI18n.t("terminal.files.removed", "Removed: {path}", { path: targetPath }), "color-green");
+      printLine(tab, hyadeOSI18n.t("terminal.files.removed", "Removed: {path}", { path: targetPath }), "color-green");
     }
 
     async function catFile(tab, requestedPath) {
       const targetPath = normalizeVirtualPath(requestedPath, tab.currentDirectory);
-      if (targetPath !== "/home" && !targetPath.startsWith("/home/")) throw new Error(hyadeOSSI18n.t("terminal.error.home-only-read", "only files in your home partition can be read"));
+      if (targetPath !== "/home" && !targetPath.startsWith("/home/")) throw new Error(hyadeOSI18n.t("terminal.error.home-only-read", "only files in your home partition can be read"));
       const target = splitHomeTarget(targetPath);
-      if (!target) throw new Error(hyadeOSSI18n.t("terminal.error.home-is-directory", "/home is a directory"));
+      if (!target) throw new Error(hyadeOSI18n.t("terminal.error.home-is-directory", "/home is a directory"));
       const data = await api(`/api/system/files/content?path=${encodeURIComponent(target.parentPath)}&name=${encodeURIComponent(target.name)}`);
       if (data.content) printLine(tab, data.content);
     }
@@ -1194,15 +1194,15 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     async function touchFile(tab, requestedPath) {
       const targetPath = normalizeVirtualPath(requestedPath, tab.currentDirectory);
       const target = splitHomeTarget(targetPath);
-      if (!target) throw new Error(hyadeOSSI18n.t("terminal.error.home-is-directory", "/home is a directory"));
+      if (!target) throw new Error(hyadeOSI18n.t("terminal.error.home-is-directory", "/home is a directory"));
       await getDirectoryContents(target.parentPath);
       const existing = await statPath(targetPath);
       if (existing) {
-        if (existing.type === "folder") throw new Error(hyadeOSSI18n.t("terminal.error.is-directory", "{path} is a directory", { path: targetPath }));
+        if (existing.type === "folder") throw new Error(hyadeOSI18n.t("terminal.error.is-directory", "{path} is a directory", { path: targetPath }));
         return; // like touch: an existing file is left as it is
       }
       await api("/api/system/files/content", { path: target.parentPath, name: target.name, content: "", createOnly: true });
-      printLine(tab, hyadeOSSI18n.t("terminal.files.created-file", "Created file: {path}", { path: targetPath }), "color-green");
+      printLine(tab, hyadeOSI18n.t("terminal.files.created-file", "Created file: {path}", { path: targetPath }), "color-green");
     }
 
     // mv / cp. The destination is either an existing folder (the item keeps its name)
@@ -1210,9 +1210,9 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     async function transferPath(tab, mode, sourceArg, destinationArg) {
       const sourcePath = normalizeVirtualPath(sourceArg, tab.currentDirectory);
       const source = splitHomeTarget(sourcePath);
-      if (!source) throw new Error(hyadeOSSI18n.t("terminal.error.transfer-home", "cannot move or copy /home"));
+      if (!source) throw new Error(hyadeOSI18n.t("terminal.error.transfer-home", "cannot move or copy /home"));
       const sourceItem = await statPath(sourcePath);
-      if (!sourceItem) throw new Error(hyadeOSSI18n.t("terminal.error.no-such-file", "{path}: no such file or directory", { path: sourcePath }));
+      if (!sourceItem) throw new Error(hyadeOSI18n.t("terminal.error.no-such-file", "{path}: no such file or directory", { path: sourcePath }));
 
       const destinationPath = normalizeVirtualPath(destinationArg, tab.currentDirectory);
       const destinationItem = await statPath(destinationPath);
@@ -1220,15 +1220,15 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       if (destinationItem && destinationItem.type === "folder") {
         directory = destinationPath; name = source.name; explicitName = false;
       } else if (destinationItem) {
-        throw new Error(hyadeOSSI18n.t("terminal.error.already-exists", "{path} already exists", { path: destinationPath }));
+        throw new Error(hyadeOSI18n.t("terminal.error.already-exists", "{path} already exists", { path: destinationPath }));
       } else {
         const destination = splitHomeTarget(destinationPath);
-        if (!destination) throw new Error(hyadeOSSI18n.t("terminal.error.invalid-destination", "invalid destination"));
+        if (!destination) throw new Error(hyadeOSI18n.t("terminal.error.invalid-destination", "invalid destination"));
         directory = destination.parentPath; name = destination.name; explicitName = true;
-        if (!(await statPath(directory))) throw new Error(hyadeOSSI18n.t("terminal.error.no-such-directory", "{path}: no such directory", { path: directory }));
+        if (!(await statPath(directory))) throw new Error(hyadeOSI18n.t("terminal.error.no-such-directory", "{path}: no such directory", { path: directory }));
       }
       if (mode === "move" && (destinationPath === sourcePath || destinationPath.startsWith(`${sourcePath}/`))) {
-        throw new Error(hyadeOSSI18n.t("terminal.error.move-inside-itself", "cannot move a folder inside itself"));
+        throw new Error(hyadeOSI18n.t("terminal.error.move-inside-itself", "cannot move a folder inside itself"));
       }
 
       let finalName = name;
@@ -1250,8 +1250,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       }
       const values = { from: sourcePath, to: `${directory === "/" ? "" : directory}/${finalName}` };
       printLine(tab, mode === "move"
-        ? hyadeOSSI18n.t("terminal.files.moved", "Moved: {from} -> {to}", values)
-        : hyadeOSSI18n.t("terminal.files.copied", "Copied: {from} -> {to}", values), "color-green");
+        ? hyadeOSI18n.t("terminal.files.moved", "Moved: {from} -> {to}", values)
+        : hyadeOSI18n.t("terminal.files.copied", "Copied: {from} -> {to}", values), "color-green");
     }
     async function openNano(tab, requestedPath) {
       const targetPath = normalizeVirtualPath(requestedPath, tab.currentDirectory);
@@ -1259,10 +1259,10 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       const directoryPath = separator === 0 ? "/" : targetPath.slice(0, separator);
       const fileName = targetPath.slice(separator + 1);
       if (!fileName || fileName === "." || fileName === "..") {
-        throw new Error(hyadeOSSI18n.t("terminal.error.provide-file-name", "provide a file name"));
+        throw new Error(hyadeOSI18n.t("terminal.error.provide-file-name", "provide a file name"));
       }
       if (directoryPath !== "/home" && !directoryPath.startsWith("/home/")) {
-        throw new Error(hyadeOSSI18n.t("terminal.error.home-only-save", "files can only be saved in your home partition"));
+        throw new Error(hyadeOSI18n.t("terminal.error.home-only-save", "files can only be saved in your home partition"));
       }
 
       try {
@@ -1270,7 +1270,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         const response = await fetch(`/api/system/files/content?path=${encodeURIComponent(directoryPath)}&name=${encodeURIComponent(fileName)}`);
         if (response.status !== 404) {
           const data = await response.json();
-          if (!response.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t("terminal.error.open-file", "Unable to open file"));
+          if (!response.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t("terminal.error.open-file", "Unable to open file"));
           content = data.content;
         }
 
@@ -1295,13 +1295,13 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     }
 
     function updateNanoModified() {
-      nanoModified.textContent = nanoEditor.value === nanoOriginalContent ? "" : hyadeOSSI18n.t("terminal.nano.modified", "Modified");
+      nanoModified.textContent = nanoEditor.value === nanoOriginalContent ? "" : hyadeOSI18n.t("terminal.nano.modified", "Modified");
     }
 
     function nanoPromptText(mode, text) {
       return mode === "search"
-        ? hyadeOSSI18n.t("terminal.nano.prompt.search", "Search: {text}", { text })
-        : hyadeOSSI18n.t("terminal.nano.prompt.read", "Read File: {text}", { text });
+        ? hyadeOSI18n.t("terminal.nano.prompt.search", "Search: {text}", { text })
+        : hyadeOSI18n.t("terminal.nano.prompt.read", "Read File: {text}", { text });
     }
 
     function nanoPrompt(mode) {
@@ -1340,7 +1340,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       const match = text.indexOf(query, from);
       const start = match === -1 ? text.indexOf(query) : match;
       if (start === -1) {
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.not-found", '"{query}" not found', { query });
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.not-found", '"{query}" not found', { query });
         return;
       }
       nanoEditor.focus();
@@ -1350,26 +1350,26 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 
     async function readNanoFile(requestedPath) {
       if (!requestedPath) {
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.read-cancelled", "Read File cancelled");
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.read-cancelled", "Read File cancelled");
         return;
       }
       const targetPath = normalizeVirtualPath(requestedPath, nanoTarget.directoryPath);
       const parts = splitHomeTarget(targetPath);
       if (!parts) {
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.read-choose-home", "Read File: choose a file under /home");
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.read-choose-home", "Read File: choose a file under /home");
         return;
       }
       try {
         const response = await fetch(`/api/system/files/content?path=${encodeURIComponent(parts.parentPath)}&name=${encodeURIComponent(parts.name)}`);
         const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t("terminal.error.read-file", "Unable to read file"));
+        if (!response.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t("terminal.error.read-file", "Unable to read file"));
         const start = nanoEditor.selectionStart;
         const end = nanoEditor.selectionEnd;
         nanoEditor.setRangeText(data.content, start, end, "end");
         updateNanoModified();
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.read-done", "Read {path}", { path: targetPath });
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.read-done", "Read {path}", { path: targetPath });
       } catch (error) {
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.read-failed", "Read failed: {error}", { error: error.message });
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.read-failed", "Read failed: {error}", { error: error.message });
       }
     }
 
@@ -1408,7 +1408,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     async function saveNano() {
       if (!nanoTarget) return false;
       const content = nanoEditor.value;
-      nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.writing", "[ Writing... ]");
+      nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.writing", "[ Writing... ]");
       try {
         const response = await fetch("/api/system/files/content", {
           method: "POST",
@@ -1420,13 +1420,13 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           })
         });
         const data = await response.json();
-        if (!response.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t("terminal.error.save-file", "Unable to save file"));
+        if (!response.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t("terminal.error.save-file", "Unable to save file"));
         nanoOriginalContent = content;
         updateNanoModified();
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.wrote", "[ Wrote file ]");
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.wrote", "[ Wrote file ]");
         return true;
       } catch (error) {
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.save-failed", "Save failed: {error}", { error: error.message });
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.save-failed", "Save failed: {error}", { error: error.message });
         return false;
       }
     }
@@ -1435,7 +1435,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       if (!nanoTarget) return;
       if (!force && nanoEditor.value !== nanoOriginalContent) {
         nanoConfirmDiscard = true;
-        nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.save-prompt", "Save modified buffer? (Y)es/(N)o");
+        nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.save-prompt", "Save modified buffer? (Y)es/(N)o");
         return;
       }
       const tab = nanoTarget.tab;
@@ -1457,8 +1457,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         event.stopPropagation();
         const key = event.key.toLowerCase();
         // The answer keys follow the language (S/N in Italian); Y always works too.
-        const yesKey = hyadeOSSI18n.t("terminal.nano.key.yes", "y").toLowerCase();
-        const noKey = hyadeOSSI18n.t("terminal.nano.key.no", "n").toLowerCase();
+        const yesKey = hyadeOSI18n.t("terminal.nano.key.yes", "y").toLowerCase();
+        const noKey = hyadeOSI18n.t("terminal.nano.key.no", "n").toLowerCase();
         if (key === "y" || key === yesKey) {
           nanoConfirmDiscard = false;
           nanoMode = "edit";
@@ -1470,7 +1470,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
             if (nanoEditor.value === nanoOriginalContent) closeNano();
             else {
               nanoConfirmDiscard = true;
-              nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.changed-while-saving", "Buffer changed while saving. Press Y to save again or N to discard.");
+              nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.changed-while-saving", "Buffer changed while saving. Press Y to save again or N to discard.");
             }
           });
         } else if (key === "n" || key === noKey) closeNano(true);
@@ -1479,7 +1479,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           nanoStatus.textContent = "";
           nanoEditor.focus();
         } else {
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.save-prompt-keys", "Save modified buffer? Y=save N=discard Esc=cancel");
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.save-prompt-keys", "Save modified buffer? Y=save N=discard Esc=cancel");
         }
         return;
       }
@@ -1491,7 +1491,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         }
         if (key === "g") {
           nanoHelp.style.display = nanoHelp.style.display === "block" ? "none" : "block";
-          nanoHelp.textContent = hyadeOSSI18n.t("terminal.nano.help", "GNU nano keyboard help\n\nCtrl+O  WriteOut (save)\nCtrl+X  Exit\nCtrl+W  Search forward\nCtrl+R  Insert a file\nCtrl+K  Cut line or selection\nCtrl+U  Uncut\nCtrl+Y/V Previous/next page\nCtrl+C  Show cursor position\nCtrl+J  Reflow current paragraph\nCtrl+T  Spell check (not available)\n\nPress Ctrl+G again or Escape to return.");
+          nanoHelp.textContent = hyadeOSI18n.t("terminal.nano.help", "GNU nano keyboard help\n\nCtrl+O  WriteOut (save)\nCtrl+X  Exit\nCtrl+W  Search forward\nCtrl+R  Insert a file\nCtrl+K  Cut line or selection\nCtrl+U  Uncut\nCtrl+Y/V Previous/next page\nCtrl+C  Show cursor position\nCtrl+J  Reflow current paragraph\nCtrl+T  Spell check (not available)\n\nPress Ctrl+G again or Escape to return.");
           return;
         }
         if (key === "o" || key === "s") { saveNano(); return; }
@@ -1501,7 +1501,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         if (key === "c") {
           const beforeCursor = nanoEditor.value.slice(0, nanoEditor.selectionStart);
           const lines = beforeCursor.split("\n");
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.position", "Line {line}/{lines}, Col {col}", { line: lines.length, lines: nanoEditor.value.split("\n").length, col: lines[lines.length - 1].length + 1 });
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.position", "Line {line}/{lines}, Col {col}", { line: lines.length, lines: nanoEditor.value.split("\n").length, col: lines[lines.length - 1].length + 1 });
           return;
         }
         if (key === "k") {
@@ -1519,13 +1519,13 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
             nanoEditor.setRangeText("", lineStart, lineEnd, "start");
           }
           updateNanoModified();
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.cut", "[ Cut text ]");
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.cut", "[ Cut text ]");
           return;
         }
         if (key === "u") {
           if (nanoCutBuffer) nanoEditor.setRangeText(nanoCutBuffer, nanoEditor.selectionStart, nanoEditor.selectionEnd, "end");
           updateNanoModified();
-          nanoStatus.textContent = nanoCutBuffer ? hyadeOSSI18n.t("terminal.nano.uncut", "[ Uncut text ]") : hyadeOSSI18n.t("terminal.nano.nothing-to-uncut", "Nothing to uncut");
+          nanoStatus.textContent = nanoCutBuffer ? hyadeOSI18n.t("terminal.nano.uncut", "[ Uncut text ]") : hyadeOSI18n.t("terminal.nano.nothing-to-uncut", "Nothing to uncut");
           return;
         }
         if (key === "y" || key === "v") {
@@ -1534,11 +1534,11 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         }
         if (key === "j") {
           justifyNanoParagraph();
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.justified", "[ Paragraph justified ]");
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.justified", "[ Paragraph justified ]");
           return;
         }
         if (key === "t") {
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.no-spell", "Spell checking is not available");
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.no-spell", "Spell checking is not available");
           return;
         }
       }
@@ -1556,7 +1556,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           nanoStatus.textContent = "";
         } else if (nanoEditor.value !== nanoOriginalContent) {
           nanoConfirmDiscard = true;
-          nanoStatus.textContent = hyadeOSSI18n.t("terminal.nano.save-prompt-keys", "Save modified buffer? Y=save N=discard Esc=cancel");
+          nanoStatus.textContent = hyadeOSI18n.t("terminal.nano.save-prompt-keys", "Save modified buffer? Y=save N=discard Esc=cancel");
         } else {
           closeNano();
         }
@@ -1591,9 +1591,9 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       dmgrActive = true; dmgrScreen = 1; focusIndex = 0; selectedDEIndex = 0;
       try { const parentUrl = window.parent.location.pathname; const currentFile = parentUrl.substring(parentUrl.lastIndexOf('/') + 1); if (currentFile) currentActiveDE = currentFile; } catch(e) {}
       fetch("/api/system/desktops").then(res => res.json()).then(data => {
-          availableDEs = data.desktops || ["com.hyadeoss.desktop.html"]; const foundIdx = availableDEs.indexOf(currentActiveDE); if(foundIdx !== -1) selectedDEIndex = foundIdx;
+          availableDEs = data.desktops || ["com.hyadeos.desktop.html"]; const foundIdx = availableDEs.indexOf(currentActiveDE); if(foundIdx !== -1) selectedDEIndex = foundIdx;
           dmgrOverlay.style.display = "flex"; document.getElementById("dmgr-screen1").style.display = "block"; document.getElementById("dmgr-screen2").style.display = "none"; renderDmgr1();
-      }).catch(() => closeDmgr(hyadeOSSI18n.t("terminal.dmgr.read-failed", "E: Failed to read desktop environments.")));
+      }).catch(() => closeDmgr(hyadeOSI18n.t("terminal.dmgr.read-failed", "E: Failed to read desktop environments.")));
     }
     function renderDmgr1() {
       const listDiv = document.getElementById("dmgr-desktop-list"); listDiv.innerHTML = "";
@@ -1611,7 +1611,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       document.getElementById("dmgr-btn-no").className = "dmgr-btn" + (confirmFocusIndex === 0 ? " focused" : "");
       document.getElementById("dmgr-btn-yes").className = "dmgr-btn" + (confirmFocusIndex === 1 ? " focused" : "");
     }
-    function closeDmgr(msg = hyadeOSSI18n.t("terminal.dmgr.cancelled", "dmgr: Operation cancelled.")) {
+    function closeDmgr(msg = hyadeOSI18n.t("terminal.dmgr.cancelled", "dmgr: Operation cancelled.")) {
       dmgrActive = false; dmgrOverlay.style.display = "none"; const tab = tabs.find(t => t.id === activeTabId); if(tab) { const out = document.createElement("div"); out.innerText = msg; tab.element.appendChild(out); newPrompt(tab); }
       focusTerminal();
     }
@@ -1621,7 +1621,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       tab.awaitingPassword = true;
       tab.authCallback = callback;
       tab.authLabel = label;
-      newPrompt(tab, `<span class="color-yellow">${escapeHtml(hyadeOSSI18n.t("terminal.auth.password-required", "Password required for system operation:"))} </span>`, true);
+      newPrompt(tab, `<span class="color-yellow">${escapeHtml(hyadeOSI18n.t("terminal.auth.password-required", "Password required for system operation:"))} </span>`, true);
       return KEEP_PROMPT;
     }
 
@@ -1678,17 +1678,17 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     }
 
     async function executeInstall(app, tab) {
-      const stop = startSpinner(tab, hyadeOSSI18n.t("terminal.get.installing", "Downloading and installing {pkg}...", { pkg: app.id }));
+      const stop = startSpinner(tab, hyadeOSI18n.t("terminal.get.installing", "Downloading and installing {pkg}...", { pkg: app.id }));
       try {
         await api("/api/store/install", { appId: app.id, title: app.title, icon: app.icon, repoUrl: app.repoUrl });
       } finally { stop(); }
-      printLine(tab, `✔ ${hyadeOSSI18n.t("terminal.get.installed", "{pkg} installed successfully.", { pkg: app.id })}`, "color-green");
+      printLine(tab, `✔ ${hyadeOSI18n.t("terminal.get.installed", "{pkg} installed successfully.", { pkg: app.id })}`, "color-green");
       globalCatalog = [];
       if (app.id === "tiles") {
-        return askConfirm(tab, "get", hyadeOSSI18n.t("terminal.get.switch-tiles", "Do you want to switch to Tiles DE right now? [Y/n]"), answer => {
-          if (!isYes(answer, true)) { printLine(tab, hyadeOSSI18n.t("terminal.get.switch-cancelled", "Switch cancelled. You can use 'dmgr' to switch later.")); return; }
-          printLine(tab, hyadeOSSI18n.t("terminal.get.switching", "Switching DE immediately..."));
-          setTimeout(() => { window.parent.location.href = "/desktop/com.hyadeoss.twm.html"; }, 500);
+        return askConfirm(tab, "get", hyadeOSI18n.t("terminal.get.switch-tiles", "Do you want to switch to Tiles DE right now? [Y/n]"), answer => {
+          if (!isYes(answer, true)) { printLine(tab, hyadeOSI18n.t("terminal.get.switch-cancelled", "Switch cancelled. You can use 'dmgr' to switch later.")); return; }
+          printLine(tab, hyadeOSI18n.t("terminal.get.switching", "Switching DE immediately..."));
+          setTimeout(() => { window.parent.location.href = "/desktop/com.hyadeos.twm.html"; }, 500);
           return KEEP_PROMPT;
         });
       }
@@ -1698,13 +1698,13 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     }
 
     const GET_SUBCOMMANDS = {
-      list: ["list", hyadeOSSI18n.t("terminal.get.cmd.list", "List every package in the local repository (installed ones are marked)")],
-      search: ["search <text>", hyadeOSSI18n.t("terminal.get.cmd.search", "Find packages whose ID or title contains the text")],
-      install: ["install <pkg>", hyadeOSSI18n.t("terminal.get.cmd.install", "Download and install a package (requires password)")],
-      remove: ["remove <pkg>", hyadeOSSI18n.t("terminal.get.cmd.remove", "Remove an installed package (requires password)")],
-      update: ["update", hyadeOSSI18n.t("terminal.get.cmd.update", "Refresh the local package repository from the remote catalog")],
-      upgrade: ["upgrade", hyadeOSSI18n.t("terminal.get.cmd.upgrade", "Upgrade the installed packages that have a newer version (requires password)")],
-      help: ["help", hyadeOSSI18n.t("terminal.get.cmd.help", "Show this help")]
+      list: ["list", hyadeOSI18n.t("terminal.get.cmd.list", "List every package in the local repository (installed ones are marked)")],
+      search: ["search <text>", hyadeOSI18n.t("terminal.get.cmd.search", "Find packages whose ID or title contains the text")],
+      install: ["install <pkg>", hyadeOSI18n.t("terminal.get.cmd.install", "Download and install a package (requires password)")],
+      remove: ["remove <pkg>", hyadeOSI18n.t("terminal.get.cmd.remove", "Remove an installed package (requires password)")],
+      update: ["update", hyadeOSI18n.t("terminal.get.cmd.update", "Refresh the local package repository from the remote catalog")],
+      upgrade: ["upgrade", hyadeOSI18n.t("terminal.get.cmd.upgrade", "Upgrade the installed packages that have a newer version (requires password)")],
+      help: ["help", hyadeOSI18n.t("terminal.get.cmd.help", "Show this help")]
     };
 
     function showGetHelp(tab) {
@@ -1714,8 +1714,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 ██║  ███╗█████╗     ██║       ██║     ██║     ██║
 ██║   ██║██╔══╝     ██║       ██║     ██║     ██║
 ╚██████╔╝███████╗   ██║       ╚██████╗███████╗██║
- ╚═════╝ ╚══════╝   ╚═╝        ╚═════╝╚══════╝╚═╝</div><div><span class="color-gray">v262909.1 (preview)</span></div><div>${hyadeOSSI18n.t("terminal.usage", "Usage: {syntax}", { syntax: `<span class="color-yellow">get</span> <span class="color-gray">&lt;command&gt;</span> [pkgname]` })}</div>`);
-      printTable(tab, hyadeOSSI18n.t("terminal.get.commands-title", "Package Commands:"), commandTableHeaders(), Object.values(GET_SUBCOMMANDS));
+ ╚═════╝ ╚══════╝   ╚═╝        ╚═════╝╚══════╝╚═╝</div><div><span class="color-gray">v262909.1 (preview)</span></div><div>${hyadeOSI18n.t("terminal.usage", "Usage: {syntax}", { syntax: `<span class="color-yellow">get</span> <span class="color-gray">&lt;command&gt;</span> [pkgname]` })}</div>`);
+      printTable(tab, hyadeOSI18n.t("terminal.get.commands-title", "Package Commands:"), commandTableHeaders(), Object.values(GET_SUBCOMMANDS));
     }
 
     async function runGet(tab, args) {
@@ -1725,83 +1725,83 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
 
       if (subcommand === "list" || subcommand === "search") {
         const query = args.slice(2).join(" ").toLowerCase();
-        if (subcommand === "search" && !query) throw new Error(hyadeOSSI18n.t("terminal.error.usage", "usage: {usage}", { usage: "get search <text>" }));
+        if (subcommand === "search" && !query) throw new Error(hyadeOSI18n.t("terminal.error.usage", "usage: {usage}", { usage: "get search <text>" }));
         const [catalog, installed] = await Promise.all([loadCatalog(true), installedApps().catch(() => [])]);
         const installedIds = new Set(installed.map(app => app.appId));
         const matches = catalog.filter(app => !query || String(app.id).toLowerCase().includes(query) || String(app.title || "").toLowerCase().includes(query));
-        if (!matches.length) { printLine(tab, query ? hyadeOSSI18n.t("terminal.get.no-match", "No packages match '{query}'.", { query }) : hyadeOSSI18n.t("terminal.get.repo-empty", "The local repository is empty. Run 'get update'.")); return; }
-        printTable(tab, subcommand === "list" ? hyadeOSSI18n.t("terminal.get.available-title", "Available Packages:") : hyadeOSSI18n.t("terminal.get.matching-title", "Packages matching '{query}':", { query }),
-          [hyadeOSSI18n.t("terminal.table.package-id", "package ID"), hyadeOSSI18n.t("terminal.table.title", "title"), hyadeOSSI18n.t("terminal.table.status", "status")],
-          matches.map(app => [app.id, app.title || "", installedIds.has(app.id) ? hyadeOSSI18n.t("terminal.table.installed", "installed") : ""]));
+        if (!matches.length) { printLine(tab, query ? hyadeOSI18n.t("terminal.get.no-match", "No packages match '{query}'.", { query }) : hyadeOSI18n.t("terminal.get.repo-empty", "The local repository is empty. Run 'get update'.")); return; }
+        printTable(tab, subcommand === "list" ? hyadeOSI18n.t("terminal.get.available-title", "Available Packages:") : hyadeOSI18n.t("terminal.get.matching-title", "Packages matching '{query}':", { query }),
+          [hyadeOSI18n.t("terminal.table.package-id", "package ID"), hyadeOSI18n.t("terminal.table.title", "title"), hyadeOSI18n.t("terminal.table.status", "status")],
+          matches.map(app => [app.id, app.title || "", installedIds.has(app.id) ? hyadeOSI18n.t("terminal.table.installed", "installed") : ""]));
         return;
       }
 
       if (subcommand === "install") {
-        if (!packageId) throw new Error(hyadeOSSI18n.t("terminal.get.specify-install", "you must specify a package to install"));
+        if (!packageId) throw new Error(hyadeOSI18n.t("terminal.get.specify-install", "you must specify a package to install"));
         const catalog = await loadCatalog();
         const app = catalog.find(item => item.id === packageId);
         if (!app) {
           const suggestion = closestMatch(packageId, catalog.map(item => item.id));
           throw new Error(suggestion
-            ? hyadeOSSI18n.t("terminal.get.not-found-suggest", "package '{pkg}' not found. Did you mean '{suggestion}'?", { pkg: packageId, suggestion })
-            : hyadeOSSI18n.t("terminal.get.not-found", "package '{pkg}' not found", { pkg: packageId }));
+            ? hyadeOSI18n.t("terminal.get.not-found-suggest", "package '{pkg}' not found. Did you mean '{suggestion}'?", { pkg: packageId, suggestion })
+            : hyadeOSI18n.t("terminal.get.not-found", "package '{pkg}' not found", { pkg: packageId }));
         }
         if ((await installedApps().catch(() => [])).some(item => item.appId === packageId)) {
-          printLine(tab, hyadeOSSI18n.t("terminal.get.reinstall", "{pkg} is already installed: it will be reinstalled.", { pkg: packageId }), "color-gray");
+          printLine(tab, hyadeOSI18n.t("terminal.get.reinstall", "{pkg} is already installed: it will be reinstalled.", { pkg: packageId }), "color-gray");
         }
         return withAuth(tab, "get", () => executeInstall(app, tab));
       }
 
       if (subcommand === "remove") {
-        if (!packageId) throw new Error(hyadeOSSI18n.t("terminal.get.specify-remove", "you must specify a package to remove"));
+        if (!packageId) throw new Error(hyadeOSI18n.t("terminal.get.specify-remove", "you must specify a package to remove"));
         const installed = await installedApps();
         if (!installed.some(app => app.appId === packageId)) {
           const suggestion = closestMatch(packageId, installed.map(app => app.appId));
           throw new Error(suggestion
-            ? hyadeOSSI18n.t("terminal.get.not-installed-suggest", "package '{pkg}' is not installed. Did you mean '{suggestion}'?", { pkg: packageId, suggestion })
-            : hyadeOSSI18n.t("terminal.get.not-installed", "package '{pkg}' is not installed", { pkg: packageId }));
+            ? hyadeOSI18n.t("terminal.get.not-installed-suggest", "package '{pkg}' is not installed. Did you mean '{suggestion}'?", { pkg: packageId, suggestion })
+            : hyadeOSI18n.t("terminal.get.not-installed", "package '{pkg}' is not installed", { pkg: packageId }));
         }
         return withAuth(tab, "get", async () => {
-          const stop = startSpinner(tab, hyadeOSSI18n.t("terminal.get.removing", "Removing {pkg}...", { pkg: packageId }));
+          const stop = startSpinner(tab, hyadeOSI18n.t("terminal.get.removing", "Removing {pkg}...", { pkg: packageId }));
           try { await api("/api/store/uninstall", { appId: packageId }); } finally { stop(); }
-          printLine(tab, hyadeOSSI18n.t("terminal.get.removed", "{pkg} removed successfully.", { pkg: packageId }), "color-green");
+          printLine(tab, hyadeOSI18n.t("terminal.get.removed", "{pkg} removed successfully.", { pkg: packageId }), "color-green");
           if (IS_EMBEDDED) window.parent.postMessage({ type: "app-uninstalled-live", appId: packageId }, window.location.origin);
         });
       }
 
       if (subcommand === "update") {
-        const stop = startSpinner(tab, hyadeOSSI18n.t("terminal.get.fetching", "Fetching the remote catalog..."));
+        const stop = startSpinner(tab, hyadeOSI18n.t("terminal.get.fetching", "Fetching the remote catalog..."));
         let data;
         try { data = await api("/api/store/update"); } finally { stop(); }
         await loadCatalog(true).catch(() => {});
-        printLine(tab, hyadeOSSI18n.t("terminal.get.updated", "Done. {added} new package(s) added to the local repository ({total} total).", { added: data.addedCount, total: globalCatalog.length }), "color-green");
+        printLine(tab, hyadeOSI18n.t("terminal.get.updated", "Done. {added} new package(s) added to the local repository ({total} total).", { added: data.addedCount, total: globalCatalog.length }), "color-green");
         return;
       }
 
       if (subcommand === "upgrade") {
-        const stop = startSpinner(tab, hyadeOSSI18n.t("terminal.get.checking-upgrades", "Checking installed packages for upgrades..."));
+        const stop = startSpinner(tab, hyadeOSI18n.t("terminal.get.checking-upgrades", "Checking installed packages for upgrades..."));
         let data;
         try { data = await api("/api/store/check-upgrades"); } finally { stop(); }
         const upgrades = data.upgrades || [];
-        if (!upgrades.length) { printLine(tab, hyadeOSSI18n.t("terminal.get.up-to-date", "All packages are up to date."), "color-green"); return; }
-        printTable(tab, hyadeOSSI18n.t("terminal.get.upgradable-title", "Upgradable Packages:"), [hyadeOSSI18n.t("terminal.table.package-id", "package ID"), hyadeOSSI18n.t("terminal.table.installed", "installed"), hyadeOSSI18n.t("terminal.table.available", "available")], upgrades.map(item => [item.appId, item.current, item.latest]));
-        return askConfirm(tab, "get", hyadeOSSI18n.t("terminal.get.upgrade-confirm", "Upgrade {count} package(s)? [Y/n]", { count: upgrades.length }), answer => {
-          if (!isYes(answer, true)) { printLine(tab, hyadeOSSI18n.t("terminal.get.upgrade-cancelled", "Upgrade cancelled.")); return; }
+        if (!upgrades.length) { printLine(tab, hyadeOSI18n.t("terminal.get.up-to-date", "All packages are up to date."), "color-green"); return; }
+        printTable(tab, hyadeOSI18n.t("terminal.get.upgradable-title", "Upgradable Packages:"), [hyadeOSI18n.t("terminal.table.package-id", "package ID"), hyadeOSI18n.t("terminal.table.installed", "installed"), hyadeOSI18n.t("terminal.table.available", "available")], upgrades.map(item => [item.appId, item.current, item.latest]));
+        return askConfirm(tab, "get", hyadeOSI18n.t("terminal.get.upgrade-confirm", "Upgrade {count} package(s)? [Y/n]", { count: upgrades.length }), answer => {
+          if (!isYes(answer, true)) { printLine(tab, hyadeOSI18n.t("terminal.get.upgrade-cancelled", "Upgrade cancelled.")); return; }
           return withAuth(tab, "get", async () => {
-            const stopUpgrade = startSpinner(tab, hyadeOSSI18n.t("terminal.get.upgrading", "Upgrading packages..."));
+            const stopUpgrade = startSpinner(tab, hyadeOSI18n.t("terminal.get.upgrading", "Upgrading packages..."));
             let result;
             try { result = await api("/api/store/do-upgrade", {}); } finally { stopUpgrade(); }
             (result.updated || []).forEach(item => printLine(tab, `✔ ${item.appId} -> ${item.version}`, "color-green"));
-            printLine(tab, hyadeOSSI18n.t("terminal.get.upgraded", "{count} of {total} package(s) upgraded.", { count: result.count, total: upgrades.length }), result.count === upgrades.length ? "color-green" : "color-yellow");
-            if (result.count < upgrades.length) printLine(tab, hyadeOSSI18n.t("terminal.get.upgrade-git-only", "Only packages installed from a git repository can be upgraded in place; reinstall the others with 'get install'."), "color-gray");
+            printLine(tab, hyadeOSI18n.t("terminal.get.upgraded", "{count} of {total} package(s) upgraded.", { count: result.count, total: upgrades.length }), result.count === upgrades.length ? "color-green" : "color-yellow");
+            if (result.count < upgrades.length) printLine(tab, hyadeOSI18n.t("terminal.get.upgrade-git-only", "Only packages installed from a git repository can be upgraded in place; reinstall the others with 'get install'."), "color-gray");
           });
         });
       }
 
       const suggestion = closestMatch(subcommand, Object.keys(GET_SUBCOMMANDS));
       throw new Error(suggestion
-        ? hyadeOSSI18n.t("terminal.get.invalid-suggest", "invalid operation '{operation}'. Did you mean 'get {suggestion}'?", { operation: subcommand, suggestion })
-        : hyadeOSSI18n.t("terminal.get.invalid", "invalid operation '{operation}'. Use 'get help'.", { operation: subcommand }));
+        ? hyadeOSI18n.t("terminal.get.invalid-suggest", "invalid operation '{operation}'. Did you mean 'get {suggestion}'?", { operation: subcommand, suggestion })
+        : hyadeOSI18n.t("terminal.get.invalid", "invalid operation '{operation}'. Use 'get help'.", { operation: subcommand }));
     }
 
     // --- APPS ---
@@ -1825,19 +1825,19 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       const apps = await availableApps();
       if (!name) {
         printLine(tab, Object.keys(apps).sort().join("    "));
-        printLine(tab, hyadeOSSI18n.t("terminal.usage", "Usage: {syntax}", { syntax: "open <app>" }), "color-gray");
+        printLine(tab, hyadeOSI18n.t("terminal.usage", "Usage: {syntax}", { syntax: "open <app>" }), "color-gray");
         return;
       }
       const id = apps[name.toLowerCase()];
       if (!id) {
         const suggestion = closestMatch(name, Object.keys(apps));
         throw new Error(suggestion
-          ? hyadeOSSI18n.t("terminal.open.no-app-suggest", "no app named '{name}'. Did you mean '{suggestion}'?", { name, suggestion })
-          : hyadeOSSI18n.t("terminal.open.no-app", "no app named '{name}'. Run 'open' to list the apps.", { name }));
+          ? hyadeOSI18n.t("terminal.open.no-app-suggest", "no app named '{name}'. Did you mean '{suggestion}'?", { name, suggestion })
+          : hyadeOSI18n.t("terminal.open.no-app", "no app named '{name}'. Run 'open' to list the apps.", { name }));
       }
-      if (!IS_EMBEDDED) throw new Error(hyadeOSSI18n.t("terminal.open.desktop-only", "apps can only be opened from the hyadeOSS desktop"));
+      if (!IS_EMBEDDED) throw new Error(hyadeOSI18n.t("terminal.open.desktop-only", "apps can only be opened from the hyadeOS desktop"));
       window.parent.postMessage({ type: "open-app-from-store", appId: id }, window.location.origin);
-      printLine(tab, hyadeOSSI18n.t("terminal.open.opening", "Opening {name}...", { name }), "color-gray");
+      printLine(tab, hyadeOSI18n.t("terminal.open.opening", "Opening {name}...", { name }), "color-gray");
     }
 
     function closeTerminal(tab) {
@@ -1853,8 +1853,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       if (!IS_EMBEDDED) return "standalone";
       try {
         const file = window.parent.location.pathname.split("/").pop();
-        if (file === "com.hyadeoss.desktop.html") return "hyadeOSS Desktop";
-        if (file === "com.hyadeoss.twm.html") return "Tiles";
+        if (file === "com.hyadeos.desktop.html") return "hyadeOS Desktop";
+        if (file === "com.hyadeos.twm.html") return "Tiles";
         return file ? file.replace(/\.html$/, "") : "standalone";
       } catch (error) { return "standalone"; }
     }
@@ -1895,12 +1895,12 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         storage ? `Storage: ${formatBytes(storage.usedBytes)} / ${formatBytes(storage.totalBytes)} (${Math.round(storage.usagePercent)}% used)` : "Storage: unknown",
         "",
         "┌──────────Shell Info──────────┐",
-        `Shell: hyadeOSS Terminal on ${currentDesktopName()}`,
-        `Build date: ${about ? new Date(about.buildDate).toLocaleString(hyadeOSSI18n.locale) : "unknown"}`,
+        `Shell: hyadeOS Terminal on ${currentDesktopName()}`,
+        `Build date: ${about ? new Date(about.buildDate).toLocaleString(hyadeOSI18n.locale) : "unknown"}`,
         `Engine: ${electron ? `Electron ${electron}` : "Web browser"}${chromium ? ` / Chromium ${chromium}` : ""}`,
-        `User: ${sysUsername}@hyadeoss`,
+        `User: ${sysUsername}@hyadeos`,
         "",
-        "© mariowstech and the hyadeOSS team"
+        "© mariowstech and the hyadeOS team"
       ];
       const rows = Math.max(FETCH_LOGO.length, details.length);
       const lines = [];
@@ -1911,12 +1911,12 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     // --- HELP ---
     const COMMAND_GROUPS = ["General", "Files", "System"];
     function commandGroupTitle(group) {
-      if (group === "Files") return hyadeOSSI18n.t("terminal.help.group.files", "Files Commands:");
-      if (group === "System") return hyadeOSSI18n.t("terminal.help.group.system", "System Commands:");
-      return hyadeOSSI18n.t("terminal.help.group.general", "General Commands:");
+      if (group === "Files") return hyadeOSI18n.t("terminal.help.group.files", "Files Commands:");
+      if (group === "System") return hyadeOSI18n.t("terminal.help.group.system", "System Commands:");
+      return hyadeOSI18n.t("terminal.help.group.general", "General Commands:");
     }
     function commandTableHeaders() {
-      return [hyadeOSSI18n.t("terminal.table.command", "command"), hyadeOSSI18n.t("terminal.table.description", "description")];
+      return [hyadeOSI18n.t("terminal.table.command", "command"), hyadeOSI18n.t("terminal.table.description", "description")];
     }
     function showHelp(tab, name) {
       if (name) {
@@ -1924,8 +1924,8 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         if (!command) {
           const suggestion = closestMatch(name, commandNames());
           throw new Error(suggestion
-            ? hyadeOSSI18n.t("terminal.help.no-help-suggest", "no help for '{name}'. Did you mean '{suggestion}'?", { name, suggestion })
-            : hyadeOSSI18n.t("terminal.help.no-help", "no help for '{name}'", { name }));
+            ? hyadeOSI18n.t("terminal.help.no-help-suggest", "no help for '{name}'. Did you mean '{suggestion}'?", { name, suggestion })
+            : hyadeOSI18n.t("terminal.help.no-help", "no help for '{name}'", { name }));
         }
         printHTML(tab, `<span class="color-yellow">${escapeHtml(command.usage)}</span>\n  ${escapeHtml(command.desc)}${command.details ? `\n\n${escapeHtml(command.details)}` : ""}`);
         if (name === "get") printTable(tab, "", commandTableHeaders(), Object.values(GET_SUBCOMMANDS));
@@ -1935,7 +1935,7 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
         const rows = Object.values(COMMANDS).filter(command => command.group === group).map(command => [command.usage, command.desc]);
         printTable(tab, commandGroupTitle(group), commandTableHeaders(), rows);
       });
-      printLine(tab, hyadeOSSI18n.t("terminal.help.footer", "Tab completes commands, paths, packages and apps · ↑/↓ browse the history · → accepts the grey suggestion\nCtrl+C cancels the line · Ctrl+L clears the screen · Ctrl+T / Ctrl+W open / close a tab · 'help <command>' for details"), "color-gray");
+      printLine(tab, hyadeOSI18n.t("terminal.help.footer", "Tab completes commands, paths, packages and apps · ↑/↓ browse the history · → accepts the grey suggestion\nCtrl+C cancels the line · Ctrl+L clears the screen · Ctrl+T / Ctrl+W open / close a tab · 'help <command>' for details"), "color-gray");
     }
 
     // --- COMMANDS ---
@@ -1943,87 +1943,87 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
     // suggestions all read this table, so they can never drift apart.
     //   run(tab, args, line) may be async; returning KEEP_PROMPT means it opened its
     //   own prompt. complete is "dir", "any" (paths) or (tab, argIndex, args) => list.
-    const usageError = name => new Error(hyadeOSSI18n.t("terminal.error.usage", "usage: {usage}", { usage: COMMANDS[name].usage }));
+    const usageError = name => new Error(hyadeOSI18n.t("terminal.error.usage", "usage: {usage}", { usage: COMMANDS[name].usage }));
     const COMMANDS = {
-      help: { group: "General", usage: "help [command]", desc: hyadeOSSI18n.t("terminal.cmd.help", "Show every command, or details about one"),
+      help: { group: "General", usage: "help [command]", desc: hyadeOSI18n.t("terminal.cmd.help", "Show every command, or details about one"),
         complete: (tab, index) => index === 1 ? commandNames() : null,
         run: (tab, args) => showHelp(tab, args[1]) },
-      about: { group: "General", usage: "about", desc: hyadeOSSI18n.t("terminal.cmd.about", "About this terminal and the installed hyadeOSS version"),
+      about: { group: "General", usage: "about", desc: hyadeOSI18n.t("terminal.cmd.about", "About this terminal and the installed hyadeOS version"),
         run: async tab => {
           let version = "";
-          try { const about = await api("/api/system/about"); version = `\nhyadeOSS ${about.version} · build ${new Date(about.buildDate).toLocaleString(hyadeOSSI18n.locale)}`; } catch (error) {}
-          printLine(tab, `hyadeOSS Terminal (preview) - (C) 2026 mariowstech and the hyadeOSS team${version}`);
+          try { const about = await api("/api/system/about"); version = `\nhyadeOS ${about.version} · build ${new Date(about.buildDate).toLocaleString(hyadeOSI18n.locale)}`; } catch (error) {}
+          printLine(tab, `hyadeOS Terminal (preview) - (C) 2026 mariowstech and the hyadeOS team${version}`);
         } },
-      clear: { group: "General", usage: "clear", desc: hyadeOSSI18n.t("terminal.cmd.clear", "Clear the screen (Ctrl+L)"), run: tab => clearScreen(tab) },
-      echo: { group: "General", usage: "echo [text]", desc: hyadeOSSI18n.t("terminal.cmd.echo", "Print a message ($USER and $PWD are expanded)"),
+      clear: { group: "General", usage: "clear", desc: hyadeOSI18n.t("terminal.cmd.clear", "Clear the screen (Ctrl+L)"), run: tab => clearScreen(tab) },
+      echo: { group: "General", usage: "echo [text]", desc: hyadeOSI18n.t("terminal.cmd.echo", "Print a message ($USER and $PWD are expanded)"),
         run: (tab, args) => printLine(tab, args.slice(1).join(" ").replace(/\$USER\b/g, sysUsername).replace(/\$PWD\b/g, tab.currentDirectory)) },
-      math: { group: "General", usage: "math <expression>", desc: hyadeOSSI18n.t("terminal.cmd.math", "Calculate an expression with + - * / % and parentheses"),
+      math: { group: "General", usage: "math <expression>", desc: hyadeOSI18n.t("terminal.cmd.math", "Calculate an expression with + - * / % and parentheses"),
         run: (tab, args, line) => {
           const expression = line.replace(/^\S+\s*/, "").trim();
           if (!expression) throw usageError("math");
           let result;
-          try { result = safeMath(expression); } catch (error) { throw new Error(hyadeOSSI18n.t("terminal.math.invalid", "invalid expression, check syntax")); }
+          try { result = safeMath(expression); } catch (error) { throw new Error(hyadeOSI18n.t("terminal.math.invalid", "invalid expression, check syntax")); }
           printLine(tab, `${expression} = ${result}`);
         } },
-      history: { group: "General", usage: "history [-c]", desc: hyadeOSSI18n.t("terminal.cmd.history", "Show the command history; -c clears it"),
+      history: { group: "General", usage: "history [-c]", desc: hyadeOSI18n.t("terminal.cmd.history", "Show the command history; -c clears it"),
         complete: (tab, index) => index === 1 ? ["-c"] : null,
         run: (tab, args) => {
           if (args[1] === "-c") {
             tab.history = []; tab.historyIndex = 0;
             try { localStorage.removeItem(HISTORY_STORAGE_KEY); } catch (error) {}
-            printLine(tab, hyadeOSSI18n.t("terminal.history.cleared", "History cleared."), "color-green");
+            printLine(tab, hyadeOSI18n.t("terminal.history.cleared", "History cleared."), "color-green");
             return;
           }
           if (args.length > 1) throw usageError("history");
           const width = String(tab.history.length).length;
           if (tab.history.length) printLine(tab, tab.history.map((line, i) => `${String(i + 1).padStart(width)}  ${line}`).join("\n"));
         } },
-      whoami: { group: "General", usage: "whoami", desc: hyadeOSSI18n.t("terminal.cmd.whoami", "Print the current user name"), run: tab => printLine(tab, sysUsername) },
-      date: { group: "General", usage: "date", desc: hyadeOSSI18n.t("terminal.cmd.date", "Show the current date and time"), run: tab => printLine(tab, new Date().toString()) },
-      uptime: { group: "General", usage: "uptime", desc: hyadeOSSI18n.t("terminal.cmd.uptime", "Show how long the system has been running"),
+      whoami: { group: "General", usage: "whoami", desc: hyadeOSI18n.t("terminal.cmd.whoami", "Print the current user name"), run: tab => printLine(tab, sysUsername) },
+      date: { group: "General", usage: "date", desc: hyadeOSI18n.t("terminal.cmd.date", "Show the current date and time"), run: tab => printLine(tab, new Date().toString()) },
+      uptime: { group: "General", usage: "uptime", desc: hyadeOSI18n.t("terminal.cmd.uptime", "Show how long the system has been running"),
         run: async tab => { const info = await api("/sysinfo"); printLine(tab, `up ${formatUptime(info.Uptime)}`); } },
-      fetch: { group: "General", usage: "fetch", desc: hyadeOSSI18n.t("terminal.cmd.fetch", "Show system information"), run: tab => showFetch(tab) },
-      lili: { group: "General", usage: "lili", desc: hyadeOSSI18n.t("terminal.cmd.lili", "A little easter egg ♥"),
+      fetch: { group: "General", usage: "fetch", desc: hyadeOSI18n.t("terminal.cmd.fetch", "Show system information"), run: tab => showFetch(tab) },
+      lili: { group: "General", usage: "lili", desc: hyadeOSI18n.t("terminal.cmd.lili", "A little easter egg ♥"),
         run: tab => printHTML(tab, `<span class="color-red">  ♥♥♥   ♥♥♥\n ♥♥♥♥♥ ♥♥♥♥♥\n  ♥♥♥♥♥♥♥♥♥\n    ♥♥♥♥♥\n      ♥</span>\n<span class="color-gray">just you and me, i love you lili &lt;3</span>`) },
-      exit: { group: "General", usage: "exit", desc: hyadeOSSI18n.t("terminal.cmd.exit", "Close this tab (the window, if it is the last one)"),
+      exit: { group: "General", usage: "exit", desc: hyadeOSI18n.t("terminal.cmd.exit", "Close this tab (the window, if it is the last one)"),
         run: tab => { closeTerminal(tab); return KEEP_PROMPT; } },
 
-      pwd: { group: "Files", usage: "pwd", desc: hyadeOSSI18n.t("terminal.cmd.pwd", "Print the working directory"), run: tab => printLine(tab, tab.currentDirectory) },
-      cd: { group: "Files", usage: "cd [directory]", desc: hyadeOSSI18n.t("terminal.cmd.cd", "Change directory (no argument: /home, '-': previous, '~': home)"), complete: "dir",
+      pwd: { group: "Files", usage: "pwd", desc: hyadeOSI18n.t("terminal.cmd.pwd", "Print the working directory"), run: tab => printLine(tab, tab.currentDirectory) },
+      cd: { group: "Files", usage: "cd [directory]", desc: hyadeOSI18n.t("terminal.cmd.cd", "Change directory (no argument: /home, '-': previous, '~': home)"), complete: "dir",
         run: (tab, args) => { if (args.length > 2) throw usageError("cd"); return changeDirectory(tab, args[1]); } },
-      ls: { group: "Files", usage: "ls [-l] [-a] [directory]", desc: hyadeOSSI18n.t("terminal.cmd.ls", "List files and folders; -l shows size and date, -a hidden items"), complete: "dir",
+      ls: { group: "Files", usage: "ls [-l] [-a] [directory]", desc: hyadeOSI18n.t("terminal.cmd.ls", "List files and folders; -l shows size and date, -a hidden items"), complete: "dir",
         run: (tab, args) => listDirectory(tab, args) },
-      cat: { group: "Files", usage: "cat <file>", desc: hyadeOSSI18n.t("terminal.cmd.cat", "Print the content of a text file in your home partition"), complete: "any",
+      cat: { group: "Files", usage: "cat <file>", desc: hyadeOSI18n.t("terminal.cmd.cat", "Print the content of a text file in your home partition"), complete: "any",
         run: (tab, args) => { if (args.length !== 2) throw usageError("cat"); return catFile(tab, args[1]); } },
-      touch: { group: "Files", usage: "touch <file>", desc: hyadeOSSI18n.t("terminal.cmd.touch", "Create an empty file in your home partition"), complete: "any",
+      touch: { group: "Files", usage: "touch <file>", desc: hyadeOSI18n.t("terminal.cmd.touch", "Create an empty file in your home partition"), complete: "any",
         run: (tab, args) => { if (args.length !== 2) throw usageError("touch"); return touchFile(tab, args[1]); } },
-      mkdir: { group: "Files", usage: "mkdir [-p] <directory>", desc: hyadeOSSI18n.t("terminal.cmd.mkdir", "Create a directory in your home partition; -p creates the missing parents"), complete: "dir",
+      mkdir: { group: "Files", usage: "mkdir [-p] <directory>", desc: hyadeOSI18n.t("terminal.cmd.mkdir", "Create a directory in your home partition; -p creates the missing parents"), complete: "dir",
         run: (tab, args) => {
           const parents = args[1] === "-p";
           const target = parents ? args[2] : args[1];
           if (!target || args.length !== (parents ? 3 : 2)) throw usageError("mkdir");
           return makeDirectory(tab, target, parents);
         } },
-      rm: { group: "Files", usage: "rm [-r] <path>", desc: hyadeOSSI18n.t("terminal.cmd.rm", "Delete a file; -r deletes a directory and its content"), complete: "any",
+      rm: { group: "Files", usage: "rm [-r] <path>", desc: hyadeOSI18n.t("terminal.cmd.rm", "Delete a file; -r deletes a directory and its content"), complete: "any",
         run: (tab, args) => {
           const recursive = args[1] === "-r" || args[1] === "-rf";
           const target = recursive ? args[2] : args[1];
           if (!target || args.length !== (recursive ? 3 : 2)) throw usageError("rm");
           return removePath(tab, target, recursive);
         } },
-      mv: { group: "Files", usage: "mv <source> <destination>", desc: hyadeOSSI18n.t("terminal.cmd.mv", "Move or rename a file or folder"), complete: "any",
+      mv: { group: "Files", usage: "mv <source> <destination>", desc: hyadeOSI18n.t("terminal.cmd.mv", "Move or rename a file or folder"), complete: "any",
         run: (tab, args) => { if (args.length !== 3) throw usageError("mv"); return transferPath(tab, "move", args[1], args[2]); } },
-      cp: { group: "Files", usage: "cp <source> <destination>", desc: hyadeOSSI18n.t("terminal.cmd.cp", "Copy a file or folder"), complete: "any",
+      cp: { group: "Files", usage: "cp <source> <destination>", desc: hyadeOSI18n.t("terminal.cmd.cp", "Copy a file or folder"), complete: "any",
         run: (tab, args) => { if (args.length !== 3) throw usageError("cp"); return transferPath(tab, "copy", args[1], args[2]); } },
-      nano: { group: "Files", usage: "nano <file>", desc: hyadeOSSI18n.t("terminal.cmd.nano", "Edit a file in your home partition (Ctrl+S save, Ctrl+X exit, Ctrl+G help)"), complete: "any",
+      nano: { group: "Files", usage: "nano <file>", desc: hyadeOSI18n.t("terminal.cmd.nano", "Edit a file in your home partition (Ctrl+S save, Ctrl+X exit, Ctrl+G help)"), complete: "any",
         run: async (tab, args) => { if (args.length !== 2) throw usageError("nano"); await openNano(tab, args[1]); return KEEP_PROMPT; } },
 
-      open: { group: "System", usage: "open [app]", desc: hyadeOSSI18n.t("terminal.cmd.open", "Open a desktop app; without arguments lists the apps"),
+      open: { group: "System", usage: "open [app]", desc: hyadeOSI18n.t("terminal.cmd.open", "Open a desktop app; without arguments lists the apps"),
         complete: async (tab, index) => index === 1 ? Object.keys(await availableApps()) : null,
         run: (tab, args) => { if (args.length > 2) throw usageError("open"); return openApp(tab, args[1]); } },
-      dmgr: { group: "System", usage: "dmgr", desc: hyadeOSSI18n.t("terminal.cmd.dmgr", "Desktop Manager: switch the desktop environment (arrows, Enter, Esc)"),
+      dmgr: { group: "System", usage: "dmgr", desc: hyadeOSI18n.t("terminal.cmd.dmgr", "Desktop Manager: switch the desktop environment (arrows, Enter, Esc)"),
         run: () => { launchDmgr(); return KEEP_PROMPT; } },
-      get: { group: "System", usage: "get <command> [pkg]", desc: hyadeOSSI18n.t("terminal.cmd.get", "hyadeOSS package manager (list, search, install, remove, update, upgrade)"),
+      get: { group: "System", usage: "get <command> [pkg]", desc: hyadeOSI18n.t("terminal.cmd.get", "hyadeOS package manager (list, search, install, remove, update, upgrade)"),
         complete: async (tab, index, args) => {
           if (index === 1) return Object.keys(GET_SUBCOMMANDS);
           if (index === 2 && args[1] === "install") return (await loadCatalog()).map(app => app.id);
@@ -2031,26 +2031,26 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
           return null;
         },
         run: (tab, args) => runGet(tab, args) },
-      addkey: { group: "System", usage: "addkey <key>", desc: hyadeOSSI18n.t("terminal.cmd.addkey", "Add a key to the system keyring (requires password)"),
+      addkey: { group: "System", usage: "addkey <key>", desc: hyadeOSI18n.t("terminal.cmd.addkey", "Add a key to the system keyring (requires password)"),
         run: (tab, args) => {
           const key = args.slice(1).join(" ").trim();
           if (!key) throw usageError("addkey");
-          return withAuth(tab, "addkey", async () => { await api("/api/system/keyring", { key }); printLine(tab, hyadeOSSI18n.t("terminal.keyring.added", "Key added to the keyring."), "color-green"); });
+          return withAuth(tab, "addkey", async () => { await api("/api/system/keyring", { key }); printLine(tab, hyadeOSI18n.t("terminal.keyring.added", "Key added to the keyring."), "color-green"); });
         } },
-      delkey: { group: "System", usage: "delkey <key>", desc: hyadeOSSI18n.t("terminal.cmd.delkey", "Delete a key from the system keyring (requires password)"),
+      delkey: { group: "System", usage: "delkey <key>", desc: hyadeOSI18n.t("terminal.cmd.delkey", "Delete a key from the system keyring (requires password)"),
         complete: async (tab, index) => index === 1 ? (await api("/api/system/keyring")).keys.map(entry => entry.key) : null,
         run: async (tab, args) => {
           const key = args.slice(1).join(" ").trim();
           if (!key) throw usageError("delkey");
           const { keys } = await api("/api/system/keyring");
-          if (!keys.some(entry => entry.key === key)) throw new Error(hyadeOSSI18n.t("terminal.keyring.not-found", "key not found in the keyring (see 'listkeys')"));
-          return withAuth(tab, "delkey", async () => { await api("/api/system/keyring/delete", { key }); printLine(tab, hyadeOSSI18n.t("terminal.keyring.deleted", "Key deleted from the keyring."), "color-green"); });
+          if (!keys.some(entry => entry.key === key)) throw new Error(hyadeOSI18n.t("terminal.keyring.not-found", "key not found in the keyring (see 'listkeys')"));
+          return withAuth(tab, "delkey", async () => { await api("/api/system/keyring/delete", { key }); printLine(tab, hyadeOSI18n.t("terminal.keyring.deleted", "Key deleted from the keyring."), "color-green"); });
         } },
-      listkeys: { group: "System", usage: "listkeys", desc: hyadeOSSI18n.t("terminal.cmd.listkeys", "List the keys in the system keyring"),
+      listkeys: { group: "System", usage: "listkeys", desc: hyadeOSI18n.t("terminal.cmd.listkeys", "List the keys in the system keyring"),
         run: async tab => {
           const { keys } = await api("/api/system/keyring");
-          if (!keys.length) { printLine(tab, hyadeOSSI18n.t("terminal.keyring.empty", "No keys saved.")); return; }
-          printTable(tab, hyadeOSSI18n.t("terminal.keyring.title", "Saved Keys:"), [hyadeOSSI18n.t("terminal.table.key", "key"), hyadeOSSI18n.t("terminal.table.date-added", "date added")], keys.map(entry => [entry.key, new Date(entry.date).toLocaleString(hyadeOSSI18n.locale)]));
+          if (!keys.length) { printLine(tab, hyadeOSI18n.t("terminal.keyring.empty", "No keys saved.")); return; }
+          printTable(tab, hyadeOSI18n.t("terminal.keyring.title", "Saved Keys:"), [hyadeOSI18n.t("terminal.table.key", "key"), hyadeOSI18n.t("terminal.table.date-added", "date added")], keys.map(entry => [entry.key, new Date(entry.date).toLocaleString(hyadeOSI18n.locale)]));
         } }
     };
 
@@ -2062,9 +2062,9 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       const installed = await installedApps().catch(() => []);
       const pkg = catalog.find(app => app.id === name);
       if (pkg && !installed.some(app => app.appId === name)) {
-        printHTML(tab, `<span class="color-red">${escapeHtml(hyadeOSSI18n.t("terminal.unknown.not-found-package", "{name}: command not found.", { name }))}</span>\n${hyadeOSSI18n.t("terminal.unknown.install-hint", 'You can install this package by running "{command}".', { command: `<span class="color-yellow">get</span> <span class="color-gray">install</span> ${escapeHtml(name)}` })}`);
-        return askConfirm(tab, "get", hyadeOSSI18n.t("terminal.unknown.install-confirm", "Do you want to install it now? [y/N]"), answer => {
-          if (!isYes(answer, false)) { printLine(tab, hyadeOSSI18n.t("terminal.unknown.install-cancelled", "Installation cancelled.")); return; }
+        printHTML(tab, `<span class="color-red">${escapeHtml(hyadeOSI18n.t("terminal.unknown.not-found-package", "{name}: command not found.", { name }))}</span>\n${hyadeOSI18n.t("terminal.unknown.install-hint", 'You can install this package by running "{command}".', { command: `<span class="color-yellow">get</span> <span class="color-gray">install</span> ${escapeHtml(name)}` })}`);
+        return askConfirm(tab, "get", hyadeOSI18n.t("terminal.unknown.install-confirm", "Do you want to install it now? [y/N]"), answer => {
+          if (!isYes(answer, false)) { printLine(tab, hyadeOSI18n.t("terminal.unknown.install-cancelled", "Installation cancelled.")); return; }
           return withAuth(tab, "get", () => executeInstall(pkg, tab));
         });
       }
@@ -2073,9 +2073,9 @@ This project use open source and free fonts sourced from Google Fonts. Google Fo
       let hint = "";
       if (apps[lower]) hint = `open ${lower}`;
       else hint = closestMatch(name, commandNames()) || "";
-      printHTML(tab, `<span class="color-red">${escapeHtml(hyadeOSSI18n.t("terminal.unknown.not-found", "{name}: command not found", { name }))}</span>` +
-        (hint ? `\n${hyadeOSSI18n.t("terminal.unknown.did-you-mean", "Did you mean '{hint}'?", { hint: `<span class="color-yellow">${escapeHtml(hint)}</span>` })}` : "") +
-        `\n${hyadeOSSI18n.t("terminal.unknown.type-help", "Type '{help}' to see all the commands.", { help: `<span class="color-yellow">help</span>` })}`);
+      printHTML(tab, `<span class="color-red">${escapeHtml(hyadeOSI18n.t("terminal.unknown.not-found", "{name}: command not found", { name }))}</span>` +
+        (hint ? `\n${hyadeOSI18n.t("terminal.unknown.did-you-mean", "Did you mean '{hint}'?", { hint: `<span class="color-yellow">${escapeHtml(hint)}</span>` })}` : "") +
+        `\n${hyadeOSI18n.t("terminal.unknown.type-help", "Type '{help}' to see all the commands.", { help: `<span class="color-yellow">help</span>` })}`);
     }
 
     async function executeCommand(line, tab) {

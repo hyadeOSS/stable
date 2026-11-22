@@ -409,18 +409,18 @@ body {
 </div>
 
 <script>
-document.getElementById('channelName').textContent = hyadeOSSI18n.t("common.loading", "Loading...");
+document.getElementById('channelName').textContent = hyadeOSI18n.t("common.loading", "Loading...");
 const appNames = {
-  calculator: [hyadeOSSI18n.t("settings.updater.app.calculator", "Calculator"), 'calculator.png', 'calculate'],
-  desktop: [hyadeOSSI18n.t("settings.updater.app.desktop", "Desktop"), 'stars.png', 'desktop_windows'],
-  explorer: [hyadeOSSI18n.t("settings.updater.app.explorer", "Explorer"), 'files.png', 'folder_open'],
-  feedback: [hyadeOSSI18n.t("settings.updater.app.feedback", "Feedback"), 'feedback.png', 'feedback'],
-  help: [hyadeOSSI18n.t("settings.updater.app.help", "Help"), 'stars.png', 'help'],
-  music: [hyadeOSSI18n.t("settings.updater.app.music", "Music"), 'music.png', 'music_note'],
-  notes: [hyadeOSSI18n.t("settings.updater.app.notes", "Notes"), 'notes.png', 'edit_note'],
-  settings: [hyadeOSSI18n.t("common.settings", "Settings"), 'settings.png', 'settings'],
-  store: [hyadeOSSI18n.t("settings.updater.app.store", "Store"), 'store.png', 'storefront'],
-  terminal: [hyadeOSSI18n.t("settings.updater.app.terminal", "Terminal"), 'terminal.png', 'terminal']
+  calculator: [hyadeOSI18n.t("settings.updater.app.calculator", "Calculator"), 'calculator.png', 'calculate'],
+  desktop: [hyadeOSI18n.t("settings.updater.app.desktop", "Desktop"), 'stars.png', 'desktop_windows'],
+  explorer: [hyadeOSI18n.t("settings.updater.app.explorer", "Explorer"), 'files.png', 'folder_open'],
+  feedback: [hyadeOSI18n.t("settings.updater.app.feedback", "Feedback"), 'feedback.png', 'feedback'],
+  help: [hyadeOSI18n.t("settings.updater.app.help", "Help"), 'stars.png', 'help'],
+  music: [hyadeOSI18n.t("settings.updater.app.music", "Music"), 'music.png', 'music_note'],
+  notes: [hyadeOSI18n.t("settings.updater.app.notes", "Notes"), 'notes.png', 'edit_note'],
+  settings: [hyadeOSI18n.t("common.settings", "Settings"), 'settings.png', 'settings'],
+  store: [hyadeOSI18n.t("settings.updater.app.store", "Store"), 'store.png', 'storefront'],
+  terminal: [hyadeOSI18n.t("settings.updater.app.terminal", "Terminal"), 'terminal.png', 'terminal']
 };
 
 let activeUpdate = null;
@@ -475,18 +475,18 @@ async function checkSystemUpdates() {
   try {
     const response = await fetch('/api/system/check-update', { cache: 'no-store' });
     const data = await response.json();
-    if (!response.ok || data.error) throw new Error(data.error || hyadeOSSI18n.t("settings.updater.check-failed", "Update check failed"));
+    if (!response.ok || data.error) throw new Error(data.error || hyadeOSI18n.t("settings.updater.check-failed", "Update check failed"));
 
     if (data.updateAvailable) {
-      setSystemStatus('auto_awesome', `hyadeOSS v${data.latest}`,
-        data.changelog || hyadeOSSI18n.t("settings.updater.system-available", "System update available · v{current} → v{latest}", { current: data.current, latest: data.latest }));
-      setAction(action, hyadeOSSI18n.t("settings.updater.install-restart", "Install & restart"), startSystemUpdate);
+      setSystemStatus('auto_awesome', `hyadeOS v${data.latest}`,
+        data.changelog || hyadeOSI18n.t("settings.updater.system-available", "System update available · v{current} → v{latest}", { current: data.current, latest: data.latest }));
+      setAction(action, hyadeOSI18n.t("settings.updater.install-restart", "Install & restart"), startSystemUpdate);
     } else {
-      setSystemStatus('check', hyadeOSSI18n.t("settings.updater.up-to-date", "hyadeOSS is up to date"), hyadeOSSI18n.t("settings.updater.version", "Version {version}", { version: data.current }), true);
+      setSystemStatus('check', hyadeOSI18n.t("settings.updater.up-to-date", "hyadeOS is up to date"), hyadeOSI18n.t("settings.updater.version", "Version {version}", { version: data.current }), true);
     }
   } catch (error) {
-    setSystemStatus('cloud_off', hyadeOSSI18n.t("settings.updater.unavailable", "System update unavailable"), hyadeOSSI18n.t("settings.updater.unreachable", "Could not reach the update service"));
-    setAction(action, hyadeOSSI18n.t("common.retry", "Try again"), checkSystemUpdates);
+    setSystemStatus('cloud_off', hyadeOSI18n.t("settings.updater.unavailable", "System update unavailable"), hyadeOSI18n.t("settings.updater.unreachable", "Could not reach the update service"));
+    setAction(action, hyadeOSI18n.t("common.retry", "Try again"), checkSystemUpdates);
     setNotice('systemNotice', error.message, true);
     console.error('System update check failed:', error);
   }
@@ -526,8 +526,8 @@ function makeAppRow(name, update) {
   const subtitle = document.createElement('div');
   subtitle.className = 'update-subtitle';
   subtitle.textContent = update
-    ? hyadeOSSI18n.t("settings.updater.app-available", "Update available · {current} → {latest}", { current: update.current, latest: update.latest })
-    : hyadeOSSI18n.t("settings.updater.apps-up-to-date", "All apps are up to date");
+    ? hyadeOSI18n.t("settings.updater.app-available", "Update available · {current} → {latest}", { current: update.current, latest: update.latest })
+    : hyadeOSI18n.t("settings.updater.apps-up-to-date", "All apps are up to date");
   copy.append(title, subtitle);
   row.append(icon, copy);
   return row;
@@ -552,7 +552,7 @@ function renderApps(updates) {
     copy.className = 'update-copy';
     const title = document.createElement('div');
     title.className = 'update-title';
-    title.textContent = hyadeOSSI18n.t("settings.updater.apps-up-to-date", "All apps are up to date");
+    title.textContent = hyadeOSI18n.t("settings.updater.apps-up-to-date", "All apps are up to date");
     copy.appendChild(title);
     row.append(icon, copy);
     panel.appendChild(row);
@@ -565,7 +565,7 @@ function renderApps(updates) {
   const action = document.createElement('button');
   action.className = 'update-action primary';
   action.type = 'button';
-  action.textContent = updates.length === 1 ? hyadeOSSI18n.t("settings.updater.update-app.one", "Update app") : hyadeOSSI18n.t("settings.updater.update-app.other", "Update apps");
+  action.textContent = updates.length === 1 ? hyadeOSI18n.t("settings.updater.update-app.one", "Update app") : hyadeOSI18n.t("settings.updater.update-app.other", "Update apps");
   action.addEventListener('click', startSotaUpdate);
   footer.appendChild(action);
   panel.appendChild(footer);
@@ -576,13 +576,13 @@ async function checkAppUpdates() {
   try {
     const response = await fetch('/api/system/check-sota-update', { cache: 'no-store' });
     const data = await response.json();
-    if (!response.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t("settings.updater.apps-check-error", "SOTA update check failed"));
+    if (!response.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t("settings.updater.apps-check-error", "SOTA update check failed"));
     renderApps(data.updates || []);
   } catch (error) {
     const panel = document.getElementById('appsPanel');
     panel.replaceChildren(makeAppRow('apps', null));
-    panel.firstElementChild.querySelector('.update-title').textContent = hyadeOSSI18n.t("settings.updater.apps-check-failed", "Could not check apps");
-    panel.firstElementChild.querySelector('.update-subtitle').textContent = hyadeOSSI18n.t("settings.updater.service-unreachable", "The update service could not be reached");
+    panel.firstElementChild.querySelector('.update-title').textContent = hyadeOSI18n.t("settings.updater.apps-check-failed", "Could not check apps");
+    panel.firstElementChild.querySelector('.update-subtitle').textContent = hyadeOSI18n.t("settings.updater.service-unreachable", "The update service could not be reached");
     setNotice('appsNotice', error.message, true);
     console.error('SOTA update check failed:', error);
   }
@@ -592,7 +592,7 @@ function updateProgress(kind, percent, status) {
   const progress = document.getElementById(`${kind}Progress`);
   const fill = document.getElementById(`${kind}ProgressFill`);
   progress.hidden = false;
-  document.getElementById(`${kind}ProgressStatus`).textContent = status || hyadeOSSI18n.t("settings.updater.updating", "Updating…");
+  document.getElementById(`${kind}ProgressStatus`).textContent = status || hyadeOSI18n.t("settings.updater.updating", "Updating…");
   document.getElementById(`${kind}ProgressPercent`).textContent = `${Math.round(percent)}%`;
   fill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
   fill.classList.toggle('complete', percent >= 100);
@@ -633,18 +633,18 @@ function startProgressStream(kind, url) {
       data = JSON.parse(event.data);
     } catch (error) {
       eventSource.close();
-      finishUpdate(kind, false, hyadeOSSI18n.t("settings.updater.invalid-response", "The update service returned an invalid response."));
+      finishUpdate(kind, false, hyadeOSI18n.t("settings.updater.invalid-response", "The update service returned an invalid response."));
       console.error('Could not parse update progress:', error);
       return;
     }
     updateProgress(kind, data.percent, data.status);
     if (!data.finished) return;
     eventSource.close();
-    finishUpdate(kind, data.percent >= 100, data.status || hyadeOSSI18n.t("settings.updater.finished", "Update finished."));
+    finishUpdate(kind, data.percent >= 100, data.status || hyadeOSI18n.t("settings.updater.finished", "Update finished."));
   };
   eventSource.onerror = () => {
     eventSource.close();
-    finishUpdate(kind, false, hyadeOSSI18n.t("settings.updater.connection-lost", "Connection to the update service was lost."));
+    finishUpdate(kind, false, hyadeOSI18n.t("settings.updater.connection-lost", "Connection to the update service was lost."));
   };
 }
 
@@ -654,11 +654,11 @@ function finishUpdate(kind, succeeded, message) {
   if (kind === 'system') {
     const action = document.getElementById('systemAction');
     if (succeeded) {
-      setSystemStatus('check', hyadeOSSI18n.t("settings.updater.installed", "System update installed"), hyadeOSSI18n.t("settings.updater.restart-to-finish", "Restart hyadeOSS to finish applying it."), true);
-      setAction(action, hyadeOSSI18n.t("settings.updater.restart", "Restart"), () => window.parent.location.reload());
+      setSystemStatus('check', hyadeOSI18n.t("settings.updater.installed", "System update installed"), hyadeOSI18n.t("settings.updater.restart-to-finish", "Restart hyadeOS to finish applying it."), true);
+      setAction(action, hyadeOSI18n.t("settings.updater.restart", "Restart"), () => window.parent.location.reload());
     } else {
-      setSystemStatus('error', hyadeOSSI18n.t("settings.updater.failed", "System update failed"), hyadeOSSI18n.t("settings.updater.not-updated", "Your system was not updated."));
-      setAction(action, hyadeOSSI18n.t("common.retry", "Try again"), startSystemUpdate);
+      setSystemStatus('error', hyadeOSI18n.t("settings.updater.failed", "System update failed"), hyadeOSI18n.t("settings.updater.not-updated", "Your system was not updated."));
+      setAction(action, hyadeOSI18n.t("common.retry", "Try again"), startSystemUpdate);
       setNotice('systemNotice', message, true);
     }
     return;
@@ -725,7 +725,7 @@ channelBtn.onclick = () => {
 };
 
 function updateChannelUI(channel) {
-  const names = { stable: hyadeOSSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
+  const names = { stable: hyadeOSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
   channelName.textContent = names[channel] || channel;
   channelMenu.querySelectorAll('button').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.channel === channel);
@@ -749,8 +749,8 @@ async function initChannelSelector() {
 
         channelBtn.disabled = true;
         setBusy(true);
-        const names = { stable: hyadeOSSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
-        setNotice('systemNotice', hyadeOSSI18n.t("settings.updater.switching", "Switching to {channel}...", { channel: names[newChannel] || newChannel }));
+        const names = { stable: hyadeOSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
+        setNotice('systemNotice', hyadeOSI18n.t("settings.updater.switching", "Switching to {channel}...", { channel: names[newChannel] || newChannel }));
         
         try {
           const reqRes = await fetch('/api/system/update-channel', {
@@ -761,7 +761,7 @@ async function initChannelSelector() {
           const reqData = await reqRes.json();
           
           if (!reqRes.ok || !reqData.success) {
-            throw new Error(reqData.error || hyadeOSSI18n.t("settings.updater.channel-failed", "Failed to change update channel."));
+            throw new Error(reqData.error || hyadeOSI18n.t("settings.updater.channel-failed", "Failed to change update channel."));
           }
           
           current = newChannel;

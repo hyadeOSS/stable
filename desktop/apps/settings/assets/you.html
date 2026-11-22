@@ -6,7 +6,7 @@
   <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
@@ -259,8 +259,8 @@
       <div class="avatar-edit-overlay" data-i18n="common.edit">Edit</div>
       <input type="file" id="pfpUpload" accept="image/png, image/jpeg" style="display: none;" onchange="previewAvatar(this)">
     </div>
-    <div class="user-name" id="displayName" data-i18n="settings.you.default-name">hyadeOSS User</div>
-    <div class="user-email" id="displayEmail" data-i18n="settings.you.default-account">hyadeOSS Account</div>
+    <div class="user-name" id="displayName" data-i18n="settings.you.default-name">hyadeOS User</div>
+    <div class="user-email" id="displayEmail" data-i18n="settings.you.default-account">hyadeOS Account</div>
     <div class="verify-row" id="verifyRow" style="display:none;">
       <span class="verify-badge no" id="verifyBadge" data-i18n="settings.you.not-verified">Not verified</span>
       <button class="verify-link" id="verifyBtn" onclick="openVerifyModal()" data-i18n="settings.you.verify-email">Verify email</button>
@@ -304,7 +304,7 @@
     <div class="list-item" onclick="exportSettings()">
       <div class="item-left">
         <div class="icon-badge bg-blue"><span class="material-symbols-outlined">cloud</span></div>
-        <div class="item-title" data-i18n="settings.you.sync">hyadeOSS Sync (Export Settings)</div>
+        <div class="item-title" data-i18n="settings.you.sync">hyadeOS Sync (Export Settings)</div>
       </div>
       <div class="item-right"><span class="material-symbols-outlined" style="opacity: 0.8;">download</span></div>
     </div>
@@ -326,7 +326,7 @@
       <div class="item-left">
         <div class="icon-badge bg-gray" style="background: transparent; color: rgba(var(--mw-ink), 0.7);"><span class="material-symbols-outlined" style="font-size: 32px;">laptop_mac</span></div>
         <div>
-          <div class="item-title" id="deviceName" data-i18n="settings.you.default-device">hyadeOSS PC</div>
+          <div class="item-title" id="deviceName" data-i18n="settings.you.default-device">hyadeOS PC</div>
           <div class="item-subtitle" data-i18n="settings.you.this-device">This Device</div>
         </div>
       </div>
@@ -353,14 +353,14 @@
 </div>
 
 <script>
-document.getElementById('verifyText').innerText = hyadeOSSI18n.t("settings.you.code-sent-generic", "We sent a 6-digit code to your email.");
-document.getElementById('resendBtn').innerText = hyadeOSSI18n.t("settings.you.resend", "Resend code");
+document.getElementById('verifyText').innerText = hyadeOSI18n.t("settings.you.code-sent-generic", "We sent a 6-digit code to your email.");
+document.getElementById('resendBtn').innerText = hyadeOSI18n.t("settings.you.resend", "Resend code");
 let currentEmail = '';
 let resendTimer = null;
 
 async function readJson(res) {
   try { return await res.json(); }
-  catch (e) { return { success: false, error: res.status === 404 ? hyadeOSSI18n.t("settings.you.kernel-outdated", "The system kernel is outdated: close and restart hyadeOSS.") : hyadeOSSI18n.t("settings.you.unexpected-response", "Unexpected server response ({status}).", { status: res.status }) }; }
+  catch (e) { return { success: false, error: res.status === 404 ? hyadeOSI18n.t("settings.you.kernel-outdated", "The system kernel is outdated: close and restart hyadeOS.") : hyadeOSI18n.t("settings.you.unexpected-response", "Unexpected server response ({status}).", { status: res.status }) }; }
 }
 
 function renderVerified(email, verified) {
@@ -369,7 +369,7 @@ function renderVerified(email, verified) {
   row.style.display = currentEmail ? 'flex' : 'none';
   const badge = document.getElementById('verifyBadge');
   badge.className = 'verify-badge ' + (verified ? 'ok' : 'no');
-  badge.innerText = verified ? hyadeOSSI18n.t("settings.you.verified", "Verified") : hyadeOSSI18n.t("settings.you.not-verified", "Not verified");
+  badge.innerText = verified ? hyadeOSI18n.t("settings.you.verified", "Verified") : hyadeOSI18n.t("settings.you.not-verified", "Not verified");
   document.getElementById('verifyBtn').style.display = verified ? 'none' : 'inline';
 }
 
@@ -384,16 +384,16 @@ function startResendCooldown(seconds) {
   clearInterval(resendTimer);
   let left = seconds;
   btn.disabled = true;
-  btn.innerText = hyadeOSSI18n.t("settings.you.resend-wait", "Resend code ({seconds}s)", { seconds: left });
+  btn.innerText = hyadeOSI18n.t("settings.you.resend-wait", "Resend code ({seconds}s)", { seconds: left });
   resendTimer = setInterval(() => {
     left--;
-    if (left <= 0) { clearInterval(resendTimer); btn.disabled = false; btn.innerText = hyadeOSSI18n.t("settings.you.resend", "Resend code"); }
-    else btn.innerText = hyadeOSSI18n.t("settings.you.resend-wait", "Resend code ({seconds}s)", { seconds: left });
+    if (left <= 0) { clearInterval(resendTimer); btn.disabled = false; btn.innerText = hyadeOSI18n.t("settings.you.resend", "Resend code"); }
+    else btn.innerText = hyadeOSI18n.t("settings.you.resend-wait", "Resend code ({seconds}s)", { seconds: left });
   }, 1000);
 }
 
 async function sendCode() {
-  setVerifyMsg(hyadeOSSI18n.t("settings.you.sending-code", "Sending code..."));
+  setVerifyMsg(hyadeOSI18n.t("settings.you.sending-code", "Sending code..."));
   try {
     const res = await fetch('/api/email/send-code', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -401,16 +401,16 @@ async function sendCode() {
     });
     const data = await readJson(res);
     if (!data.success) {
-      setVerifyMsg(data.error || hyadeOSSI18n.t("settings.you.send-failed", "Could not send the code."), 'err');
+      setVerifyMsg(data.error || hyadeOSI18n.t("settings.you.send-failed", "Could not send the code."), 'err');
       if (data.retryAfter) startResendCooldown(data.retryAfter);
       return false;
     }
-    document.getElementById('verifyText').innerText = hyadeOSSI18n.t("settings.you.code-sent", "We sent a 6-digit code to {email}. It expires in 10 minutes.", { email: currentEmail });
-    setVerifyMsg(hyadeOSSI18n.t("settings.you.code-sent-short", "Code sent."), 'ok');
+    document.getElementById('verifyText').innerText = hyadeOSI18n.t("settings.you.code-sent", "We sent a 6-digit code to {email}. It expires in 10 minutes.", { email: currentEmail });
+    setVerifyMsg(hyadeOSI18n.t("settings.you.code-sent-short", "Code sent."), 'ok');
     startResendCooldown(60);
     return true;
   } catch (e) {
-    setVerifyMsg(hyadeOSSI18n.t("settings.you.network-error", "Network error: {message}", { message: e.message }), 'err');
+    setVerifyMsg(hyadeOSI18n.t("settings.you.network-error", "Network error: {message}", { message: e.message }), 'err');
     return false;
   }
 }
@@ -430,7 +430,7 @@ function closeVerifyModal() {
 
 async function confirmCode() {
   const code = document.getElementById('codeInput').value.trim();
-  if (!/^\d{6}$/.test(code)) { setVerifyMsg(hyadeOSSI18n.t("settings.you.enter-code", "Enter the 6-digit code."), 'err'); return; }
+  if (!/^\d{6}$/.test(code)) { setVerifyMsg(hyadeOSI18n.t("settings.you.enter-code", "Enter the 6-digit code."), 'err'); return; }
   const btn = document.getElementById('confirmCodeBtn');
   btn.disabled = true;
   try {
@@ -439,12 +439,12 @@ async function confirmCode() {
       body: JSON.stringify({ email: currentEmail, code })
     });
     const data = await readJson(res);
-    if (!data.success) { setVerifyMsg(data.error || hyadeOSSI18n.t("settings.you.wrong-code", "Wrong code."), 'err'); return; }
+    if (!data.success) { setVerifyMsg(data.error || hyadeOSI18n.t("settings.you.wrong-code", "Wrong code."), 'err'); return; }
     renderVerified(currentEmail, true);
-    setVerifyMsg(hyadeOSSI18n.t("settings.you.email-verified", "Email verified!"), 'ok');
+    setVerifyMsg(hyadeOSI18n.t("settings.you.email-verified", "Email verified!"), 'ok');
     setTimeout(closeVerifyModal, 900);
   } catch (e) {
-    setVerifyMsg(hyadeOSSI18n.t("settings.you.network-error", "Network error: {message}", { message: e.message }), 'err');
+    setVerifyMsg(hyadeOSI18n.t("settings.you.network-error", "Network error: {message}", { message: e.message }), 'err');
   } finally {
     btn.disabled = false;
   }
@@ -475,7 +475,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cfg.username) {
       document.getElementById('username').value = cfg.username;
       document.getElementById('displayName').innerText = cfg.username;
-      document.getElementById('deviceName').innerText = hyadeOSSI18n.t("settings.you.device-name", "{name}'s PC", { name: cfg.username });
+      document.getElementById('deviceName').innerText = hyadeOSI18n.t("settings.you.device-name", "{name}'s PC", { name: cfg.username });
     }
     if (cfg.email) {
       document.getElementById('email').value = cfg.email;
@@ -520,7 +520,7 @@ function jumpToApps() {
 async function exportSettings() {
   try {
     const resp = await fetch('/get-settings');
-    if (!resp.ok) throw new Error(hyadeOSSI18n.t("settings.you.fetch-failed", "Failed to fetch settings"));
+    if (!resp.ok) throw new Error(hyadeOSI18n.t("settings.you.fetch-failed", "Failed to fetch settings"));
     const cfg = await resp.json();
     
     // Create and trigger download of the JSON file
@@ -530,13 +530,13 @@ async function exportSettings() {
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = "hyadeOSS-sync.json";
+    a.download = "hyadeOS-sync.json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } catch (e) {
-    await mDialog.alert(hyadeOSSI18n.t("settings.you.export-failed", "Could not export settings: {message}", { message: e.message }));
+    await mDialog.alert(hyadeOSI18n.t("settings.you.export-failed", "Could not export settings: {message}", { message: e.message }));
   }
 }
 
@@ -560,24 +560,24 @@ async function saveAvatarOnly() {
     try {
       const response = await fetch('/upload-avatar', { method: 'POST', body: formData });
       const result = await response.json();
-      if (!response.ok || !result.success) throw new Error(result.error || hyadeOSSI18n.t("settings.you.avatar-upload-failed", "Avatar upload failed"));
+      if (!response.ok || !result.success) throw new Error(result.error || hyadeOSI18n.t("settings.you.avatar-upload-failed", "Avatar upload failed"));
       avatarChanged = false;
       document.getElementById('pfpPreview').src = `/api/users/avatar/me?t=${Date.now()}`;
       if (window.parent && typeof window.parent.fetchServerInfo === 'function') {
         window.parent.fetchServerInfo(); 
       }
     } catch (err) {
-      await mDialog.alert(hyadeOSSI18n.t("settings.you.picture-failed", "Could not update profile picture: {message}", { message: err.message }));
+      await mDialog.alert(hyadeOSI18n.t("settings.you.picture-failed", "Could not update profile picture: {message}", { message: err.message }));
     }
   }
 }
 
 async function resetAvatar() {
-  if (await mDialog.confirm(hyadeOSSI18n.t("settings.you.remove-picture-confirm", "Are you sure you want to remove your profile picture?"), { danger: true, okText: hyadeOSSI18n.t("common.remove", "Remove") })) {
+  if (await mDialog.confirm(hyadeOSI18n.t("settings.you.remove-picture-confirm", "Are you sure you want to remove your profile picture?"), { danger: true, okText: hyadeOSI18n.t("common.remove", "Remove") })) {
     try {
       const response = await fetch('/reset-avatar', { method: 'POST' });
       const result = await response.json();
-      if (!response.ok || !result.success) throw new Error(result.error || hyadeOSSI18n.t("settings.you.avatar-reset-failed", "Avatar reset failed"));
+      if (!response.ok || !result.success) throw new Error(result.error || hyadeOSI18n.t("settings.you.avatar-reset-failed", "Avatar reset failed"));
       document.getElementById('pfpUpload').value = "";
       avatarChanged = false;
       document.getElementById('pfpPreview').src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTEyIDJDMiAxMiA2LjQ4IDEyIDEyIDEyIDEyczEwLTQuNDggMTAtMTAgMTAuNDgtMTAgMTItMTB6IiBvcGFjaXR5PSIwLjMiLz48cGF0aCBkPSJNMTIgMTJjMi4yMSAwIDQtMS43OSA0LTRzLTEuNzktNC00LTQtNCAxLjc5LTQgNCAxLjc5IDQgNCA0em0wIDJjLTIuNjcgMC04IDEuMzQtOCA0djJoMTZ2LTJjMC0yLjY2LTUuMzMtNC04LTR6Ii8+PC9zdmc+";
@@ -586,7 +586,7 @@ async function resetAvatar() {
         window.parent.fetchServerInfo();
       }
     } catch (error) {
-      await mDialog.alert(hyadeOSSI18n.t("settings.you.reset-avatar-failed", "Failed to reset avatar: {message}", { message: error.message }));
+      await mDialog.alert(hyadeOSI18n.t("settings.you.reset-avatar-failed", "Failed to reset avatar: {message}", { message: error.message }));
     }
   }
 }
@@ -596,17 +596,17 @@ async function saveSettings() {
   const email = document.getElementById('email').value.trim();
 
   if (!username || !email) {
-    await mDialog.alert(hyadeOSSI18n.t("settings.you.empty-fields", "Username and Email cannot be empty."));
+    await mDialog.alert(hyadeOSI18n.t("settings.you.empty-fields", "Username and Email cannot be empty."));
     return;
   }
 
   if (username.length > 50) {
-    await mDialog.alert(hyadeOSSI18n.t("settings.you.username-too-long", "Username is too long. Maximum 50 characters allowed."));
+    await mDialog.alert(hyadeOSI18n.t("settings.you.username-too-long", "Username is too long. Maximum 50 characters allowed."));
     return;
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
-    await mDialog.alert(hyadeOSSI18n.t("settings.you.invalid-email", "Please enter a valid email address."));
+    await mDialog.alert(hyadeOSI18n.t("settings.you.invalid-email", "Please enter a valid email address."));
     return;
   }
 
@@ -624,11 +624,11 @@ async function saveSettings() {
     const data = await readJson(response);
     if (data.success) {
       document.getElementById('displayName').innerText = username;
-      document.getElementById('deviceName').innerText = hyadeOSSI18n.t("settings.you.device-name", "{name}'s PC", { name: username });
+      document.getElementById('deviceName').innerText = hyadeOSI18n.t("settings.you.device-name", "{name}'s PC", { name: username });
       document.getElementById('displayEmail').innerText = email;
       if (emailChanged) {
         renderVerified(email, false);
-        if (await mDialog.confirm(hyadeOSSI18n.t("settings.you.email-changed", "Your email changed. Send a verification code now?"))) openVerifyModal();
+        if (await mDialog.confirm(hyadeOSI18n.t("settings.you.email-changed", "Your email changed. Send a verification code now?"))) openVerifyModal();
       }
       
       toggleEditPanel();
@@ -637,10 +637,10 @@ async function saveSettings() {
         window.parent.fetchServerInfo();
       }
     } else {
-      await mDialog.alert(hyadeOSSI18n.t("settings.you.error", "Error: {message}", { message: data.error || hyadeOSSI18n.t("settings.you.unknown-error", "Unknown error") }));
+      await mDialog.alert(hyadeOSI18n.t("settings.you.error", "Error: {message}", { message: data.error || hyadeOSI18n.t("settings.you.unknown-error", "Unknown error") }));
     }
   } catch (err) {
-    await mDialog.alert(hyadeOSSI18n.t("settings.you.save-failed", "Error saving settings: {message}", { message: err.message }));
+    await mDialog.alert(hyadeOSI18n.t("settings.you.save-failed", "Error saving settings: {message}", { message: err.message }));
   }
 }
 </script>

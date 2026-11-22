@@ -1,4 +1,4 @@
-# Posts a hyadeOSS release to Discord, only when asked: a change to version.json is not
+# Posts a hyadeOS release to Discord, only when asked: a change to version.json is not
 # announced by itself, so a mistake or a quick fix never reaches the channel. Either
 #  - run it by hand: Actions › Announce release › Run workflow, or
 #  - put [announce] in the message of the commit that changes version.json.

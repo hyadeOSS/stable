@@ -9,7 +9,7 @@
 // Warnings: keys not translated yet (they show in English).
 //
 // The keys and their English text are read from the pages themselves: data-i18n,
-// data-i18n-placeholder / -title / -aria-label attributes, and hyadeOSSI18n.t("key", "English")
+// data-i18n-placeholder / -title / -aria-label attributes, and hyadeOSI18n.t("key", "English")
 // calls.
 
 const fs = require("fs");
@@ -62,7 +62,7 @@ function findKeys(dir, keys = new Map()) {
         add(key[1], value ? decode(value[1]) : "");
       }
     }
-    for (const match of text.matchAll(/hyadeOSSI18n\.t\(\s*["']([^"']+)["']\s*(?:,\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\$]|\\.)*`))?/g)) {
+    for (const match of text.matchAll(/hyadeOSI18n\.t\(\s*["']([^"']+)["']\s*(?:,\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\$]|\\.)*`))?/g)) {
       add(match[1], match[2] ? unquote(match[2]) : "");
     }
   }

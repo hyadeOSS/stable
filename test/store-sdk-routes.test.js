@@ -24,11 +24,11 @@ function fakeApp() {
 function setup({ fetchImpl } = {}) {
   const appsDir = fs.mkdtempSync(path.join(os.tmpdir(), "mw-sdk-"));
   fs.mkdirSync(path.join(appsDir, "todo"));
-  fs.writeFileSync(path.join(appsDir, "todo", "hyadeoss.json"), JSON.stringify({ permissions: ["theme", "files.documents"], category: "productivity" }));
+  fs.writeFileSync(path.join(appsDir, "todo", "hyadeos.json"), JSON.stringify({ permissions: ["theme", "files.documents"], category: "productivity" }));
   fs.mkdirSync(path.join(appsDir, "plain"));
   const config = { installedApps: [
     { appId: "todo", title: "Todo", repoUrl: "https://github.com/someone/todo.git", grantedPermissions: ["theme"] },
-    { appId: "plain", title: "Plain", repoUrl: "https://github.com/hyadeOSS/plain.git" }
+    { appId: "plain", title: "Plain", repoUrl: "https://github.com/hyadeOS/plain.git" }
   ] };
   let saves = 0;
   const app = fakeApp();
@@ -42,16 +42,39 @@ function setup({ fetchImpl } = {}) {
 
 const response = (status, text) => ({ ok: status === 200, status, text: async () => text });
 
-test("manifest route fetches hyadeoss.json from main, then master, and caches it", async () => {
+test("manifest route fetches hyadeos.json from main, then master, and caches it", async () => {
   const seen = [];
   const env = setup({ fetchImpl: url => { seen.push(url); return url.includes("/main/") ? response(404, "") : response(200, '{"permissions":["theme","system"],"category":"games"}'); } });
   const first = await env.app.call("GET", "/api/store/manifest", { query: { repo: "https://github.com/someone/app.git" } });
   assert.equal(first.status, 200);
   assert.deepEqual(first.body.manifest.permissions, ["theme"]);
   assert.equal(first.body.manifest.category, "games");
-  assert.deepEqual(seen, ["https://raw.githubusercontent.com/someone/app/main/hyadeoss.json", "https://raw.githubusercontent.com/someone/app/master/hyadeoss.json"]);
+  assert.deepEqual(seen, ["https://raw.githubusercontent.com/someone/app/main/hyadeos.json", "https://raw.githubusercontent.com/someone/app/master/hyadeos.json"]);
   await env.app.call("GET", "/api/store/manifest", { query: { repo: "https://github.com/someone/app.git" } });
   assert.equal(env.fetchCalls(), 2, "second call served from the cache");
+});
+
+test("an app that still ships hyadeoss.json (written before the rename) is found when hyadeos.json is not there", async () => {
+  const seen = [];
+  const legacy = '{"permissions":["theme"],"category":"games"}';
+  const env = setup({ fetchImpl: url => { seen.push(url); return url.endsWith("/hyadeoss.json") && url.includes("/main/") ? response(200, legacy) : response(404, ""); } });
+  const result = await env.app.call("GET", "/api/store/manifest", { query: { repo: "https://github.com/someone/app.git" } });
+  assert.deepEqual(result.body.manifest.permissions, ["theme"]);
+  assert.deepEqual(seen, [
+    "https://raw.githubusercontent.com/someone/app/main/hyadeos.json",
+    "https://raw.githubusercontent.com/someone/app/master/hyadeos.json",
+    "https://raw.githubusercontent.com/someone/app/main/hyadeoss.json"
+  ]);
+});
+
+test("an installed app whose own folder holds hyadeoss.json still gets its declared permissions", async () => {
+  const env = setup({ fetchImpl: () => response(404, "") });
+  fs.mkdirSync(path.join(env.appsDir, "old"));
+  fs.writeFileSync(path.join(env.appsDir, "old", "hyadeoss.json"), JSON.stringify({ permissions: ["theme", "storage"], category: "tools" }));
+  env.config.installedApps.push({ appId: "old", title: "Old", repoUrl: "https://github.com/someone/old.git", grantedPermissions: ["theme"] });
+  const all = await env.app.call("GET", "/api/store/app-permissions");
+  assert.deepEqual(all.body.apps.find(a => a.appId === "old").declared, ["theme", "storage"]);
+  assert.deepEqual(resolveGrantedPermissions(["theme", "storage"], path.join(env.appsDir, "old")), ["theme", "storage"]);
 });
 
 test("manifest route refuses anything but GitHub and survives network errors", async () => {
@@ -103,8 +126,12 @@ test("install grants are limited to the installed app's own manifest", () => {
 });
 
 test("trusted repositories follow the kernel's isolation rule", () => {
-  assert.equal(isTrustedRepo("https://github.com/hyadeOSS/x.git"), true);
+  assert.equal(isTrustedRepo("https://github.com/hyadeOS/x.git"), true);
   assert.equal(isTrustedRepo("https://github.com/mariowstech/x.git"), true);
   assert.equal(isTrustedRepo("https://github.com/someone/x.git"), false);
-  assert.equal(isTrustedRepo("https://github.com.evil/hyadeOSS/x.git"), false);
+  assert.equal(isTrustedRepo("https://github.com.evil/hyadeOS/x.git"), false);
+  // The team's account used to be named hyadeOSS: apps installed back then still point at it.
+  assert.equal(isTrustedRepo("https://github.com/hyadeOSS/x.git"), true);
+  assert.equal(isTrustedRepo("https://raw.githubusercontent.com/hyadeoss/x/main/index.html"), true);
+  assert.equal(isTrustedRepo("https://github.com/hyadeossx/x.git"), false);
 });

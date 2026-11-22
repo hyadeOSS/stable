@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reset Desktop</title>
@@ -173,9 +173,9 @@ window.addEventListener("DOMContentLoaded", () => {
         btn.disabled = true;
         try {
             const res = await fetch("/api/system/reset-desktop", { method: "POST" });
-            if (!res.ok) throw new Error(hyadeOSSI18n.t("settings.reset-desktop.server-error", "Server error {status}", { status: res.status }));
+            if (!res.ok) throw new Error(hyadeOSI18n.t("settings.reset-desktop.server-error", "Server error {status}", { status: res.status }));
         } catch (e) {
-            await mDialog.alert(hyadeOSSI18n.t("settings.reset-desktop.failed", "Desktop reset failed: {error}", { error: e.message }));
+            await mDialog.alert(hyadeOSI18n.t("settings.reset-desktop.failed", "Desktop reset failed: {error}", { error: e.message }));
             btn.disabled = false;
             return;
         }
@@ -187,7 +187,7 @@ window.addEventListener("DOMContentLoaded", () => {
             desktop.document.body.style.backgroundImage = `url('${wallpaperPath}')`;
         }
 
-        await mDialog.alert(hyadeOSSI18n.t("settings.reset-desktop.done", "Desktop restored to default."));
+        await mDialog.alert(hyadeOSI18n.t("settings.reset-desktop.done", "Desktop restored to default."));
         if (window.top !== window) window.top.location.reload();
         else location.reload();
     });

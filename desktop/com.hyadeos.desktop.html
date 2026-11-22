@@ -1,7 +1,7 @@
 <!--
 !!!! THIS SECTION MUST NOT BE EDITED OR REMOVED. YOU CAN REMOVE ONLY THE DISCLAMERS/SPECIAL SECTION UNDER THIS ONE. !!!! 
 ------------------------------------------------------------------------------------------------------------------------- 
-hyadeOSS DE - (C) 2026 mariowstech and the hyadeOSS team 
+hyadeOS DE - (C) 2026 mariowstech and the hyadeOS team 
 Licensed under the Apache License, Version 2.0; you can use this file if you give credits to the original creators and you may not use this file except in compliance with the License. 
 Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 This project use open source and free fonts sourced from Google Fonts. Google Fonts is a trademark of Google LCC, privacy docs are at https://developers.google.com/fonts/faq/privacy 
@@ -15,6 +15,11 @@ Questions? https://discord.gg/YDVxw6jfbH
 <html lang="en">
 
 <head>
+<script>
+// Legacy name: right after an update the open window still runs the old preload.js, which exposes
+// window.hyadeOSSElectron (the name before the rename) until the shell restarts.
+if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron = window.hyadeOSSElectron;
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="/desktop/assets/i18n-data.js"></script>
@@ -981,7 +986,7 @@ Questions? https://discord.gg/YDVxw6jfbH
 
   </style>
   <link rel="stylesheet" href="/desktop/assets/mw-shell.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <script src="/desktop/assets/external-consent.js"></script>
 <script src="/desktop/assets/calendar-core.js"></script>
 <script src="/desktop/assets/live-wallpaper.js"></script>
@@ -1032,8 +1037,8 @@ Questions? https://discord.gg/YDVxw6jfbH
                 <button class="am-power-item" type="button" onclick="signOut()"><span class="material-symbols-outlined">logout</span><span data-i18n="desktop.session.sign-out">Sign out</span></button>
                 <button class="am-power-item" type="button" onclick="window.location.reload()"><span class="material-symbols-outlined">refresh</span><span data-i18n="desktop.session.refresh">Refresh Desktop</span></button>
                 <div class="am-power-sep"></div>
-                <button class="am-power-item" id="rebootHyadeOSSButton" type="button" aria-label="Reboot" data-i18n-aria-label="desktop.session.reboot" onclick="rebootHyadeOSS()"><span class="material-symbols-outlined">restart_alt</span><span id="rebootHyadeOSSLabel" data-i18n="desktop.session.reboot">Reboot</span></button>
-                <button class="am-power-item danger" id="shutdownHyadeOSSButton" type="button" aria-label="Shutdown" data-i18n-aria-label="desktop.session.shutdown" onclick="shutdownHyadeOSS()"><span class="material-symbols-outlined">power_settings_new</span><span id="shutdownHyadeOSSLabel" data-i18n="desktop.session.shutdown">Shutdown</span></button>
+                <button class="am-power-item" id="rebootHyadeOSButton" type="button" aria-label="Reboot" data-i18n-aria-label="desktop.session.reboot" onclick="rebootHyadeOS()"><span class="material-symbols-outlined">restart_alt</span><span id="rebootHyadeOSLabel" data-i18n="desktop.session.reboot">Reboot</span></button>
+                <button class="am-power-item danger" id="shutdownHyadeOSButton" type="button" aria-label="Shutdown" data-i18n-aria-label="desktop.session.shutdown" onclick="shutdownHyadeOS()"><span class="material-symbols-outlined">power_settings_new</span><span id="shutdownHyadeOSLabel" data-i18n="desktop.session.shutdown">Shutdown</span></button>
               </div>
             </div>
           </div>
@@ -1059,7 +1064,7 @@ Questions? https://discord.gg/YDVxw6jfbH
 
       <div class="btn-wrapper">
         <button class="system-tray-btn" id="contextBtn"><span class="material-symbols-outlined">more_horiz</span></button>
-        <div class="dropdown" id="contextDropdown"><a href="/desktop/com.hyadeoss.desktop.html"><div class="dropdown-item"><span data-i18n="desktop.menu.refresh">Refresh desktop</span></div></a></div>
+        <div class="dropdown" id="contextDropdown"><a href="/desktop/com.hyadeos.desktop.html"><div class="dropdown-item"><span data-i18n="desktop.menu.refresh">Refresh desktop</span></div></a></div>
       </div>
 
       <div class="btn-wrapper">
@@ -1225,7 +1230,7 @@ Questions? https://discord.gg/YDVxw6jfbH
 
   <!-- Hidden-on-open Lockscreen Overlay (uses the one in lockscreen folder) -->
   <div id="lockscreenContainer" class="lockscreen-overlay" aria-hidden="true">
-    <iframe id="lockscreenFrame" src="/lockscreen/com.hyadeoss.lockscreen.html" title="Lock Screen"></iframe>
+    <iframe id="lockscreenFrame" src="/lockscreen/com.hyadeos.lockscreen.html" title="Lock Screen"></iframe>
   </div>
 
   <div id="spotlightSearch" class="spotlight-overlay">
@@ -1296,7 +1301,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       <div class="browser-url-wrap">
         <span class="material-symbols-outlined browser-url-icon" id="browserUrlIcon">search</span>
         <input id="browserUrl" type="text" placeholder="Search or enter a website" data-i18n-placeholder="desktop.browser.url-placeholder" autocomplete="off" spellcheck="false" />
-        <button class="browser-ext-add" id="browserExtAdd" type="button" hidden><span class="material-symbols-outlined">extension</span><span id="browserExtAddLabel" data-i18n="desktop.browser.ext-add">Add to hyadeOSS</span></button>
+        <button class="browser-ext-add" id="browserExtAdd" type="button" hidden><span class="material-symbols-outlined">extension</span><span id="browserExtAddLabel" data-i18n="desktop.browser.ext-add">Add to hyadeOS</span></button>
         <button id="browserZoom" onclick="browserZoom(0)" title="Reset zoom" data-i18n-title="desktop.browser.reset-zoom" hidden>100%</button>
       </div>
       <div class="browser-suggest" id="browserSuggest" hidden></div>
@@ -1407,7 +1412,7 @@ Questions? https://discord.gg/YDVxw6jfbH
           <div>${message}</div>
         </div>
         <div class="dialog-buttons">
-          <div class="dialog-btn" onclick="closeDialog('${dialogId}')">${hyadeOSSI18n.t("common.ok", "OK")}</div>
+          <div class="dialog-btn" onclick="closeDialog('${dialogId}')">${hyadeOSI18n.t("common.ok", "OK")}</div>
         </div>
       `;
 
@@ -1445,7 +1450,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     }
 
     // Native OS Confirmation Dialog (Replaces browser confirm)
-    function showConfirmDialog(title, message, onConfirm, confirmText = hyadeOSSI18n.t("common.delete", "Delete"), isDanger = true) {
+    function showConfirmDialog(title, message, onConfirm, confirmText = hyadeOSI18n.t("common.delete", "Delete"), isDanger = true) {
       const dialogId = 'dialog_' + Date.now() + Math.floor(Math.random() * 1000);
       const popupDiv = document.createElement('div');
       popupDiv.id = dialogId;
@@ -1463,7 +1468,7 @@ Questions? https://discord.gg/YDVxw6jfbH
           <div>${message}</div>
         </div>
         <div class="dialog-buttons" style="gap: 8px;">
-          <div class="dialog-btn" onclick="closeDialog('${dialogId}')">${hyadeOSSI18n.t("common.cancel", "Cancel")}</div>
+          <div class="dialog-btn" onclick="closeDialog('${dialogId}')">${hyadeOSI18n.t("common.cancel", "Cancel")}</div>
           <div class="dialog-btn" id="${dialogId}_confirmBtn" style="${isDanger ? 'background: #ff453a; color: #fff;' : 'background: var(--m3-accent-active); color: var(--m3-accent-on-active);'}">${confirmText}</div>
         </div>
       `;
@@ -1512,7 +1517,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       });
       
       if (throttledCount > 0) {
-        showDialog('warning', 'com.hyadeoss.desktop', hyadeOSSI18n.t("desktop.dialog.high-usage", "High resource usage detected. Background tasks are paused to preserve system resources."));
+        showDialog('warning', 'com.hyadeos.desktop', hyadeOSI18n.t("desktop.dialog.high-usage", "High resource usage detected. Background tasks are paused to preserve system resources."));
       }
       
       setTimeout(() => {
@@ -1654,19 +1659,19 @@ Questions? https://discord.gg/YDVxw6jfbH
     let draggedAppId = null;
 
     const builtInApps = [
-      { id: 'popup10', title: hyadeOSSI18n.t("desktop.app.files", "Files"), icon: '/desktop/assets/icons/files.png' },
-      { id: 'popup1', title: hyadeOSSI18n.t("desktop.app.settings", "Settings"), icon: '/desktop/assets/icons/settings.png' },
-      { id: 'popup2', title: hyadeOSSI18n.t("desktop.app.browser", "Browser"), icon: '/desktop/assets/icons/browser.png' },
-      { id: 'popup3', title: hyadeOSSI18n.t("desktop.app.help", "Help"), icon: '/desktop/assets/icons/feedback.png' },
-      { id: 'popup4', title: hyadeOSSI18n.t("desktop.app.music", "Music"), icon: '/desktop/assets/icons/music.png' },
-      { id: 'popup5', title: hyadeOSSI18n.t("desktop.app.notes", "Notes"), icon: '/desktop/assets/icons/notes.png' },
-      { id: 'popup6', title: hyadeOSSI18n.t("desktop.app.messaging", "Messaging"), icon: '/desktop/assets/icons/messaging.png' },
-      { id: 'popup7', title: hyadeOSSI18n.t("desktop.app.store", "Store"), icon: '/desktop/assets/icons/store.png' },
-      { id: 'popup8', title: hyadeOSSI18n.t("desktop.app.terminal", "Terminal"), icon: '/desktop/assets/icons/terminal.png' },
-      { id: 'popup9', title: hyadeOSSI18n.t("desktop.app.calculator", "Calculator"), icon: '/desktop/assets/icons/calculator.png' },
-      { id: 'popup11', title: hyadeOSSI18n.t("desktop.app.calendar", "Calendar"), icon: '/desktop/assets/icons/calendar.png' },
-      { id: 'popup12', title: hyadeOSSI18n.t("desktop.app.pictures", "Pictures"), icon: '/desktop/assets/icons/pictures.png' },
-      { id: 'popup13', title: hyadeOSSI18n.t("desktop.app.videoplayer", "Video Player"), icon: '/desktop/assets/icons/videos.png' }
+      { id: 'popup10', title: hyadeOSI18n.t("desktop.app.files", "Files"), icon: '/desktop/assets/icons/files.png' },
+      { id: 'popup1', title: hyadeOSI18n.t("desktop.app.settings", "Settings"), icon: '/desktop/assets/icons/settings.png' },
+      { id: 'popup2', title: hyadeOSI18n.t("desktop.app.browser", "Browser"), icon: '/desktop/assets/icons/browser.png' },
+      { id: 'popup3', title: hyadeOSI18n.t("desktop.app.help", "Help"), icon: '/desktop/assets/icons/feedback.png' },
+      { id: 'popup4', title: hyadeOSI18n.t("desktop.app.music", "Music"), icon: '/desktop/assets/icons/music.png' },
+      { id: 'popup5', title: hyadeOSI18n.t("desktop.app.notes", "Notes"), icon: '/desktop/assets/icons/notes.png' },
+      { id: 'popup6', title: hyadeOSI18n.t("desktop.app.messaging", "Messaging"), icon: '/desktop/assets/icons/messaging.png' },
+      { id: 'popup7', title: hyadeOSI18n.t("desktop.app.store", "Store"), icon: '/desktop/assets/icons/store.png' },
+      { id: 'popup8', title: hyadeOSI18n.t("desktop.app.terminal", "Terminal"), icon: '/desktop/assets/icons/terminal.png' },
+      { id: 'popup9', title: hyadeOSI18n.t("desktop.app.calculator", "Calculator"), icon: '/desktop/assets/icons/calculator.png' },
+      { id: 'popup11', title: hyadeOSI18n.t("desktop.app.calendar", "Calendar"), icon: '/desktop/assets/icons/calendar.png' },
+      { id: 'popup12', title: hyadeOSI18n.t("desktop.app.pictures", "Pictures"), icon: '/desktop/assets/icons/pictures.png' },
+      { id: 'popup13', title: hyadeOSI18n.t("desktop.app.videoplayer", "Video Player"), icon: '/desktop/assets/icons/videos.png' }
     ];
     
     // Standard accounts (Settings > Users) cannot use some apps; the server refuses them too.
@@ -1692,7 +1697,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     }
 
     // --- Control Panel edit mode: tiles and round buttons are dragged into any order, which is kept. ---
-    const CP_ORDER_KEY = 'hyadeoss_cp_order';
+    const CP_ORDER_KEY = 'hyadeoss_cp_order'; // legacy name, kept so the saved order survives the rename
     let cpEditing = false;
     const cpGroup = sel => document.querySelector('#notificationsDropdown ' + sel);
 
@@ -1716,7 +1721,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       const dd = document.getElementById('notificationsDropdown');
       dd.classList.toggle('cp-editing', on);
       document.getElementById('cpEditIcon').textContent = on ? 'check' : 'edit_square';
-      document.getElementById('cpEditBtn').title = on ? hyadeOSSI18n.t("desktop.cp.done", "Done") : hyadeOSSI18n.t("desktop.cp.edit", "Edit");
+      document.getElementById('cpEditBtn').title = on ? hyadeOSI18n.t("desktop.cp.done", "Done") : hyadeOSI18n.t("desktop.cp.edit", "Edit");
       if (on) { dd.querySelectorAll('.qs-subpanel.active').forEach(p => p.classList.remove('active')); activeSubPanel = null; }
       else saveCpOrder();
     }
@@ -1792,7 +1797,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     // --- Apps menu: every app in a grid, the files opened lately above it. ---
     function renderAppsMenu() {
       const grid = document.getElementById('amAppsGrid'); if (!grid) return;
-      const apps = getAllApps().slice().sort((a, b) => String(a.title).localeCompare(String(b.title), hyadeOSSI18n.locale || undefined));
+      const apps = getAllApps().slice().sort((a, b) => String(a.title).localeCompare(String(b.title), hyadeOSI18n.locale || undefined));
       grid.replaceChildren(...apps.map((app, i) => {
         const btn = document.createElement('button');
         btn.type = 'button'; btn.className = 'am-app'; btn.dataset.popup = app.id == null ? '' : String(app.id);
@@ -1801,7 +1806,7 @@ Questions? https://discord.gg/YDVxw6jfbH
         // Dragged onto the desktop it leaves a shortcut; the menu steps aside so the desktop shows.
         btn.draggable = true;
         btn.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('application/x-hyadeoss-app', String(app.id));
+          e.dataTransfer.setData('application/x-hyadeos-app', String(app.id));
           e.dataTransfer.effectAllowed = 'copy';
           setTimeout(closeAllPanels, 120);
         });
@@ -1821,7 +1826,7 @@ Questions? https://discord.gg/YDVxw6jfbH
 
     function openAppShortcut(appId) {
       const app = getAllApps().find(a => a.id === appId);
-      if (!app) { showNotification("Desktop", hyadeOSSI18n.t("desktop.shortcut.missing", "This app is no longer installed."), "⚠️"); return; }
+      if (!app) { showNotification("Desktop", hyadeOSI18n.t("desktop.shortcut.missing", "This app is no longer installed."), "⚠️"); return; }
       openPopup(app.id);
     }
 
@@ -1832,7 +1837,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       try {
         const list = (await (await fetch('/api/system/files?path=/home/Desktop')).json()).contents || [];
         if ((typeof desktopItemsList !== 'undefined' ? desktopItemsList : []).some(item => item.appId === app.id)) {
-          showNotification("Desktop", hyadeOSSI18n.t("desktop.shortcut.exists", "{app} is already on the desktop.", { app: app.title }), "📌");
+          showNotification("Desktop", hyadeOSI18n.t("desktop.shortcut.exists", "{app} is already on the desktop.", { app: app.title }), "📌");
           return;
         }
         const base = String(app.title).replace(/[\\/:*?"<>|]+/g, '').trim() || 'App';
@@ -1843,10 +1848,10 @@ Questions? https://discord.gg/YDVxw6jfbH
         const data = await res.json();
         if (!data.success) throw new Error(data.error || 'failed');
         await loadDesktopIcons();
-        showNotification("Desktop", hyadeOSSI18n.t("desktop.shortcut.added", "{app} added to the desktop", { app: app.title }), "📌");
+        showNotification("Desktop", hyadeOSI18n.t("desktop.shortcut.added", "{app} added to the desktop", { app: app.title }), "📌");
         document.querySelector('#popup10 iframe')?.contentWindow?.postMessage({ type: 'refresh-view' }, window.location.origin);
       } catch (err) {
-        showNotification(hyadeOSSI18n.t("common.error", "Error"), hyadeOSSI18n.t("desktop.shortcut.failed", "Could not add the shortcut."), "❌");
+        showNotification(hyadeOSI18n.t("common.error", "Error"), hyadeOSI18n.t("desktop.shortcut.failed", "Could not add the shortcut."), "❌");
       }
     }
 
@@ -1854,9 +1859,9 @@ Questions? https://discord.gg/YDVxw6jfbH
     function openAppMenuContext(app, x, y) {
       const pinnedNow = pinnedApps.includes(app.id);
       openAmContext([
-        ['open_in_new', hyadeOSSI18n.t("common.open", "Open"), () => launchAppFromMenu(app.id)],
-        ['add_to_home_screen', hyadeOSSI18n.t("desktop.shortcut.add", "Add to desktop"), () => addAppShortcut(app.id)],
-        ['keep', pinnedNow ? hyadeOSSI18n.t("desktop.shortcut.unpin-taskbar", "Unpin from taskbar") : hyadeOSSI18n.t("desktop.shortcut.pin-taskbar", "Pin to taskbar"), () => togglePin(app.id)]
+        ['open_in_new', hyadeOSI18n.t("common.open", "Open"), () => launchAppFromMenu(app.id)],
+        ['add_to_home_screen', hyadeOSI18n.t("desktop.shortcut.add", "Add to desktop"), () => addAppShortcut(app.id)],
+        ['keep', pinnedNow ? hyadeOSI18n.t("desktop.shortcut.unpin-taskbar", "Unpin from taskbar") : hyadeOSI18n.t("desktop.shortcut.pin-taskbar", "Pin to taskbar"), () => togglePin(app.id)]
       ], x, y);
     }
     function openAmContext(entries, x, y) {
@@ -1876,7 +1881,7 @@ Questions? https://discord.gg/YDVxw6jfbH
 
     // Files reopen in the app that showed them; the list lives in this browser only.
     // Kept per account (each account shares this browser's storage).
-    const RECENT_FILES_KEY = (window.hyadeOSSUserKey || (k => k))('hyadeoss_recent_files');
+    const RECENT_FILES_KEY = (window.hyadeOSUserKey || (k => k))('hyadeoss_recent_files'); // legacy name, kept so the saved list survives the rename
     const RECENT_KINDS = {
       notes: { icon: 'description', tint: '#4da3ff', open: (path, name) => openFileInNotes(path, name) },
       picture: { icon: 'image', tint: '#30d158', open: (path, name) => openFileInPicture(path, name) },
@@ -1902,7 +1907,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     function recentWhen(at) {
       const mins = Math.max(0, Math.round((Date.now() - at) / 60000));
       try {
-        const rtf = new Intl.RelativeTimeFormat(hyadeOSSI18n.locale || undefined, { numeric: 'auto' });
+        const rtf = new Intl.RelativeTimeFormat(hyadeOSI18n.locale || undefined, { numeric: 'auto' });
         if (mins < 60) return rtf.format(-mins, 'minute');
         if (mins < 1440) return rtf.format(-Math.round(mins / 60), 'hour');
         return rtf.format(-Math.round(mins / 1440), 'day');
@@ -1915,7 +1920,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       document.querySelector('#amFiles .am-more[data-expand]').hidden = files.length <= 6;
       document.getElementById('amClearFiles').hidden = !files.length;
       if (!files.length) {
-        box.innerHTML = `<div class="am-empty">${EMPTY_FOLDER_SVG}<span>${osEscapeHtml(hyadeOSSI18n.t("desktop.apps.no-files", "No files"))}</span></div>`;
+        box.innerHTML = `<div class="am-empty">${EMPTY_FOLDER_SVG}<span>${osEscapeHtml(hyadeOSI18n.t("desktop.apps.no-files", "No files"))}</span></div>`;
         return;
       }
       const grid = document.createElement('div'); grid.className = 'am-files';
@@ -1926,9 +1931,9 @@ Questions? https://discord.gg/YDVxw6jfbH
         btn.style.setProperty('--i', Math.min(i, 16)); btn.style.setProperty('--ft', kind.tint);
         btn.addEventListener('click', () => { closeAllPanels(); kind.open(file.path, file.name); });
         btn.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); openAmContext([
-          ['open_in_new', hyadeOSSI18n.t("common.open", "Open"), () => { closeAllPanels(); kind.open(file.path, file.name); }],
-          ['remove', hyadeOSSI18n.t("desktop.apps.remove-recent", "Remove from list"), () => forgetRecentFile(file)],
-          ['delete_sweep', hyadeOSSI18n.t("desktop.apps.clear-recents", "Clear recent files"), clearRecentFiles]], e.clientX, e.clientY); });
+          ['open_in_new', hyadeOSI18n.t("common.open", "Open"), () => { closeAllPanels(); kind.open(file.path, file.name); }],
+          ['remove', hyadeOSI18n.t("desktop.apps.remove-recent", "Remove from list"), () => forgetRecentFile(file)],
+          ['delete_sweep', hyadeOSI18n.t("desktop.apps.clear-recents", "Clear recent files"), clearRecentFiles]], e.clientX, e.clientY); });
         const icon = document.createElement('span'); icon.className = 'am-file-icon';
         const glyph = document.createElement('span'); glyph.className = 'material-symbols-outlined'; glyph.textContent = kind.icon; icon.append(glyph);
         const text = document.createElement('span'); text.className = 'am-file-text';
@@ -1956,7 +1961,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       dd.querySelectorAll('.am-more[data-expand]').forEach(btn => {
         const open = btn.dataset.expand === view;
         btn.setAttribute('aria-expanded', String(open));
-        btn.querySelector('.am-more-label').textContent = open ? hyadeOSSI18n.t("desktop.apps.less", "Less") : hyadeOSSI18n.t("desktop.apps.more", "More");
+        btn.querySelector('.am-more-label').textContent = open ? hyadeOSI18n.t("desktop.apps.less", "Less") : hyadeOSI18n.t("desktop.apps.more", "More");
         if (!open) btn.closest('.am-section').querySelector('.am-scroll').scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
@@ -2068,7 +2073,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       const name = document.createElement('span'); name.className = 'tv-label-name';
       name.textContent = (app && app.title) || it.el.querySelector('.popup-header span')?.textContent || '';
       const close = document.createElement('button'); close.type = 'button'; close.className = 'tv-close material-symbols-outlined'; close.textContent = 'close';
-      close.title = hyadeOSSI18n.t("common.close", "Close");
+      close.title = hyadeOSI18n.t("common.close", "Close");
       label.append(icon.content, name, close);
       it.label = label; placeTaskViewLabel(it, index);
       document.getElementById('taskView').appendChild(label);
@@ -2299,7 +2304,7 @@ Questions? https://discord.gg/YDVxw6jfbH
             e.preventDefault();
             dockIcon.classList.remove('drag-over-left', 'drag-over-right');
             if (!draggedAppId || draggedAppId === appId) return;
-            if (!pinnedApps.includes(draggedAppId)) { pinnedApps.push(draggedAppId); showNotification("Dock", hyadeOSSI18n.t("desktop.dock.pinned-dock", "{app} pinned to dock", { app: app.title }), "📌"); }
+            if (!pinnedApps.includes(draggedAppId)) { pinnedApps.push(draggedAppId); showNotification("Dock", hyadeOSI18n.t("desktop.dock.pinned-dock", "{app} pinned to dock", { app: app.title }), "📌"); }
             pinnedApps = pinnedApps.filter(id => id !== draggedAppId);
             if (!pinnedApps.includes(appId)) pinnedApps.push(appId);
             let newIdx = pinnedApps.indexOf(appId); const rect = dockIcon.getBoundingClientRect(); if (e.clientX > rect.left + rect.width / 2) newIdx++; 
@@ -2407,12 +2412,12 @@ Questions? https://discord.gg/YDVxw6jfbH
       const open = Array.from(runningApps).filter(id => !id.startsWith('dialog_'));
       if (!open.length) return;
       showConfirmDialog(
-        hyadeOSSI18n.t("desktop.taskbar.close-all", "Close all windows"),
+        hyadeOSI18n.t("desktop.taskbar.close-all", "Close all windows"),
         open.length === 1
-          ? hyadeOSSI18n.t("desktop.close-all.confirm.one", "Close {count} open window? Any unsaved work will be lost.", { count: open.length })
-          : hyadeOSSI18n.t("desktop.close-all.confirm.other", "Close {count} open windows? Any unsaved work will be lost.", { count: open.length }),
+          ? hyadeOSI18n.t("desktop.close-all.confirm.one", "Close {count} open window? Any unsaved work will be lost.", { count: open.length })
+          : hyadeOSI18n.t("desktop.close-all.confirm.other", "Close {count} open windows? Any unsaved work will be lost.", { count: open.length }),
         () => { open.forEach(id => closePopup(id)); minimizedByShowDesktop = []; },
-        hyadeOSSI18n.t("desktop.close-all.button", "Close all"),
+        hyadeOSI18n.t("desktop.close-all.button", "Close all"),
         true
       );
     }
@@ -2421,8 +2426,8 @@ Questions? https://discord.gg/YDVxw6jfbH
       const app = getAllApps().find(a => a.id === appId || a.appId === appId);
       if (!app) return;
       showConfirmDialog(
-        hyadeOSSI18n.t("desktop.dock.uninstall", "Uninstall app"),
-        hyadeOSSI18n.t("desktop.uninstall.confirm", "Remove \"{app}\" from hyadeOSS? Its files will be deleted.", { app: app.title }),
+        hyadeOSI18n.t("desktop.dock.uninstall", "Uninstall app"),
+        hyadeOSI18n.t("desktop.uninstall.confirm", "Remove \"{app}\" from hyadeOS? Its files will be deleted.", { app: app.title }),
         async () => {
           try {
             const res = await fetch('/api/store/uninstall', {
@@ -2431,13 +2436,13 @@ Questions? https://discord.gg/YDVxw6jfbH
               body: JSON.stringify({ appId })
             });
             const data = await res.json().catch(() => null);
-            if (!res.ok || !data || !data.success) throw new Error((data && data.error) || hyadeOSSI18n.t("desktop.uninstall.server-error", "Server error ({status})", { status: res.status }));
+            if (!res.ok || !data || !data.success) throw new Error((data && data.error) || hyadeOSI18n.t("desktop.uninstall.server-error", "Server error ({status})", { status: res.status }));
             window.postMessage({ type: 'app-uninstalled-live', appId }, '*');
           } catch (err) {
-            showNotification(hyadeOSSI18n.t("desktop.uninstall.failed", "Uninstall failed"), err.message, '⚠️');
+            showNotification(hyadeOSI18n.t("desktop.uninstall.failed", "Uninstall failed"), err.message, '⚠️');
           }
         },
-        hyadeOSSI18n.t("desktop.uninstall.button", "Uninstall"),
+        hyadeOSI18n.t("desktop.uninstall.button", "Uninstall"),
         true
       );
     }
@@ -2451,19 +2456,19 @@ Questions? https://discord.gg/YDVxw6jfbH
       const isInstalled = dynamicInstalledApps.some(a => a.id === appId);
 
       const items = [
-        { header: true, label: app ? app.title : hyadeOSSI18n.t("desktop.dock.app", "App"), state: running ? (visible ? (maximized ? hyadeOSSI18n.t("desktop.dock.state.maximized", "Maximized") : hyadeOSSI18n.t("desktop.dock.state.open", "Open")) : hyadeOSSI18n.t("desktop.dock.state.minimized", "Minimized")) : hyadeOSSI18n.t("desktop.dock.state.not-running", "Not running"), appIcon: app && app.icon },
+        { header: true, label: app ? app.title : hyadeOSI18n.t("desktop.dock.app", "App"), state: running ? (visible ? (maximized ? hyadeOSI18n.t("desktop.dock.state.maximized", "Maximized") : hyadeOSI18n.t("desktop.dock.state.open", "Open")) : hyadeOSI18n.t("desktop.dock.state.minimized", "Minimized")) : hyadeOSI18n.t("desktop.dock.state.not-running", "Not running"), appIcon: app && app.icon },
         running
           ? (visible
-            ? { icon: 'minimize', label: hyadeOSSI18n.t("desktop.dock.minimize", "Minimize"), action: () => minimizePopup(appId) }
-            : { icon: 'open_in_full', label: hyadeOSSI18n.t("desktop.dock.show-window", "Show window"), action: () => openPopup(appId) })
-          : { icon: 'open_in_new', label: hyadeOSSI18n.t("common.open", "Open"), action: () => openPopup(appId) },
-        running && { icon: maximized ? 'close_fullscreen' : 'crop_square', label: maximized ? hyadeOSSI18n.t("desktop.dock.restore-size", "Restore size") : hyadeOSSI18n.t("desktop.dock.maximize", "Maximize"), action: () => { if (!visible) openPopup(appId); toggleMaximize(appId); } },
-        running && popup && popup.querySelector('iframe, webview') && { icon: 'refresh', label: hyadeOSSI18n.t("desktop.dock.reload-app", "Reload app"), action: () => reloadApp(appId) },
+            ? { icon: 'minimize', label: hyadeOSI18n.t("desktop.dock.minimize", "Minimize"), action: () => minimizePopup(appId) }
+            : { icon: 'open_in_full', label: hyadeOSI18n.t("desktop.dock.show-window", "Show window"), action: () => openPopup(appId) })
+          : { icon: 'open_in_new', label: hyadeOSI18n.t("common.open", "Open"), action: () => openPopup(appId) },
+        running && { icon: maximized ? 'close_fullscreen' : 'crop_square', label: maximized ? hyadeOSI18n.t("desktop.dock.restore-size", "Restore size") : hyadeOSI18n.t("desktop.dock.maximize", "Maximize"), action: () => { if (!visible) openPopup(appId); toggleMaximize(appId); } },
+        running && popup && popup.querySelector('iframe, webview') && { icon: 'refresh', label: hyadeOSI18n.t("desktop.dock.reload-app", "Reload app"), action: () => reloadApp(appId) },
         { separator: true },
-        { icon: isPinned ? 'keep_off' : 'keep', label: isPinned ? hyadeOSSI18n.t("desktop.dock.unpin", "Unpin from taskbar") : hyadeOSSI18n.t("desktop.dock.pin", "Pin to taskbar"), action: () => togglePin(appId) },
-        isInstalled && { icon: 'delete', label: hyadeOSSI18n.t("desktop.dock.uninstall", "Uninstall app"), danger: true, action: () => uninstallAppFromDock(appId) },
+        { icon: isPinned ? 'keep_off' : 'keep', label: isPinned ? hyadeOSI18n.t("desktop.dock.unpin", "Unpin from taskbar") : hyadeOSI18n.t("desktop.dock.pin", "Pin to taskbar"), action: () => togglePin(appId) },
+        isInstalled && { icon: 'delete', label: hyadeOSI18n.t("desktop.dock.uninstall", "Uninstall app"), danger: true, action: () => uninstallAppFromDock(appId) },
         running && { separator: true },
-        running && { icon: 'close', label: hyadeOSSI18n.t("desktop.dock.close-window", "Close window"), danger: true, action: () => closePopup(appId) }
+        running && { icon: 'close', label: hyadeOSI18n.t("desktop.dock.close-window", "Close window"), danger: true, action: () => closePopup(appId) }
       ];
       openTaskbarMenu(document.getElementById('dockContextMenu'), items, e.clientX);
     }
@@ -2475,15 +2480,15 @@ Questions? https://discord.gg/YDVxw6jfbH
       const canRestore = minimizedByShowDesktop.some(id => runningApps.has(id));
 
       const items = [
-        { icon: anyVisible ? 'desktop_windows' : 'web_asset', label: anyVisible ? hyadeOSSI18n.t("desktop.taskbar.show-desktop", "Show desktop") : hyadeOSSI18n.t("desktop.taskbar.restore-windows", "Restore windows"), disabled: !anyVisible && !canRestore, action: showDesktopToggle },
-        { icon: 'close', label: hyadeOSSI18n.t("desktop.taskbar.close-all", "Close all windows"), danger: true, disabled: openCount === 0, action: closeAllWindows },
+        { icon: anyVisible ? 'desktop_windows' : 'web_asset', label: anyVisible ? hyadeOSI18n.t("desktop.taskbar.show-desktop", "Show desktop") : hyadeOSI18n.t("desktop.taskbar.restore-windows", "Restore windows"), disabled: !anyVisible && !canRestore, action: showDesktopToggle },
+        { icon: 'close', label: hyadeOSI18n.t("desktop.taskbar.close-all", "Close all windows"), danger: true, disabled: openCount === 0, action: closeAllWindows },
         { separator: true },
-        { icon: 'apps', label: hyadeOSSI18n.t("desktop.taskbar.app-launcher", "App launcher"), action: () => document.getElementById('actionsBtn').click() },
-        { icon: 'search', label: hyadeOSSI18n.t("common.search", "Search"), action: () => openSpotlight() },
-        { icon: 'notifications', label: hyadeOSSI18n.t("desktop.taskbar.notifications", "Notifications"), action: () => document.getElementById('notificationsBtn').click() },
+        { icon: 'apps', label: hyadeOSI18n.t("desktop.taskbar.app-launcher", "App launcher"), action: () => document.getElementById('actionsBtn').click() },
+        { icon: 'search', label: hyadeOSI18n.t("common.search", "Search"), action: () => openSpotlight() },
+        { icon: 'notifications', label: hyadeOSI18n.t("desktop.taskbar.notifications", "Notifications"), action: () => document.getElementById('notificationsBtn').click() },
         { separator: true },
-        { icon: 'wallpaper', label: hyadeOSSI18n.t("desktop.menu.change-wallpaper", "Change wallpaper"), action: () => { const frame = document.querySelector('#popup1 iframe'); if (frame) frame.src = '/desktop/apps/settings/index.html#wallpaper'; openPopup('popup1'); } },
-        { icon: 'settings', label: hyadeOSSI18n.t("desktop.menu.system-settings", "System settings"), action: () => openPopup('popup1') }
+        { icon: 'wallpaper', label: hyadeOSI18n.t("desktop.menu.change-wallpaper", "Change wallpaper"), action: () => { const frame = document.querySelector('#popup1 iframe'); if (frame) frame.src = '/desktop/apps/settings/index.html#wallpaper'; openPopup('popup1'); } },
+        { icon: 'settings', label: hyadeOSI18n.t("desktop.menu.system-settings", "System settings"), action: () => openPopup('popup1') }
       ];
       openTaskbarMenu(document.getElementById('taskbarContextMenu'), items, e.clientX);
     }
@@ -2496,8 +2501,8 @@ Questions? https://discord.gg/YDVxw6jfbH
 
     function togglePin(appId) {
       const app = getAllApps().find(a => a.id === appId || a.appId === appId);
-      if (pinnedApps.includes(appId)) { pinnedApps = pinnedApps.filter(id => id !== appId); showNotification("Dock", hyadeOSSI18n.t("desktop.dock.unpinned-taskbar", "{app} unpinned from taskbar", { app: app.title }), "📌"); }
-      else { pinnedApps.push(appId); showNotification("Dock", hyadeOSSI18n.t("desktop.dock.pinned-taskbar", "{app} pinned to taskbar", { app: app.title }), "📌"); }
+      if (pinnedApps.includes(appId)) { pinnedApps = pinnedApps.filter(id => id !== appId); showNotification("Dock", hyadeOSI18n.t("desktop.dock.unpinned-taskbar", "{app} unpinned from taskbar", { app: app.title }), "📌"); }
+      else { pinnedApps.push(appId); showNotification("Dock", hyadeOSI18n.t("desktop.dock.pinned-taskbar", "{app} pinned to taskbar", { app: app.title }), "📌"); }
       localStorage.setItem('hmos_pinned_apps', JSON.stringify(pinnedApps)); updateDock();
     }
 
@@ -2535,7 +2540,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       const muteTile = document.getElementById('tileMute');
       if (muteTile) muteTile.className = `hmos-circle-toggle ${val === 0 ? 'active' : 'inactive'}`;
       const trayGroup = document.getElementById('notificationsBtn');
-      if (trayGroup) trayGroup.title = hyadeOSSI18n.t("desktop.volume.tooltip", "Volume: {value}%", { value: val });
+      if (trayGroup) trayGroup.title = hyadeOSI18n.t("desktop.volume.tooltip", "Volume: {value}%", { value: val });
     }
 
     if (volSlider) {
@@ -2558,16 +2563,16 @@ Questions? https://discord.gg/YDVxw6jfbH
 
     function renderQuickSettings() {
       const tileWifi = document.getElementById("tileWifi"); const iconWifi = document.getElementById("iconWifi"); const titleWifi = document.getElementById("titleWifi"); const subWifi = document.getElementById("subWifi"); const textContainer = document.getElementById("wifiTextContainer");
-      if (qsState.isEthernet) { tileWifi.className = `qs-tile-hmos active ethernet`; titleWifi.textContent = "Ethernet"; subWifi.textContent = hyadeOSSI18n.t("desktop.qs.connected", "Connected"); textContainer.onclick = (e) => { e.stopPropagation(); toggleSubPanel('ethernet'); }; } 
-      else { tileWifi.className = `qs-tile-hmos ${qsState.wifi ? 'active' : 'inactive'}`; titleWifi.textContent = "WLAN"; subWifi.textContent = qsState.wifi ? (qsState.connectedWifi || hyadeOSSI18n.t("desktop.qs.on", "On")) : hyadeOSSI18n.t("desktop.qs.off", "Off"); textContainer.onclick = (e) => { e.stopPropagation(); toggleSubPanel('wifi'); }; }
+      if (qsState.isEthernet) { tileWifi.className = `qs-tile-hmos active ethernet`; titleWifi.textContent = "Ethernet"; subWifi.textContent = hyadeOSI18n.t("desktop.qs.connected", "Connected"); textContainer.onclick = (e) => { e.stopPropagation(); toggleSubPanel('ethernet'); }; } 
+      else { tileWifi.className = `qs-tile-hmos ${qsState.wifi ? 'active' : 'inactive'}`; titleWifi.textContent = "WLAN"; subWifi.textContent = qsState.wifi ? (qsState.connectedWifi || hyadeOSI18n.t("desktop.qs.on", "On")) : hyadeOSI18n.t("desktop.qs.off", "Off"); textContainer.onclick = (e) => { e.stopPropagation(); toggleSubPanel('wifi'); }; }
       const trayWifiIcon = document.getElementById("trayWifiIcon"); if (trayWifiIcon) trayWifiIcon.textContent = qsState.isEthernet ? "settings_ethernet" : (qsState.wifi ? "wifi" : "wifi_off");
-      const tileBt = document.getElementById("tileBt"); tileBt.className = `qs-tile-hmos ${qsState.bluetooth ? 'active' : 'inactive'}`; document.getElementById("subBt").textContent = qsState.bluetooth ? (qsState.connectedBt || hyadeOSSI18n.t("desktop.qs.on", "On")) : hyadeOSSI18n.t("desktop.qs.off", "Off");
+      const tileBt = document.getElementById("tileBt"); tileBt.className = `qs-tile-hmos ${qsState.bluetooth ? 'active' : 'inactive'}`; document.getElementById("subBt").textContent = qsState.bluetooth ? (qsState.connectedBt || hyadeOSI18n.t("desktop.qs.on", "On")) : hyadeOSI18n.t("desktop.qs.off", "Off");
       const tileDnd = document.getElementById("tileDnd"); tileDnd.className = `hmos-circle-toggle ${qsState.dnd ? 'active' : 'inactive'}`; 
-      const tilePower = document.getElementById("tilePower"); const titlePower = document.getElementById("titlePower");  titlePower.textContent = ({ "Balanced": hyadeOSSI18n.t("desktop.qs.power.balanced", "Balanced"), "Performance": hyadeOSSI18n.t("desktop.qs.power.performance", "Performance"), "Battery Saver": hyadeOSSI18n.t("desktop.qs.power.battery-saver", "Battery Saver") })[qsState.powerMode] || qsState.powerMode; tilePower.dataset.mode = qsState.powerMode;
+      const tilePower = document.getElementById("tilePower"); const titlePower = document.getElementById("titlePower");  titlePower.textContent = ({ "Balanced": hyadeOSI18n.t("desktop.qs.power.balanced", "Balanced"), "Performance": hyadeOSI18n.t("desktop.qs.power.performance", "Performance"), "Battery Saver": hyadeOSI18n.t("desktop.qs.power.battery-saver", "Battery Saver") })[qsState.powerMode] || qsState.powerMode; tilePower.dataset.mode = qsState.powerMode;
       tilePower.className = 'qs-tile-hmos active';
       document.getElementById("tileAirplane").className = `hmos-circle-toggle ${qsState.airplane ? 'active' : 'inactive'}`;
       document.getElementById("tileNight").className = `qs-tile-hmos ${qsState.nightLight ? 'active' : 'inactive'}`;
-      document.getElementById("subNight").textContent = qsState.nightLight ? hyadeOSSI18n.t("desktop.qs.on", "On") : hyadeOSSI18n.t("desktop.qs.off", "Off");
+      document.getElementById("subNight").textContent = qsState.nightLight ? hyadeOSI18n.t("desktop.qs.on", "On") : hyadeOSI18n.t("desktop.qs.off", "Off");
       document.body.classList.toggle('night-light', !!qsState.nightLight);
       document.getElementById("ncDndBtn").classList.toggle('on', !!qsState.dnd);
       document.getElementById("ncDnd").hidden = !qsState.dnd;
@@ -2614,7 +2619,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       delete busyQsTiles[tileId]; document.getElementById(tileId).classList.remove('qs-busy');
       if (!result.success) {
         qsState = before;
-        showNotification("Quick Settings", hyadeOSSI18n.t("desktop.qs.toggle-failed", "Windows refused the change"), "⚠️");
+        showNotification("Quick Settings", hyadeOSI18n.t("desktop.qs.toggle-failed", "Windows refused the change"), "⚠️");
       } else if (result.quickSettings) {
         const { wifi, bluetooth } = result.quickSettings; qsState.wifi = wifi !== false; qsState.bluetooth = bluetooth !== false;
       }
@@ -2656,9 +2661,9 @@ Questions? https://discord.gg/YDVxw6jfbH
       const listContainer = document.getElementById("ethList");
       try { const res = await fetch("/api/system/ethernet-stats"); const data = await res.json();
         if (data.interfaces && data.interfaces.length > 0) {
-          listContainer.innerHTML = data.interfaces.map(iface => `<div class="qs-list-item connected" style="cursor: default;"><div style="display:flex; flex-direction:column; gap:2px;"><div style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined" style="font-size:18px;">settings_ethernet</span><span style="font-weight:600;">${iface.name}</span></div><span style="font-size:10px; color:#ddd; margin-left:26px;">IP: ${iface.ip}</span></div><span style="font-size:11px; font-weight:500; text-align:right;">${hyadeOSSI18n.t("desktop.qs.connected", "Connected")}</span></div>`).join('');
-        } else { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSSI18n.t("desktop.qs.no-ethernet", "No Ethernet ports active")}</div>`; }
-      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSSI18n.t("desktop.qs.stats-failed", "Failed to get stats")}</div>`; }
+          listContainer.innerHTML = data.interfaces.map(iface => `<div class="qs-list-item connected" style="cursor: default;"><div style="display:flex; flex-direction:column; gap:2px;"><div style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined" style="font-size:18px;">settings_ethernet</span><span style="font-weight:600;">${iface.name}</span></div><span style="font-size:10px; color:#ddd; margin-left:26px;">IP: ${iface.ip}</span></div><span style="font-size:11px; font-weight:500; text-align:right;">${hyadeOSI18n.t("desktop.qs.connected", "Connected")}</span></div>`).join('');
+        } else { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSI18n.t("desktop.qs.no-ethernet", "No Ethernet ports active")}</div>`; }
+      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSI18n.t("desktop.qs.stats-failed", "Failed to get stats")}</div>`; }
     }
 
     async function fetchNetworks() {
@@ -2668,7 +2673,7 @@ Questions? https://discord.gg/YDVxw6jfbH
           if (typeof data.wifi === 'boolean' && !busyQsTiles.tileWifi && !busyQsTiles.tileAirplane) qsState.wifi = data.wifi;
           if (typeof data.bluetooth === 'boolean' && !busyQsTiles.tileBt && !busyQsTiles.tileAirplane) qsState.bluetooth = data.bluetooth;
           const activeNet = data.networks.find(net => net.connected); qsState.connectedWifi = activeNet ? activeNet.ssid : null; renderQuickSettings();
-          if (data.networks.length === 0) { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSSI18n.t("desktop.qs.no-wifi", "No Wi-Fi networks found")}</div>`; return; }
+          if (data.networks.length === 0) { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSI18n.t("desktop.qs.no-wifi", "No Wi-Fi networks found")}</div>`; return; }
           // SECURITY (layer-2 XSS): Wi-Fi SSIDs are attacker-controllable; build via DOM.
           listContainer.replaceChildren();
           data.networks.forEach(net => {
@@ -2686,23 +2691,23 @@ Questions? https://discord.gg/YDVxw6jfbH
             left.append(icon, name);
             const sig = document.createElement('span');
             sig.style.fontSize = '11px';
-            sig.textContent = net.connected ? hyadeOSSI18n.t("desktop.qs.connected", "Connected") : (net.signal + '%');
+            sig.textContent = net.connected ? hyadeOSI18n.t("desktop.qs.connected", "Connected") : (net.signal + '%');
             item.append(left, sig);
             listContainer.appendChild(item);
           });
         }
-      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSSI18n.t("desktop.qs.wifi-failed", "Failed to scan Wi-Fi")}</div>`; }
+      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSI18n.t("desktop.qs.wifi-failed", "Failed to scan Wi-Fi")}</div>`; }
     }
 
     async function connectWifi(ssid, password) {
       try { const res = await fetch("/api/system/connect-wifi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ssid, password }) }); const data = await res.json();
         if (data.needsPassword && !password) {
-          const typed = await mDialog.prompt(hyadeOSSI18n.t("desktop.qs.wifi-password", "Password for {name}", { name: ssid }), { type: "password" });
+          const typed = await mDialog.prompt(hyadeOSI18n.t("desktop.qs.wifi-password", "Password for {name}", { name: ssid }), { type: "password" });
           if (typed) connectWifi(ssid, typed);
           return;
         }
-        if (!data.success && password) { showNotification("Wi-Fi", hyadeOSSI18n.t("desktop.qs.wifi-connect-failed", "Could not connect to {name}", { name: ssid }), "⚠️"); return; }
-        if (data.success) { qsState.connectedWifi = ssid; qsState.wifi = true; renderQuickSettings(); fetchNetworks(); showNotification("Wi-Fi", hyadeOSSI18n.t("desktop.notify.connected-to", "Connected to {name}", { name: ssid }), "📶"); }
+        if (!data.success && password) { showNotification("Wi-Fi", hyadeOSI18n.t("desktop.qs.wifi-connect-failed", "Could not connect to {name}", { name: ssid }), "⚠️"); return; }
+        if (data.success) { qsState.connectedWifi = ssid; qsState.wifi = true; renderQuickSettings(); fetchNetworks(); showNotification("Wi-Fi", hyadeOSI18n.t("desktop.notify.connected-to", "Connected to {name}", { name: ssid }), "📶"); }
       } catch (err) {}
     }
 
@@ -2711,7 +2716,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       try { const res = await fetch("/api/system/bt-devices"); const data = await res.json();
         if (data.devices) {
           const activeDev = data.devices.find(dev => dev.connected); qsState.connectedBt = activeDev ? activeDev.name : null; renderQuickSettings();
-          if (data.devices.length === 0) { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSSI18n.t("desktop.qs.no-devices", "No devices found")}</div>`; return; }
+          if (data.devices.length === 0) { listContainer.innerHTML = `<div style="font-size:11px; color:#aaa; text-align:center;">${hyadeOSI18n.t("desktop.qs.no-devices", "No devices found")}</div>`; return; }
           const iconMap = { speaker: 'speaker', headphones: 'headphones', headset: 'headphones', earbuds: 'earbuds', smartphone: 'smartphone', mouse: 'mouse', keyboard: 'keyboard', pen: 'stylus' };
           // SECURITY (layer-2 XSS): Bluetooth device names are attacker-controllable; build via DOM.
           listContainer.replaceChildren();
@@ -2730,18 +2735,18 @@ Questions? https://discord.gg/YDVxw6jfbH
             left.append(icon, name);
             const status = document.createElement('span');
             status.style.fontSize = '11px';
-            status.textContent = dev.connected ? hyadeOSSI18n.t("desktop.qs.connected", "Connected") : hyadeOSSI18n.t("desktop.qs.saved", "Saved");
+            status.textContent = dev.connected ? hyadeOSI18n.t("desktop.qs.connected", "Connected") : hyadeOSI18n.t("desktop.qs.saved", "Saved");
             item.append(left, status);
             listContainer.appendChild(item);
           });
         }
-      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSSI18n.t("desktop.qs.bt-failed", "Failed to find Bluetooth devices")}</div>`; }
+      } catch (err) { listContainer.innerHTML = `<div style="font-size:11px; color:#ff453a; text-align:center;">${hyadeOSI18n.t("desktop.qs.bt-failed", "Failed to find Bluetooth devices")}</div>`; }
     }
 
     async function connectBt(mac, name) {
       try { const res = await fetch("/api/system/connect-bt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mac, name }) }); const data = await res.json();
-        if (data.unsupported) { showNotification("Bluetooth", hyadeOSSI18n.t("desktop.bt.connect-from-device", "Connect {name} from the device or from Windows", { name }), "🎧"); return; }
-        if (data.success) { qsState.connectedBt = data.connectedBt; qsState.bluetooth = true; renderQuickSettings(); fetchBtDevices(); showNotification("Bluetooth", data.connectedBt ? hyadeOSSI18n.t("desktop.notify.connected-to", "Connected to {name}", { name }) : hyadeOSSI18n.t("desktop.notify.disconnected", "Disconnected {name}", { name }), "🎧"); }
+        if (data.unsupported) { showNotification("Bluetooth", hyadeOSI18n.t("desktop.bt.connect-from-device", "Connect {name} from the device or from Windows", { name }), "🎧"); return; }
+        if (data.success) { qsState.connectedBt = data.connectedBt; qsState.bluetooth = true; renderQuickSettings(); fetchBtDevices(); showNotification("Bluetooth", data.connectedBt ? hyadeOSI18n.t("desktop.notify.connected-to", "Connected to {name}", { name }) : hyadeOSI18n.t("desktop.notify.disconnected", "Disconnected {name}", { name }), "🎧"); }
       } catch (err) {}
     }
 
@@ -2776,7 +2781,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     }
 
     function showNotification(title, msg, icon = "notifications", options = {}) {
-      const time = new Date().toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit' });
+      const time = new Date().toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' });
       const app = options && options.app && options.app.id ? { id: String(options.app.id), title: String(options.app.title || options.app.id).slice(0, 60) } : null;
       notificationsHistory.unshift({ title, msg, icon, time, app }); if (notificationsHistory.length > 30) notificationsHistory.pop(); updateNotificationCenter();
       if (qsState.dnd || (app && mutedNotificationApps().includes(app.id))) return;
@@ -2790,39 +2795,39 @@ Questions? https://discord.gg/YDVxw6jfbH
       container.prepend(toast); setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 350); }, 4000);
     }
 
-    async function shutdownHyadeOSS() {
-      const button = document.getElementById('shutdownHyadeOSSButton');
-      if (!window.hyadeOSSElectron?.shutdown) {
-        showNotification(hyadeOSSI18n.t("desktop.session.shutdown-unavailable", "Shutdown unavailable"), hyadeOSSI18n.t("desktop.session.no-container", "You're not running hyadeOSS in its container"), '⚠️');
+    async function shutdownHyadeOS() {
+      const button = document.getElementById('shutdownHyadeOSButton');
+      if (!window.hyadeOSElectron?.shutdown) {
+        showNotification(hyadeOSI18n.t("desktop.session.shutdown-unavailable", "Shutdown unavailable"), hyadeOSI18n.t("desktop.session.no-container", "You're not running hyadeOS in its container"), '⚠️');
         return;
       }
 
       button.disabled = true;
-      document.getElementById('shutdownHyadeOSSLabel').textContent = hyadeOSSI18n.t("desktop.session.closing", "Closing...");
+      document.getElementById('shutdownHyadeOSLabel').textContent = hyadeOSI18n.t("desktop.session.closing", "Closing...");
       try {
-        await window.hyadeOSSElectron.shutdown();
+        await window.hyadeOSElectron.shutdown();
       } catch (error) {
         button.disabled = false;
-        document.getElementById('shutdownHyadeOSSLabel').textContent = hyadeOSSI18n.t("desktop.session.shutdown", "Shutdown");
-        showNotification(hyadeOSSI18n.t("desktop.session.shutdown-failed", "Shutdown failed"), error.message, '⚠️');
+        document.getElementById('shutdownHyadeOSLabel').textContent = hyadeOSI18n.t("desktop.session.shutdown", "Shutdown");
+        showNotification(hyadeOSI18n.t("desktop.session.shutdown-failed", "Shutdown failed"), error.message, '⚠️');
       }
     }
 
-    async function rebootHyadeOSS() {
-      const button = document.getElementById('rebootHyadeOSSButton');
-      if (!window.hyadeOSSElectron?.reboot) {
-        showNotification(hyadeOSSI18n.t("desktop.session.reboot-unavailable", "Reboot unavailable"), hyadeOSSI18n.t("desktop.session.no-container", "You're not running hyadeOSS in its container"), '⚠️');
+    async function rebootHyadeOS() {
+      const button = document.getElementById('rebootHyadeOSButton');
+      if (!window.hyadeOSElectron?.reboot) {
+        showNotification(hyadeOSI18n.t("desktop.session.reboot-unavailable", "Reboot unavailable"), hyadeOSI18n.t("desktop.session.no-container", "You're not running hyadeOS in its container"), '⚠️');
         return;
       }
 
       button.disabled = true;
-      document.getElementById('rebootHyadeOSSLabel').textContent = hyadeOSSI18n.t("desktop.session.rebooting", "Rebooting…");
+      document.getElementById('rebootHyadeOSLabel').textContent = hyadeOSI18n.t("desktop.session.rebooting", "Rebooting…");
       try {
-        await window.hyadeOSSElectron.reboot();
+        await window.hyadeOSElectron.reboot();
       } catch (error) {
         button.disabled = false;
-        document.getElementById('rebootHyadeOSSLabel').textContent = hyadeOSSI18n.t("desktop.session.reboot", "Reboot");
-        showNotification(hyadeOSSI18n.t("desktop.session.reboot-failed", "Reboot failed"), error.message, '⚠️');
+        document.getElementById('rebootHyadeOSLabel').textContent = hyadeOSI18n.t("desktop.session.reboot", "Reboot");
+        showNotification(hyadeOSI18n.t("desktop.session.reboot-failed", "Reboot failed"), error.message, '⚠️');
       }
     }
 
@@ -2831,7 +2836,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       const list = document.getElementById('notificationsList'); const badge = document.getElementById('notifBadge'); const dropdown = document.getElementById('calendarDropdown');
       document.getElementById('ncClearBtn').disabled = notificationsHistory.length === 0;
       if (notificationsHistory.length === 0) {
-        list.innerHTML = `<div class="nc-empty"><svg viewBox="0 0 96 72" aria-hidden="true"><path d="M50 6h30a8 8 0 0 1 8 8v12a8 8 0 0 1-8 8H66l-8 6v-6h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="rgba(255,255,255,0.16)"/><path d="M10 40l10-14h40l10 14v20a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.13)"/><path d="M10 40h18l4 8h16l4-8h18v20a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.22)"/></svg><span>${osEscapeHtml(hyadeOSSI18n.t("desktop.notifications.empty", "No notifications"))}</span></div>`;
+        list.innerHTML = `<div class="nc-empty"><svg viewBox="0 0 96 72" aria-hidden="true"><path d="M50 6h30a8 8 0 0 1 8 8v12a8 8 0 0 1-8 8H66l-8 6v-6h-8a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="rgba(255,255,255,0.16)"/><path d="M10 40l10-14h40l10 14v20a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.13)"/><path d="M10 40h18l4 8h16l4-8h18v20a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.22)"/></svg><span>${osEscapeHtml(hyadeOSI18n.t("desktop.notifications.empty", "No notifications"))}</span></div>`;
         badge.style.display = 'none'; return;
       }
       if (dropdown && !dropdown.classList.contains('open')) badge.style.display = 'block';
@@ -2868,10 +2873,10 @@ Questions? https://discord.gg/YDVxw6jfbH
           const isMuted = muted.includes(group.app.id);
           const mute = document.createElement('button'); mute.type = 'button'; mute.className = 'nc-group-btn material-symbols-outlined';
           mute.textContent = isMuted ? 'notifications_off' : 'notifications_active';
-          mute.title = isMuted ? hyadeOSSI18n.t("desktop.notifications.unmute", "Show this app's notifications again") : hyadeOSSI18n.t("desktop.notifications.mute", "Do not disturb for this app");
+          mute.title = isMuted ? hyadeOSI18n.t("desktop.notifications.unmute", "Show this app's notifications again") : hyadeOSI18n.t("desktop.notifications.mute", "Do not disturb for this app");
           mute.addEventListener('click', e => { e.stopPropagation(); setNotificationAppMuted(group.app.id, !isMuted); });
           const clear = document.createElement('button'); clear.type = 'button'; clear.className = 'nc-group-btn material-symbols-outlined'; clear.textContent = 'clear_all';
-          clear.title = hyadeOSSI18n.t("desktop.notifications.clear-app", "Clear this app's notifications");
+          clear.title = hyadeOSI18n.t("desktop.notifications.clear-app", "Clear this app's notifications");
           clear.addEventListener('click', e => { e.stopPropagation(); notificationsHistory = notificationsHistory.filter(n => !(n.app && n.app.id === group.app.id)); updateNotificationCenter(); syncLockscreenData(); });
           head.append(name, mute, clear);
           nodes.push(head);
@@ -2936,10 +2941,10 @@ Questions? https://discord.gg/YDVxw6jfbH
       const session = mediaSessions.get(activeMediaId) || null;
       const art = session ? safeMediaArt(session.art) : '';
       const card = document.getElementById('mediaPlayerBanner');
-      document.getElementById('mediaBannerTitle').textContent = session ? (session.title || hyadeOSSI18n.t("desktop.media.no-media", "No media")) : hyadeOSSI18n.t("desktop.media.no-media", "No media");
-      document.getElementById('mediaBannerArtist').textContent = session ? (session.artist || session.app || '') : hyadeOSSI18n.t("desktop.media.not-playing", "Not playing");
+      document.getElementById('mediaBannerTitle').textContent = session ? (session.title || hyadeOSI18n.t("desktop.media.no-media", "No media")) : hyadeOSI18n.t("desktop.media.no-media", "No media");
+      document.getElementById('mediaBannerArtist').textContent = session ? (session.artist || session.app || '') : hyadeOSI18n.t("desktop.media.not-playing", "Not playing");
       document.getElementById('mediaBannerPlayIcon').textContent = session && session.isPlaying ? 'pause' : 'play_arrow';
-      document.getElementById('mediaAppName').textContent = session ? session.app : hyadeOSSI18n.t("desktop.media.this-device", "This device");
+      document.getElementById('mediaAppName').textContent = session ? session.app : hyadeOSI18n.t("desktop.media.this-device", "This device");
       card.classList.toggle('has-art', !!art);
       card.classList.toggle('no-skip', !!session && session.canSkip === false);
       card.classList.toggle('playing', !!session && session.isPlaying);
@@ -3010,7 +3015,7 @@ Questions? https://discord.gg/YDVxw6jfbH
       if (!info) { removeMediaSession(id); return; }
       let site = ''; try { site = new URL(tab.url).hostname.replace(/^www\./, ''); } catch (err) {}
       setMediaSession(id, {
-        tab: true, app: site || hyadeOSSI18n.t("desktop.app.browser", "Browser"), icon: tab.favicon || '/desktop/assets/icons/browser.png',
+        tab: true, app: site || hyadeOSI18n.t("desktop.app.browser", "Browser"), icon: tab.favicon || '/desktop/assets/icons/browser.png',
         title: String(info.title || tab.title || ''), artist: String(info.artist || ''), art: info.art, isPlaying: !!info.isPlaying, canSkip: !!info.canSkip,
         open: () => { openPopup('popup2'); selectBrowserTab(tab.id); },
         command: cmd => {
@@ -3110,7 +3115,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     function updateContextBar() {
       const topPopup = getTopmostPopup(); const contextDropdown = document.getElementById('contextDropdown');
       if (topPopup && !topPopup.id.startsWith('dialog_')) { // Don't show quit for dialogs
-        const span = topPopup.querySelector('.popup-header span'); const appName = span ? span.innerText : hyadeOSSI18n.t("desktop.dock.app", "App");
+        const span = topPopup.querySelector('.popup-header span'); const appName = span ? span.innerText : hyadeOSI18n.t("desktop.dock.app", "App");
         // SECURITY (layer-2 XSS): appName is an app window title (may be untrusted); build via DOM.
         const mkLink = (labelText, handler, color) => {
           const a = document.createElement('a');
@@ -3121,10 +3126,10 @@ Questions? https://discord.gg/YDVxw6jfbH
           return a;
         };
         contextDropdown.replaceChildren();
-        contextDropdown.appendChild(mkLink(hyadeOSSI18n.t("desktop.context.quit", "Quit {app}", { app: appName }), () => closePopup(topPopup.id), '#ff453a'));
-        if (topPopup.querySelector('iframe')) contextDropdown.appendChild(mkLink(hyadeOSSI18n.t("desktop.context.reload-app", "Reload App"), () => { const f = document.querySelector(`#${CSS.escape(topPopup.id)} iframe`); if (f && f.contentWindow) f.contentWindow.location.reload(); }));
-        if (topPopup.querySelector('webview')) contextDropdown.appendChild(mkLink(hyadeOSSI18n.t("desktop.context.reload-page", "Reload Page"), () => browserNav('reload')));
-      } else { contextDropdown.innerHTML = `<a href="/desktop/com.hyadeoss.desktop.html"><div class="dropdown-item"><span>${hyadeOSSI18n.t("desktop.menu.refresh", "Refresh desktop")}</span></div></a>`; }
+        contextDropdown.appendChild(mkLink(hyadeOSI18n.t("desktop.context.quit", "Quit {app}", { app: appName }), () => closePopup(topPopup.id), '#ff453a'));
+        if (topPopup.querySelector('iframe')) contextDropdown.appendChild(mkLink(hyadeOSI18n.t("desktop.context.reload-app", "Reload App"), () => { const f = document.querySelector(`#${CSS.escape(topPopup.id)} iframe`); if (f && f.contentWindow) f.contentWindow.location.reload(); }));
+        if (topPopup.querySelector('webview')) contextDropdown.appendChild(mkLink(hyadeOSI18n.t("desktop.context.reload-page", "Reload Page"), () => browserNav('reload')));
+      } else { contextDropdown.innerHTML = `<a href="/desktop/com.hyadeos.desktop.html"><div class="dropdown-item"><span>${hyadeOSI18n.t("desktop.menu.refresh", "Refresh desktop")}</span></div></a>`; }
     }
 
     // Window size animations run on the main thread, and resizing the app inside on every
@@ -3191,7 +3196,7 @@ Questions? https://discord.gg/YDVxw6jfbH
     function openPopup(popupId) {
       const popup = document.getElementById(popupId); if(!popup) return;
       if (!isAppAllowed(popupId)) {
-        showNotification(hyadeOSSI18n.t("desktop.app.terminal", "Terminal"), hyadeOSSI18n.t("desktop.users.admin-only-app", "Only administrators can use this app."), "🔒");
+        showNotification(hyadeOSI18n.t("desktop.app.terminal", "Terminal"), hyadeOSI18n.t("desktop.users.admin-only-app", "Only administrators can use this app."), "🔒");
         return;
       }
       const externalView = popup.querySelector('[data-default-src^="http"]');
@@ -3545,7 +3550,7 @@ snapZone = getSnapZone(pendingX, pendingY);
           }
           if (!iconEl) { iconEl = document.createElement('span'); iconEl.className = 'material-symbols-outlined spotlight-item-icon'; iconEl.style.cssText = 'font-size:22px; color:var(--m3-accent-text);'; iconEl.textContent = (app.icon && !app.icon.includes('/')) ? app.icon : 'apps'; }
           const nameEl = document.createElement('span'); nameEl.style.fontWeight = '500'; nameEl.textContent = app.title == null ? '' : String(app.title);
-          const tag = document.createElement('span'); tag.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.5;'; tag.textContent = hyadeOSSI18n.t("desktop.spotlight.application", "Application");
+          const tag = document.createElement('span'); tag.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.5;'; tag.textContent = hyadeOSI18n.t("desktop.spotlight.application", "Application");
           item.append(iconEl, document.createTextNode(' '), nameEl, document.createTextNode(' '), tag);
           resultsDiv.appendChild(item);
         });
@@ -3556,9 +3561,9 @@ snapZone = getSnapZone(pendingX, pendingY);
       const wIcon = document.createElement('span'); wIcon.className = 'material-symbols-outlined spotlight-item-icon'; wIcon.style.cssText = 'font-size:22px; color:var(--m3-accent-text);'; wIcon.textContent = 'search';
       const wText = document.createElement('span');
       const wq = document.createElement('b'); wq.textContent = query == null ? '' : String(query);
-      const [wBefore, wAfter = ''] = String(hyadeOSSI18n.t("desktop.spotlight.search-web", "Search Google for \"{query}\"")).split('{query}');
+      const [wBefore, wAfter = ''] = String(hyadeOSI18n.t("desktop.spotlight.search-web", "Search Google for \"{query}\"")).split('{query}');
       wText.append(document.createTextNode(wBefore), wq, document.createTextNode(wAfter));
-      const wTag = document.createElement('span'); wTag.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.5;'; wTag.textContent = hyadeOSSI18n.t("desktop.spotlight.web", "Web");
+      const wTag = document.createElement('span'); wTag.style.cssText = 'margin-left: auto; font-size: 11px; opacity: 0.5;'; wTag.textContent = hyadeOSI18n.t("desktop.spotlight.web", "Web");
       webItem.append(wIcon, document.createTextNode(' '), wText, document.createTextNode(' '), wTag);
       resultsDiv.appendChild(webItem);
     }
@@ -3599,7 +3604,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         const local = /^(localhost|\d)/i.test(hostMatch[1]);
         return new URL(`${local ? 'http' : 'https'}://${input}`).href;
       }
-      if (/^[a-z][a-z\d+.-]*:\/\//i.test(input)) throw new Error(hyadeOSSI18n.t("desktop.browser.only-http", "Only HTTP and HTTPS websites can be opened."));
+      if (/^[a-z][a-z\d+.-]*:\/\//i.test(input)) throw new Error(hyadeOSI18n.t("desktop.browser.only-http", "Only HTTP and HTTPS websites can be opened."));
       return BROWSER_ENGINES[getBrowserEngineId()].url + encodeURIComponent(input);
     }
 
@@ -3624,8 +3629,8 @@ snapZone = getSnapZone(pendingX, pendingY);
       const reload = browserEl('browserReload');
       const loading = !!tab?.loading;
       reload.querySelector('.material-symbols-outlined').textContent = loading ? 'close' : 'refresh';
-      reload.setAttribute('aria-label', loading ? hyadeOSSI18n.t("desktop.browser.stop", "Stop") : hyadeOSSI18n.t("desktop.browser.reload", "Reload"));
-      reload.title = loading ? hyadeOSSI18n.t("desktop.browser.stop-shortcut", "Stop (Esc)") : hyadeOSSI18n.t("desktop.browser.reload-shortcut", "Reload (F5)");
+      reload.setAttribute('aria-label', loading ? hyadeOSI18n.t("desktop.browser.stop", "Stop") : hyadeOSI18n.t("desktop.browser.reload", "Reload"));
+      reload.title = loading ? hyadeOSI18n.t("desktop.browser.stop-shortcut", "Stop (Esc)") : hyadeOSI18n.t("desktop.browser.reload-shortcut", "Reload (F5)");
 
       const input = browserEl('browserUrl');
       if (document.activeElement !== input) input.value = browserDisplayUrl(tab?.url);
@@ -3633,7 +3638,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       const shown = browserDisplayUrl(tab?.url);
       icon.textContent = !shown ? 'search' : shown.startsWith('https:') ? 'lock' : 'info';
       icon.classList.toggle('secure', shown.startsWith('https:'));
-      icon.title = !shown ? '' : shown.startsWith('https:') ? hyadeOSSI18n.t("desktop.browser.secure", "Secure connection") : hyadeOSSI18n.t("desktop.browser.not-secure", "Connection is not secure");
+      icon.title = !shown ? '' : shown.startsWith('https:') ? hyadeOSI18n.t("desktop.browser.secure", "Secure connection") : hyadeOSI18n.t("desktop.browser.not-secure", "Connection is not secure");
 
       updateBrowserExtAdd(tab);
 
@@ -3681,10 +3686,10 @@ snapZone = getSnapZone(pendingX, pendingY);
 
     function updateBrowserTab(tab) {
       const button = tab.button;
-      const title = tab.title || hyadeOSSI18n.t("desktop.browser.new-tab-title", "New Tab");
+      const title = tab.title || hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab");
       button.querySelector('.browser-tab-title').textContent = title;
       button.title = title;
-      button.querySelector('.browser-tab-close').setAttribute('aria-label', hyadeOSSI18n.t("desktop.browser.close-tab", "Close {title}", { title }));
+      button.querySelector('.browser-tab-close').setAttribute('aria-label', hyadeOSI18n.t("desktop.browser.close-tab", "Close {title}", { title }));
       const icon = button.querySelector('.browser-tab-icon');
       icon.classList.toggle('loading', !!tab.loading);
       const currentImg = icon.querySelector('img');
@@ -3757,7 +3762,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         refresh();
       });
       view.addEventListener('page-title-updated', event => {
-        tab.title = event.title || hyadeOSSI18n.t("desktop.browser.new-tab-title", "New Tab");
+        tab.title = event.title || hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab");
         recordBrowserTitle(tab.url, event.title);
         if (mediaSessions.has(`tab:${tab.id}`)) refreshTabMedia(tab);
         refresh();
@@ -3769,8 +3774,8 @@ snapZone = getSnapZone(pendingX, pendingY);
       view.addEventListener('did-fail-load', event => {
         // -3 is an aborted load (user stop / new navigation), not a real failure.
         if (!event.isMainFrame || event.errorCode === -3) return;
-        tab.error = { url: event.validatedURL || tab.url, description: event.errorDescription || hyadeOSSI18n.t("desktop.browser.load-failed", "The page could not be loaded.") };
-        tab.title = hyadeOSSI18n.t("desktop.browser.cant-reach", "Can't reach this page");
+        tab.error = { url: event.validatedURL || tab.url, description: event.errorDescription || hyadeOSI18n.t("desktop.browser.load-failed", "The page could not be loaded.") };
+        tab.title = hyadeOSI18n.t("desktop.browser.cant-reach", "Can't reach this page");
         refresh();
       });
       view.addEventListener('found-in-page', event => {
@@ -3794,10 +3799,10 @@ snapZone = getSnapZone(pendingX, pendingY);
       const errorEl = document.createElement('div');
       errorEl.className = 'browser-error';
       errorEl.hidden = true;
-      errorEl.innerHTML = `<span class="material-symbols-outlined">cloud_off</span><h2>${hyadeOSSI18n.t("desktop.browser.cant-reach", "Can't reach this page")}</h2>
-        <p style="white-space:pre-line"></p><button type="button">${hyadeOSSI18n.t("common.retry", "Try again")}</button>`;
+      errorEl.innerHTML = `<span class="material-symbols-outlined">cloud_off</span><h2>${hyadeOSI18n.t("desktop.browser.cant-reach", "Can't reach this page")}</h2>
+        <p style="white-space:pre-line"></p><button type="button">${hyadeOSI18n.t("common.retry", "Try again")}</button>`;
 
-      const tab = { id: nextBrowserTabId++, title: hyadeOSSI18n.t("desktop.browser.new-tab-title", "New Tab"), url: url || BROWSER_HOME, view, errorEl,
+      const tab = { id: nextBrowserTabId++, title: hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab"), url: url || BROWSER_HOME, view, errorEl,
         loading: false, ready: false, favicon: null, error: null, zoom: 1, progress: 0 };
       errorEl.querySelector('button').addEventListener('click', () => {
         tab.error = null;
@@ -3866,12 +3871,12 @@ snapZone = getSnapZone(pendingX, pendingY);
         if (!tab) { createBrowserTab(url); return; }
         tab.url = url;
         tab.error = null;
-        tab.title = hyadeOSSI18n.t("desktop.browser.loading", "Loading…");
+        tab.title = hyadeOSI18n.t("desktop.browser.loading", "Loading…");
         browserEl('browserUrl').blur();
         tab.view.src = url;
         updateBrowserTab(tab);
       } catch (error) {
-        showNotification(hyadeOSSI18n.t("desktop.browser.open-failed", "Unable to open website"), error.message, '⚠️');
+        showNotification(hyadeOSI18n.t("desktop.browser.open-failed", "Unable to open website"), error.message, '⚠️');
       }
     }
 
@@ -3937,22 +3942,22 @@ snapZone = getSnapZone(pendingX, pendingY);
       const engine = getBrowserEngineId();
       const zoom = Math.round((getActiveBrowserTab()?.zoom || 1) * 100);
       menu.innerHTML = `
-        <button data-act="new-tab"><span class="material-symbols-outlined check" style="color:inherit">add</span>${hyadeOSSI18n.t("desktop.browser.new-tab", "New tab")}<span style="margin-left:auto;opacity:.5">Ctrl+T</span></button>
-        <button data-act="find"><span class="material-symbols-outlined check" style="color:inherit">search</span>${hyadeOSSI18n.t("desktop.browser.find", "Find in page")}<span style="margin-left:auto;opacity:.5">Ctrl+F</span></button>
+        <button data-act="new-tab"><span class="material-symbols-outlined check" style="color:inherit">add</span>${hyadeOSI18n.t("desktop.browser.new-tab", "New tab")}<span style="margin-left:auto;opacity:.5">Ctrl+T</span></button>
+        <button data-act="find"><span class="material-symbols-outlined check" style="color:inherit">search</span>${hyadeOSI18n.t("desktop.browser.find", "Find in page")}<span style="margin-left:auto;opacity:.5">Ctrl+F</span></button>
         <div style="display:flex;align-items:center;gap:4px;padding:2px 4px 2px 10px">
-          <span style="flex:1">${hyadeOSSI18n.t("desktop.browser.zoom", "Zoom")}</span>
+          <span style="flex:1">${hyadeOSI18n.t("desktop.browser.zoom", "Zoom")}</span>
           <button data-act="zoom-out" style="width:auto;padding:4px 10px">−</button>
           <span style="min-width:42px;text-align:center">${zoom}%</span>
           <button data-act="zoom-in" style="width:auto;padding:4px 10px">+</button>
         </div>
-        <button data-act="extensions"><span class="material-symbols-outlined check" style="color:inherit">extension</span>${hyadeOSSI18n.t("desktop.browser.extensions", "Extensions")}</button>
-        <hr><div class="menu-label">${hyadeOSSI18n.t("desktop.browser.theme", "Theme")}</div>
+        <button data-act="extensions"><span class="material-symbols-outlined check" style="color:inherit">extension</span>${hyadeOSI18n.t("desktop.browser.extensions", "Extensions")}</button>
+        <hr><div class="menu-label">${hyadeOSI18n.t("desktop.browser.theme", "Theme")}</div>
         <div class="browser-themes">${browserThemeSwatches()}</div>
-        <hr><div class="menu-label">${hyadeOSSI18n.t("desktop.browser.search-engine", "Search engine")}</div>
+        <hr><div class="menu-label">${hyadeOSI18n.t("desktop.browser.search-engine", "Search engine")}</div>
         ${Object.entries(BROWSER_ENGINES).map(([id, e]) =>
           `<button data-engine="${id}"><span class="material-symbols-outlined check">${id === engine ? 'check' : ''}</span>${e.name}</button>`).join('')}
         <hr>
-        <button data-act="clear-data"><span class="material-symbols-outlined check" style="color:inherit">delete</span>${hyadeOSSI18n.t("desktop.browser.clear-data", "Clear browsing data")}</button>`;
+        <button data-act="clear-data"><span class="material-symbols-outlined check" style="color:inherit">delete</span>${hyadeOSI18n.t("desktop.browser.clear-data", "Clear browsing data")}</button>`;
       menu.onclick = async event => {
         const item = event.target.closest('button');
         if (!item) return;
@@ -3969,9 +3974,9 @@ snapZone = getSnapZone(pendingX, pendingY);
         if (act === 'find') openBrowserFind();
         if (act === 'extensions') openBrowserExtPanel();
         if (act === 'clear-data') {
-          if (!window.hyadeOSSElectron?.clearBrowserData) { showNotification(hyadeOSSI18n.t("desktop.app.browser", "Browser"), hyadeOSSI18n.t("desktop.browser.not-available", "Not available in this mode."), '⚠️'); return; }
-          try { await window.hyadeOSSElectron.clearBrowserData(); showNotification(hyadeOSSI18n.t("desktop.app.browser", "Browser"), hyadeOSSI18n.t("desktop.browser.data-cleared", "Cookies, cache and site data cleared."), '🧹'); }
-          catch (error) { showNotification(hyadeOSSI18n.t("desktop.app.browser", "Browser"), error.message || hyadeOSSI18n.t("desktop.browser.clear-failed", "Could not clear browsing data."), '⚠️'); }
+          if (!window.hyadeOSElectron?.clearBrowserData) { showNotification(hyadeOSI18n.t("desktop.app.browser", "Browser"), hyadeOSI18n.t("desktop.browser.not-available", "Not available in this mode."), '⚠️'); return; }
+          try { await window.hyadeOSElectron.clearBrowserData(); showNotification(hyadeOSI18n.t("desktop.app.browser", "Browser"), hyadeOSI18n.t("desktop.browser.data-cleared", "Cookies, cache and site data cleared."), '🧹'); }
+          catch (error) { showNotification(hyadeOSI18n.t("desktop.app.browser", "Browser"), error.message || hyadeOSI18n.t("desktop.browser.clear-failed", "Could not clear browsing data."), '⚠️'); }
         }
       };
       const custom = menu.querySelector('.browser-theme-custom input');
@@ -3980,7 +3985,7 @@ snapZone = getSnapZone(pendingX, pendingY);
     }
 
     // --- Address bar autofill: what you visit is remembered here and completed as you type. ---
-    const BROWSER_HISTORY_KEY = (window.hyadeOSSUserKey || (k => k))('browserHistory');
+    const BROWSER_HISTORY_KEY = (window.hyadeOSUserKey || (k => k))('browserHistory');
     const BROWSER_SEED_SITES = ['google.com', 'youtube.com', 'github.com', 'wikipedia.org', 'reddit.com', 'x.com', 'instagram.com', 'facebook.com',
       'amazon.com', 'netflix.com', 'twitch.tv', 'spotify.com', 'discord.com', 'stackoverflow.com', 'claude.ai', 'chatgpt.com', 'duckduckgo.com',
       'bing.com', 'linkedin.com', 'outlook.com', 'mail.google.com', 'maps.google.com', 'translate.google.com', 'drive.google.com', 'whatsapp.com',
@@ -4047,7 +4052,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       }
       const engine = BROWSER_ENGINES[getBrowserEngineId()];
       browserSuggestItems = browserTyped.trim()
-        ? [...items, { search: true, text: browserTyped.trim(), url: null, title: hyadeOSSI18n.t("desktop.browser.search-with", "Search with {engine}", { engine: engine.name }) }]
+        ? [...items, { search: true, text: browserTyped.trim(), url: null, title: hyadeOSI18n.t("desktop.browser.search-with", "Search with {engine}", { engine: engine.name }) }]
         : [];
       browserSuggestIndex = -1;
       renderBrowserSuggestions();
@@ -4103,8 +4108,8 @@ snapZone = getSnapZone(pendingX, pendingY);
     function browserThemeSwatches() {
       const current = getBrowserTheme();
       const custom = current.startsWith('#') && !BROWSER_THEMES.some(([id]) => id === current);
-      return BROWSER_THEMES.map(([id, color]) => `<button class="browser-theme${id === current ? ' on' : ''}" data-theme="${id}" style="--sw:${color}" title="${id === 'default' ? hyadeOSSI18n.t("desktop.browser.theme-default", "Default") : id === 'accent' ? hyadeOSSI18n.t("desktop.browser.theme-accent", "System accent") : id}"></button>`).join('') +
-        `<button class="browser-theme browser-theme-custom${custom ? ' on' : ''}" style="--sw:${custom ? current : 'conic-gradient(#ff6b6b, #fcc419, #51cf66, #339af0, #cc5de8, #ff6b6b)'}" title="${hyadeOSSI18n.t("desktop.browser.theme-custom", "Custom colour")}"><span class="material-symbols-outlined">colorize</span><input type="color" value="${custom ? current : '#4263eb'}"></button>`;
+      return BROWSER_THEMES.map(([id, color]) => `<button class="browser-theme${id === current ? ' on' : ''}" data-theme="${id}" style="--sw:${color}" title="${id === 'default' ? hyadeOSI18n.t("desktop.browser.theme-default", "Default") : id === 'accent' ? hyadeOSI18n.t("desktop.browser.theme-accent", "System accent") : id}"></button>`).join('') +
+        `<button class="browser-theme browser-theme-custom${custom ? ' on' : ''}" style="--sw:${custom ? current : 'conic-gradient(#ff6b6b, #fcc419, #51cf66, #339af0, #cc5de8, #ff6b6b)'}" title="${hyadeOSI18n.t("desktop.browser.theme-custom", "Custom colour")}"><span class="material-symbols-outlined">colorize</span><input type="color" value="${custom ? current : '#4263eb'}"></button>`;
     }
     function applyBrowserTheme() {
       const popup = document.getElementById('popup2'), theme = getBrowserTheme();
@@ -4122,8 +4127,8 @@ snapZone = getSnapZone(pendingX, pendingY);
     }
 
     // --- Extensions: Chrome Web Store or unpacked, run only inside the browser's session. ---
-    const BROWSER_PARTITION = 'persist:hyadeoss-browser';
-    const browserExtApi = () => window.hyadeOSSElectron?.browserExtensions;
+    const BROWSER_PARTITION = 'persist:hyadeoss-browser'; // legacy name, kept: it holds the browser's logins and extensions
+    const browserExtApi = () => window.hyadeOSElectron?.browserExtensions;
     let browserExtensionList = [];
     const browserStoreId = url => { const match = /^https:\/\/chromewebstore\.google\.com\/detail\/(?:[^/]+\/)?([a-p]{32})/.exec(url || ''); return match ? match[1] : null; };
 
@@ -4152,14 +4157,14 @@ snapZone = getSnapZone(pendingX, pendingY);
       if (!id) return;
       const installed = browserExtensionList.some(ext => ext.id === id);
       chip.disabled = installed;
-      browserEl('browserExtAddLabel').textContent = installed ? hyadeOSSI18n.t("desktop.browser.ext-installed", "Installed") : hyadeOSSI18n.t("desktop.browser.ext-add", "Add to hyadeOSS");
+      browserEl('browserExtAddLabel').textContent = installed ? hyadeOSI18n.t("desktop.browser.ext-installed", "Installed") : hyadeOSI18n.t("desktop.browser.ext-add", "Add to hyadeOS");
     }
 
     // An extension's popup is its own page, shown in a small view of the same session.
     function openBrowserExtPopup(ext, anchor) {
       const pop = browserEl('browserExtPopup');
       if (!pop.hidden && pop.dataset.id === ext.id) { closeBrowserExtPopup(); return; }
-      if (!ext.popup) { showNotification(ext.name, hyadeOSSI18n.t("desktop.browser.ext-no-popup", "This extension works on its own and has no window."), '🧩'); return; }
+      if (!ext.popup) { showNotification(ext.name, hyadeOSI18n.t("desktop.browser.ext-no-popup", "This extension works on its own and has no window."), '🧩'); return; }
       const view = document.createElement('webview');
       view.setAttribute('partition', BROWSER_PARTITION);
       view.style.width = '300px'; view.style.height = '150px';
@@ -4182,17 +4187,17 @@ snapZone = getSnapZone(pendingX, pendingY);
 
     function openBrowserExtPanel() {
       const panel = browserEl('browserExtPanel');
-      if (!browserExtApi()) { showNotification(hyadeOSSI18n.t("desktop.app.browser", "Browser"), hyadeOSSI18n.t("desktop.browser.not-available", "Not available in this mode."), '⚠️'); return; }
+      if (!browserExtApi()) { showNotification(hyadeOSI18n.t("desktop.app.browser", "Browser"), hyadeOSI18n.t("desktop.browser.not-available", "Not available in this mode."), '⚠️'); return; }
       panel.innerHTML = `
-        <div class="bx-head"><span>${hyadeOSSI18n.t("desktop.browser.extensions", "Extensions")}</span><button class="browser-nav-btn" type="button" data-bx="close"><span class="material-symbols-outlined" style="font-size:18px;">close</span></button></div>
-        <div class="bx-install"><input id="bxInput" type="text" spellcheck="false" placeholder="${hyadeOSSI18n.t("desktop.browser.ext-input", "Chrome Web Store link or extension ID")}"><button class="bx-btn primary" type="button" data-bx="install">${hyadeOSSI18n.t("desktop.browser.ext-install", "Install")}</button></div>
+        <div class="bx-head"><span>${hyadeOSI18n.t("desktop.browser.extensions", "Extensions")}</span><button class="browser-nav-btn" type="button" data-bx="close"><span class="material-symbols-outlined" style="font-size:18px;">close</span></button></div>
+        <div class="bx-install"><input id="bxInput" type="text" spellcheck="false" placeholder="${hyadeOSI18n.t("desktop.browser.ext-input", "Chrome Web Store link or extension ID")}"><button class="bx-btn primary" type="button" data-bx="install">${hyadeOSI18n.t("desktop.browser.ext-install", "Install")}</button></div>
         <div class="bx-row">
-          <button class="bx-btn" type="button" data-bx="store"><span class="material-symbols-outlined">storefront</span>${hyadeOSSI18n.t("desktop.browser.ext-store", "Chrome Web Store")}</button>
-          <button class="bx-btn" type="button" data-bx="unpacked"><span class="material-symbols-outlined">folder_open</span>${hyadeOSSI18n.t("desktop.browser.ext-unpacked", "Load unpacked")}</button>
+          <button class="bx-btn" type="button" data-bx="store"><span class="material-symbols-outlined">storefront</span>${hyadeOSI18n.t("desktop.browser.ext-store", "Chrome Web Store")}</button>
+          <button class="bx-btn" type="button" data-bx="unpacked"><span class="material-symbols-outlined">folder_open</span>${hyadeOSI18n.t("desktop.browser.ext-unpacked", "Load unpacked")}</button>
         </div>
         <div class="bx-status" id="bxStatus"></div>
         <div class="bx-list" id="bxList"></div>
-        <div class="bx-note">${hyadeOSSI18n.t("desktop.browser.ext-note", "Extensions only run in the browser. Some Chrome features they rely on may be missing.")}</div>`;
+        <div class="bx-note">${hyadeOSI18n.t("desktop.browser.ext-note", "Extensions only run in the browser. Some Chrome features they rely on may be missing.")}</div>`;
       panel.onclick = async event => {
         const button = event.target.closest('[data-bx]');
         if (!button) return;
@@ -4201,7 +4206,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         if (act === 'store') { panel.hidden = true; createBrowserTab('https://chromewebstore.google.com/category/extensions'); return; }
         if (act === 'install') { installBrowserExtension(browserEl('bxInput').value); return; }
         if (act === 'unpacked') {
-          try { const ext = await browserExtApi().loadUnpacked(); if (ext) setBrowserExtStatus(hyadeOSSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name })); }
+          try { const ext = await browserExtApi().loadUnpacked(); if (ext) setBrowserExtStatus(hyadeOSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name })); }
           catch (error) { setBrowserExtStatus(browserExtError(error), true); }
           refreshBrowserExtensions(); return;
         }
@@ -4224,19 +4229,19 @@ snapZone = getSnapZone(pendingX, pendingY);
 
     function renderBrowserExtPanel() {
       const list = browserEl('bxList'); if (!list) return;
-      if (!browserExtensionList.length) { list.innerHTML = `<div class="bx-empty">${hyadeOSSI18n.t("desktop.browser.ext-empty", "No extensions yet")}</div>`; return; }
+      if (!browserExtensionList.length) { list.innerHTML = `<div class="bx-empty">${hyadeOSI18n.t("desktop.browser.ext-empty", "No extensions yet")}</div>`; return; }
       list.replaceChildren(...browserExtensionList.map(ext => {
         const row = document.createElement('div'); row.className = 'bx-item'; row.dataset.ext = ext.id || '';
         const icon = ext.icon ? Object.assign(document.createElement('img'), { src: ext.icon, alt: '' }) : Object.assign(document.createElement('span'), { className: 'bx-noicon material-symbols-outlined', textContent: 'extension' });
         const text = document.createElement('div'); text.className = 'bx-text';
         const name = document.createElement('div'); name.className = 'bx-name'; name.textContent = ext.name + (ext.version ? '  ' + ext.version : '');
-        const desc = document.createElement('div'); desc.className = 'bx-desc'; desc.textContent = ext.description || (ext.source === 'unpacked' ? hyadeOSSI18n.t("desktop.browser.ext-unpacked", "Load unpacked") : '');
+        const desc = document.createElement('div'); desc.className = 'bx-desc'; desc.textContent = ext.description || (ext.source === 'unpacked' ? hyadeOSI18n.t("desktop.browser.ext-unpacked", "Load unpacked") : '');
         desc.title = ext.description || '';
         text.append(name, desc);
         const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'bx-switch' + (ext.enabled ? ' on' : ''); toggle.dataset.bx = 'toggle';
-        toggle.title = ext.enabled ? hyadeOSSI18n.t("desktop.browser.ext-disable", "Turn off") : hyadeOSSI18n.t("desktop.browser.ext-enable", "Turn on");
+        toggle.title = ext.enabled ? hyadeOSI18n.t("desktop.browser.ext-disable", "Turn off") : hyadeOSI18n.t("desktop.browser.ext-enable", "Turn on");
         const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'browser-nav-btn'; remove.dataset.bx = 'remove';
-        remove.title = hyadeOSSI18n.t("common.remove", "Remove");
+        remove.title = hyadeOSI18n.t("common.remove", "Remove");
         remove.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">delete</span>';
         row.append(icon, text, toggle, remove);
         return row;
@@ -4246,16 +4251,16 @@ snapZone = getSnapZone(pendingX, pendingY);
     async function installBrowserExtension(input) {
       if (!browserExtApi() || !String(input || '').trim()) return;
       const chip = browserEl('browserExtAdd');
-      chip.disabled = true; browserEl('browserExtAddLabel').textContent = hyadeOSSI18n.t("desktop.browser.ext-installing", "Installing…");
-      setBrowserExtStatus(hyadeOSSI18n.t("desktop.browser.ext-installing", "Installing…"));
+      chip.disabled = true; browserEl('browserExtAddLabel').textContent = hyadeOSI18n.t("desktop.browser.ext-installing", "Installing…");
+      setBrowserExtStatus(hyadeOSI18n.t("desktop.browser.ext-installing", "Installing…"));
       try {
         const ext = await browserExtApi().install(String(input).trim());
-        setBrowserExtStatus(hyadeOSSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name }));
-        showNotification(hyadeOSSI18n.t("desktop.browser.extensions", "Extensions"), hyadeOSSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name }), '🧩');
+        setBrowserExtStatus(hyadeOSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name }));
+        showNotification(hyadeOSI18n.t("desktop.browser.extensions", "Extensions"), hyadeOSI18n.t("desktop.browser.ext-added", "{name} added", { name: ext.name }), '🧩');
         if (browserEl('bxInput')) browserEl('bxInput').value = '';
       } catch (error) {
         setBrowserExtStatus(browserExtError(error), true);
-        showNotification(hyadeOSSI18n.t("desktop.browser.extensions", "Extensions"), browserExtError(error), '⚠️');
+        showNotification(hyadeOSI18n.t("desktop.browser.extensions", "Extensions"), browserExtError(error), '⚠️');
       }
       refreshBrowserExtensions();
     }
@@ -4335,17 +4340,17 @@ snapZone = getSnapZone(pendingX, pendingY);
         }
       }, true);
       // ...and while focus is inside a page (forwarded by the Electron shell).
-      window.hyadeOSSElectron?.onBrowserShortcut?.(name => {
+      window.hyadeOSElectron?.onBrowserShortcut?.(name => {
         if (document.getElementById('popup2').classList.contains('active')) runBrowserShortcut(name);
       });
-      window.hyadeOSSElectron?.onBrowserOpenTab?.(url => {
+      window.hyadeOSElectron?.onBrowserOpenTab?.(url => {
         if (/^https?:\/\//i.test(url)) openUrlInBrowserTab(url);
       });
     })();
 
     // Sign out: the session ends on the server too (and a guest's files are erased), then the login.
     function signOut() {
-      fetch('/api/system/logout', { method: 'POST' }).catch(() => {}).finally(() => { window.location.href = '/loginui/com.hyadeoss.loginui.html'; });
+      fetch('/api/system/logout', { method: 'POST' }).catch(() => {}).finally(() => { window.location.href = '/loginui/com.hyadeos.loginui.html'; });
     }
 
     // Win+D: hides every open window; pressed again (with nothing opened in between) it
@@ -4384,7 +4389,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       'alt+f4': () => { const top = getTopmostPopup(); if (top && !top.id.startsWith('dialog_')) closePopup(top.id); }
     };
     SYSTEM_KEY_ACTIONS['win+space'] = SYSTEM_KEY_ACTIONS['win+s'];
-    window.hyadeOSSElectron?.onSystemKey?.(name => {
+    window.hyadeOSElectron?.onSystemKey?.(name => {
       const action = SYSTEM_KEY_ACTIONS[name];
       const locked = document.getElementById('lockscreenContainer')?.classList.contains('active');
       // While locked, the keys do nothing: the lock screen is the only way back in.
@@ -4396,7 +4401,7 @@ snapZone = getSnapZone(pendingX, pendingY);
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let systemTimeOffset = 0, timezoneOffset = 0, manualTimeEnabled = false;
     // Other languages: names and formats from Intl (the dates below are UTC-based).
-    const calFormat = (options, date) => new Intl.DateTimeFormat(hyadeOSSI18n.locale, { timeZone: 'UTC', ...options }).format(date);
+    const calFormat = (options, date) => new Intl.DateTimeFormat(hyadeOSI18n.locale, { timeZone: 'UTC', ...options }).format(date);
     const calCapitalize = text => text.charAt(0).toUpperCase() + text.slice(1);
 
     // --- System calendar (tray) — shares its events with the Calendar app ---
@@ -4452,7 +4457,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       calLastKey = key;
 
       const dayEl = document.getElementById('calDayText'), dateEl = document.getElementById('calDateText');
-      const localized = !!hyadeOSSI18n.locale;
+      const localized = !!hyadeOSI18n.locale;
       if(dayEl) dayEl.textContent = localized ? calCapitalize(calFormat({ weekday: 'long' }, d)) : dayName;
       if(dateEl) dateEl.textContent = localized ? calFormat({ day: 'numeric', month: 'long', year: 'numeric' }, d) : `${monthName} ${date}, ${year}`;
       const label = document.getElementById('calMonthLabel'); if (label) label.textContent = localized ? calCapitalize(calFormat({ month: 'long', year: 'numeric' }, viewStart)) : `${months[vm]} ${vy}`;
@@ -4485,8 +4490,8 @@ snapZone = getSnapZone(pendingX, pendingY);
       if (list) {
         const evs = calEventsOn(picked);
         const p = calParse(picked);
-        const title = picked === todayStr ? hyadeOSSI18n.t("desktop.cal.today", "Today") : localized ? calFormat({ weekday: 'long', day: 'numeric', month: 'long' }, new Date(Date.UTC(p.y, p.m, p.d))) : `${days[new Date(Date.UTC(p.y, p.m, p.d)).getUTCDay()]}, ${months[p.m]} ${p.d}`;
-        list.innerHTML = evs.length ? `<div class="cal-events-title">${calEsc(title)}</div>` + evs.map(ev => `<div class="cal-ev" data-date="${picked}"><div class="cal-ev-bar" style="background:${CAL_COLORS[ev.color] || CAL_COLORS.blue}"></div><div><div class="cal-ev-title">${calEsc(ev.title)}</div><div class="cal-ev-time">${ev.allDay ? hyadeOSSI18n.t("desktop.cal.all-day", "All day") : calEsc(ev.start + (ev.end ? ' – ' + ev.end : ''))}${ev.location ? ' · ' + calEsc(ev.location) : ''}</div></div></div>`).join('') : '';
+        const title = picked === todayStr ? hyadeOSI18n.t("desktop.cal.today", "Today") : localized ? calFormat({ weekday: 'long', day: 'numeric', month: 'long' }, new Date(Date.UTC(p.y, p.m, p.d))) : `${days[new Date(Date.UTC(p.y, p.m, p.d)).getUTCDay()]}, ${months[p.m]} ${p.d}`;
+        list.innerHTML = evs.length ? `<div class="cal-events-title">${calEsc(title)}</div>` + evs.map(ev => `<div class="cal-ev" data-date="${picked}"><div class="cal-ev-bar" style="background:${CAL_COLORS[ev.color] || CAL_COLORS.blue}"></div><div><div class="cal-ev-title">${calEsc(ev.title)}</div><div class="cal-ev-time">${ev.allDay ? hyadeOSI18n.t("desktop.cal.all-day", "All day") : calEsc(ev.start + (ev.end ? ' – ' + ev.end : ''))}${ev.location ? ' · ' + calEsc(ev.location) : ''}</div></div></div>`).join('') : '';
       }
     }
 
@@ -4496,7 +4501,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       const card = document.getElementById('calCard'), wrap = document.getElementById('calGridWrap'), grid = document.getElementById('calGrid');
       calCollapsed = collapsed;
       try { localStorage.setItem('trayCalendarCollapsed', String(collapsed)); } catch (e) {}
-      document.getElementById('calToggleLabel').textContent = collapsed ? hyadeOSSI18n.t("desktop.cal.show-more", "Show more") : hyadeOSSI18n.t("desktop.cal.show-less", "Show less");
+      document.getElementById('calToggleLabel').textContent = collapsed ? hyadeOSI18n.t("desktop.cal.show-more", "Show more") : hyadeOSI18n.t("desktop.cal.show-less", "Show less");
       if (!animate) { card.classList.toggle('collapsed', collapsed); return; }
       const from = wrap.offsetHeight;
       grid.classList.add('swap');
@@ -4556,10 +4561,10 @@ snapZone = getSnapZone(pendingX, pendingY);
             calFired[key] = Date.now();
             saveCalFired();
             const mins = startMin - nowMin;
-            const when = mins <= 0 ? hyadeOSSI18n.t("desktop.reminder.now", "Starting now")
-              : mins < 60 ? hyadeOSSI18n.t("desktop.reminder.minutes", "Starts in {count} min ({time})", { count: mins, time: ev.start })
-              : mins < 1440 ? hyadeOSSI18n.t("desktop.reminder.hours", "Starts in {count} h ({time})", { count: Math.round(mins / 60), time: ev.start })
-              : hyadeOSSI18n.t("desktop.reminder.date", "Starts on {date} at {time}", { date, time: ev.start });
+            const when = mins <= 0 ? hyadeOSI18n.t("desktop.reminder.now", "Starting now")
+              : mins < 60 ? hyadeOSI18n.t("desktop.reminder.minutes", "Starts in {count} min ({time})", { count: mins, time: ev.start })
+              : mins < 1440 ? hyadeOSI18n.t("desktop.reminder.hours", "Starts in {count} h ({time})", { count: Math.round(mins / 60), time: ev.start })
+              : hyadeOSI18n.t("desktop.reminder.date", "Starts on {date} at {time}", { date, time: ev.start });
             showNotification(ev.title, `${when}${ev.location ? ' · ' + ev.location : ''}`, '📅');
           }
         }
@@ -4574,7 +4579,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       if (timezoneOffset !== null) { utcMs += timezoneOffset * 3600000; } else if (manualTimeEnabled) { utcMs += systemTimeOffset; }
       const d = new Date(utcMs); let h = d.getUTCHours(), m = d.getUTCMinutes();
       const ampm = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; m = m < 10 ? "0" + m : m;
-      const clockText = hyadeOSSI18n.locale ? calFormat({ hour: 'numeric', minute: '2-digit' }, d) : `${h}:${m} ${ampm}`;
+      const clockText = hyadeOSI18n.locale ? calFormat({ hour: 'numeric', minute: '2-digit' }, d) : `${h}:${m} ${ampm}`;
       // Rewriting the same text every second would repaint the taskbar and redo its blur.
       const clockEl = document.getElementById("clockBtn"); if(clockEl && clockEl.textContent !== clockText) clockEl.textContent = clockText;
       renderCalendarGrid(d);
@@ -4675,7 +4680,7 @@ snapZone = getSnapZone(pendingX, pendingY);
           document.getElementById('batteryIcon').textContent = battery.charging ? 'battery_android_frame_bolt' : batteryGlyph(percent);
           button.classList.toggle('charging', battery.charging);
           button.classList.toggle('low', !battery.charging && percent <= 20);
-          button.title = (battery.charging ? hyadeOSSI18n.t("desktop.battery.charging", "Charging") : hyadeOSSI18n.t("desktop.battery.on-battery", "On battery")) + ` · ${percent}%`;
+          button.title = (battery.charging ? hyadeOSI18n.t("desktop.battery.charging", "Charging") : hyadeOSI18n.t("desktop.battery.on-battery", "On battery")) + ` · ${percent}%`;
         };
         render();
         button.hidden = false;
@@ -4707,7 +4712,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         if (typeof deselectDesktopItems === 'function') deselectDesktopItems();
       }
     });
-    const liveWallpaper = hyadeOSSLiveWallpaper.mount(document.getElementById('desktop-wallpaper'));
+    const liveWallpaper = hyadeOSLiveWallpaper.mount(document.getElementById('desktop-wallpaper'));
     function applyUserWallpaper(forceReload = false) {
      const wallpaper = document.getElementById('desktop-wallpaper');
      if (forceReload) liveWallpaper.reload();
@@ -4742,11 +4747,11 @@ snapZone = getSnapZone(pendingX, pendingY);
     function applyDesktopStyle() {
       const st = loadDesktopStyle();
       const root = document.documentElement;
-      const { accent, on, text } = hyadeOSSAccent.derive(st.accent);
+      const { accent, on, text } = hyadeOSAccent.derive(st.accent);
       root.style.setProperty('--m3-accent-active', accent);
       root.style.setProperty('--m3-accent-on-active', on);
       root.style.setProperty('--m3-accent-text', text);
-      hyadeOSSAccent.apply();
+      hyadeOSAccent.apply();
 
       const wallpaper = document.getElementById('desktop-wallpaper');
       if (st.wallpaperMode === 'color') {
@@ -4853,7 +4858,7 @@ snapZone = getSnapZone(pendingX, pendingY);
       if (e.data.type === 'maximize-app') { toggleMaximize(e.data.appId); }
       
       if (e.origin && e.origin.includes("minnit.chat")) {
-        try { const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; if (data && (data.action === 'newMessage' || data.type === 'message' || data.event === 'notification')) showNotification(hyadeOSSI18n.t("desktop.app.messaging", "Messaging"), hyadeOSSI18n.t("desktop.notify.new-message", "New message received"), "💬"); } catch(err) {}
+        try { const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; if (data && (data.action === 'newMessage' || data.type === 'message' || data.event === 'notification')) showNotification(hyadeOSI18n.t("desktop.app.messaging", "Messaging"), hyadeOSI18n.t("desktop.notify.new-message", "New message received"), "💬"); } catch(err) {}
       }
 
       if (e.data.type === 'apply-style') applyDesktopStyle();
@@ -4874,7 +4879,7 @@ snapZone = getSnapZone(pendingX, pendingY);
 
           updateDock();
           const notifIcon = (app.icon && (app.icon.includes('/') || app.icon.includes('.'))) ? "📦" : (app.icon || "📦");
-          showNotification(hyadeOSSI18n.t("desktop.notify.app-installed", "App is installed"), hyadeOSSI18n.t("desktop.notify.app-ready", "{app} is ready to use!", { app: app.title }), notifIcon);
+          showNotification(hyadeOSI18n.t("desktop.notify.app-installed", "App is installed"), hyadeOSI18n.t("desktop.notify.app-ready", "{app} is ready to use!", { app: app.title }), notifIcon);
         }
       }
       
@@ -4884,7 +4889,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         pinnedApps = pinnedApps.filter(id => id !== appId); localStorage.setItem('hmos_pinned_apps', JSON.stringify(pinnedApps));
         document.querySelectorAll(`[data-popup="${appId}"]`).forEach(el => el.remove()); 
         const popupDiv = document.getElementById(appId); if (popupDiv) { setTimeout(() => popupDiv.remove(), 400); } 
-        updateDock(); showNotification(hyadeOSSI18n.t("desktop.notify.app-removed", "App removed"), hyadeOSSI18n.t("desktop.notify.app-removed-msg", "The application has been removed."), "🗑️");
+        updateDock(); showNotification(hyadeOSI18n.t("desktop.notify.app-removed", "App removed"), hyadeOSI18n.t("desktop.notify.app-removed-msg", "The application has been removed."), "🗑️");
       }
 
       if (e.data.type === 'notes-ready') {
@@ -5044,10 +5049,10 @@ snapZone = getSnapZone(pendingX, pendingY);
       kpDiv.innerHTML = `
         <div class="kp-center">
           <div class="kp-qr">
-            <img src="${qrUrl}" alt="${hyadeOSSI18n.t("desktop.panic.qr-alt", "QR Code Error Info")}">
+            <img src="${qrUrl}" alt="${hyadeOSI18n.t("desktop.panic.qr-alt", "QR Code Error Info")}">
           </div>
           <div class="kp-text" style="font-weight: bold;">KERNEL PANIC!</div>
-          <div class="kp-text">${hyadeOSSI18n.t("desktop.panic.reboot", "Please reboot your computer.")}</div>
+          <div class="kp-text">${hyadeOSI18n.t("desktop.panic.reboot", "Please reboot your computer.")}</div>
           <br>
           <div class="kp-text" style="font-size: 12px; color: #ccc;">
             Error code: BACKEND_WATCHDOG_TIMEOUT (0x00000001)<br>
@@ -5079,12 +5084,12 @@ snapZone = getSnapZone(pendingX, pendingY);
       applyDesktopStyle();
       clearInterval(labDevTimer);
       labDevTimer = null;
-      window.hyadeOSSDevStats = null;
+      window.hyadeOSDevStats = null;
       if (flags.developer) startLabDevChip();
     }
 
     // Developer Options: the desktop measures, Settings → Functions Lab shows it under
-    // Performance Tuning (window.hyadeOSSDevStats, read by that page every second).
+    // Performance Tuning (window.hyadeOSDevStats, read by that page every second).
     function startLabDevChip() {
       let frames = 0, last = performance.now();
       const countFrame = () => { frames++; if (labDevTimer) requestAnimationFrame(countFrame); };
@@ -5093,7 +5098,7 @@ snapZone = getSnapZone(pendingX, pendingY);
         const fps = Math.round(frames * 1000 / (now - last)); frames = 0; last = now;
         let kernel;
         try { const r = await fetch('/api/system/health', { cache: 'no-store' }); kernel = r.ok ? 'online' : 'error ' + r.status; } catch (e) { kernel = 'offline'; }
-        window.hyadeOSSDevStats = { fps, heapMB: performance.memory ? +(performance.memory.usedJSHeapSize / 1048576).toFixed(1) : null, apps: runningApps.size, kernel, at: Date.now() };
+        window.hyadeOSDevStats = { fps, heapMB: performance.memory ? +(performance.memory.usedJSHeapSize / 1048576).toFixed(1) : null, apps: runningApps.size, kernel, at: Date.now() };
       }, 1000);
       requestAnimationFrame(countFrame);
     }
@@ -5303,14 +5308,14 @@ snapZone = getSnapZone(pendingX, pendingY);
     const openText = document.getElementById('itemMenuOpenText');
     if (isAppShortcut(item)) {
       openIcon.textContent = 'open_in_new';
-      openText.textContent = hyadeOSSI18n.t("common.open", "Open");
+      openText.textContent = hyadeOSI18n.t("common.open", "Open");
     } else if (item.type === 'folder') {
       openIcon.textContent = 'folder_open';
-      openText.textContent = hyadeOSSI18n.t("desktop.item.open-in-files", "Open in Files");
+      openText.textContent = hyadeOSI18n.t("desktop.item.open-in-files", "Open in Files");
     } 
     else {
       openIcon.textContent = 'open_in_new';
-      openText.textContent = hyadeOSSI18n.t("desktop.item.open-in-notes", "Open in Notes");
+      openText.textContent = hyadeOSI18n.t("desktop.item.open-in-notes", "Open in Notes");
   }
 
   menu.style.position = 'fixed';
@@ -5350,16 +5355,16 @@ snapZone = getSnapZone(pendingX, pendingY);
       document.getElementById('desktopContextMenu').classList.remove('open');
       
       try {
-        let baseName = type === 'folder' ? hyadeOSSI18n.t("desktop.menu.new-folder", "New Folder") : hyadeOSSI18n.t("desktop.menu.new-text-file", "New Text File") + '.txt';
+        let baseName = type === 'folder' ? hyadeOSI18n.t("desktop.menu.new-folder", "New Folder") : hyadeOSI18n.t("desktop.menu.new-text-file", "New Text File") + '.txt';
         let candidate = baseName;
         let counter = 2;
         const existingNames = new Set(desktopItemsList.map(i => i.name.toLowerCase()));
 
         while (existingNames.has(candidate.toLowerCase())) {
           if (type === 'folder') {
-            candidate = hyadeOSSI18n.t("desktop.new-item.folder-numbered", "New Folder ({n})", { n: counter });
+            candidate = hyadeOSI18n.t("desktop.new-item.folder-numbered", "New Folder ({n})", { n: counter });
           } else {
-            candidate = hyadeOSSI18n.t("desktop.new-item.text-file-numbered", "New Text File ({n})", { n: counter }) + '.txt';
+            candidate = hyadeOSI18n.t("desktop.new-item.text-file-numbered", "New Text File ({n})", { n: counter }) + '.txt';
           }
           counter++;
         }
@@ -5385,7 +5390,7 @@ snapZone = getSnapZone(pendingX, pendingY);
           explorerIframe.contentWindow.postMessage({type: 'refresh-view'}, '*');
         }
       } catch (e) {
-        showNotification(hyadeOSSI18n.t("common.error", "Error"), hyadeOSSI18n.t("desktop.item.create-failed", "Could not create item."), "❌");
+        showNotification(hyadeOSI18n.t("common.error", "Error"), hyadeOSI18n.t("desktop.item.create-failed", "Could not create item."), "❌");
       }
     }
 
@@ -5440,7 +5445,7 @@ snapZone = getSnapZone(pendingX, pendingY);
             input.remove();
             nameSpan.style.display = '';
             isDesktopRenaming = false;
-            showNotification("Desktop", hyadeOSSI18n.t("desktop.item.renamed", "Renamed to {name}", { name: newName }), "✏️");
+            showNotification("Desktop", hyadeOSI18n.t("desktop.item.renamed", "Renamed to {name}", { name: newName }), "✏️");
             const explorerIframe = document.querySelector('#popup10 iframe');
             if(explorerIframe && explorerIframe.contentWindow) {
               explorerIframe.contentWindow.postMessage({type: 'refresh-view'}, '*');
@@ -5449,7 +5454,7 @@ snapZone = getSnapZone(pendingX, pendingY);
             input.remove();
             nameSpan.style.display = '';
             isDesktopRenaming = false;
-            showNotification(hyadeOSSI18n.t("common.error", "Error"), resData.error || hyadeOSSI18n.t("desktop.item.rename-failed", "Could not rename"), "❌");
+            showNotification(hyadeOSI18n.t("common.error", "Error"), resData.error || hyadeOSI18n.t("desktop.item.rename-failed", "Could not rename"), "❌");
           }
         } catch (err) {
           input.remove();
@@ -5490,8 +5495,8 @@ snapZone = getSnapZone(pendingX, pendingY);
 
     function deleteDesktopItem(item) {
       showConfirmDialog(
-        item.type === 'folder' ? hyadeOSSI18n.t("desktop.item.delete-folder", "Delete Folder") : hyadeOSSI18n.t("desktop.item.delete-file", "Delete File"),
-        hyadeOSSI18n.t("desktop.item.delete-confirm", "Are you sure you want to delete \"{name}\"? This action cannot be undone.", { name: item.name }),
+        item.type === 'folder' ? hyadeOSI18n.t("desktop.item.delete-folder", "Delete Folder") : hyadeOSI18n.t("desktop.item.delete-file", "Delete File"),
+        hyadeOSI18n.t("desktop.item.delete-confirm", "Are you sure you want to delete \"{name}\"? This action cannot be undone.", { name: item.name }),
         async () => {
           try {
             await fetch('/api/system/files/delete', {
@@ -5501,16 +5506,16 @@ snapZone = getSnapZone(pendingX, pendingY);
             });
             selectedDesktopItem = null;
             loadDesktopIcons();
-            showNotification("Desktop", hyadeOSSI18n.t("desktop.item.deleted", "\"{name}\" deleted.", { name: item.name }), "🗑️");
+            showNotification("Desktop", hyadeOSI18n.t("desktop.item.deleted", "\"{name}\" deleted.", { name: item.name }), "🗑️");
             const explorerIframe = document.querySelector('#popup10 iframe');
             if(explorerIframe && explorerIframe.contentWindow) {
               explorerIframe.contentWindow.postMessage({type: 'refresh-view'}, '*');
             }
           } catch (e) {
-            showNotification(hyadeOSSI18n.t("common.error", "Error"), hyadeOSSI18n.t("desktop.item.delete-failed", "Could not delete item."), "❌");
+            showNotification(hyadeOSI18n.t("common.error", "Error"), hyadeOSI18n.t("desktop.item.delete-failed", "Could not delete item."), "❌");
           }
         },
-        hyadeOSSI18n.t("common.delete", "Delete"),
+        hyadeOSI18n.t("common.delete", "Delete"),
         true
       );
     }
@@ -5522,12 +5527,12 @@ snapZone = getSnapZone(pendingX, pendingY);
     document.body.addEventListener('drop', async (e) => {
       if (e.target.closest('.popup')) return; // Let apps handle their own drops
       e.preventDefault();
-      const droppedApp = e.dataTransfer.getData('application/x-hyadeoss-app');
+      const droppedApp = e.dataTransfer.getData('application/x-hyadeos-app');
       if (droppedApp) { if (!e.target.closest('.status-bar')) addAppShortcut(droppedApp); return; }
       
       const files = e.dataTransfer.files;
       if (files.length > 0) {
-        showNotification("Desktop", files.length === 1 ? hyadeOSSI18n.t("desktop.upload.progress.one", "Uploading {count} file...", { count: files.length }) : hyadeOSSI18n.t("desktop.upload.progress.other", "Uploading {count} files...", { count: files.length }), "⏳");
+        showNotification("Desktop", files.length === 1 ? hyadeOSI18n.t("desktop.upload.progress.one", "Uploading {count} file...", { count: files.length }) : hyadeOSI18n.t("desktop.upload.progress.other", "Uploading {count} files...", { count: files.length }), "⏳");
         
         let uploadsComplete = 0;
         for(let file of files) {
@@ -5543,7 +5548,7 @@ snapZone = getSnapZone(pendingX, pendingY);
              
              uploadsComplete++;
              if(uploadsComplete === files.length) {
-               showNotification("Desktop", hyadeOSSI18n.t("desktop.upload.done", "Uploads complete!"), "✅");
+               showNotification("Desktop", hyadeOSI18n.t("desktop.upload.done", "Uploads complete!"), "✅");
                loadDesktopIcons(); 
                
                const explorerIframe = document.querySelector('#popup10 iframe');

@@ -1,9 +1,9 @@
-// hyadeOSS anonymous usage counter (Cloudflare Worker + one KV namespace bound as STATS).
+// hyadeOS anonymous usage counter (Cloudflare Worker + one KV namespace bound as STATS).
 //
 //   POST /ping   {"version":"1.5.0","channel":"stable"}  -> adds 1 to today's total
 //   GET  /stats                                          -> daily totals of the last 30 days
 //
-// A hyadeOSS kernel pings at most once a day and only when its owner turned the count on
+// A hyadeOS kernel pings at most once a day and only when its owner turned the count on
 // (server.js › sendAnonymousStats), so a day's total is the number of systems that were on
 // that day. Nothing about the sender is stored: not the IP address, not a header, not an id.
 // Only the day, the version and the channel become part of a KV key.

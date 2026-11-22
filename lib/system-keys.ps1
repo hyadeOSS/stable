@@ -1,11 +1,11 @@
-# hyadeOSS builder note: Windows-style system keys for hyadeOSS, started by launcher.js.
+# hyadeOS builder note: Windows-style system keys for hyadeOS, started by launcher.js.
 # Windows handles the Windows key (Start, Win+D, Win+E...) before any app sees it, so a
-# low-level keyboard hook takes those keys while the hyadeOSS window is in the
+# low-level keyboard hook takes those keys while the hyadeOS window is in the
 # foreground and prints them, one per line, for the launcher to forward to the desktop:
 #
-#   win            the Windows key pressed and released alone (opens the hyadeOSS Start)
+#   win            the Windows key pressed and released alone (opens the hyadeOS Start)
 #   win+<key>      a combination, e.g. win+d, win+e, win+tab, win+l, win+shift+s, win+ctrl+left
-#   alt+f4         closes the hyadeOSS app in front instead of the whole system
+#   alt+f4         closes the hyadeOS app in front instead of the whole system
 #
 # Any other window keeps the normal Windows behaviour. Ctrl+Alt+Del is never touched (no
 # app can). The launcher writes "enable" or "disable" to stdin (Settings > General >
@@ -24,7 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-public static class HyadeOSSSystemKeys {
+public static class HyadeOSSystemKeys {
   [StructLayout(LayoutKind.Sequential)]
   struct KeyInfo { public uint vkCode; public uint scanCode; public uint flags; public uint time; public IntPtr extraInfo; }
   [StructLayout(LayoutKind.Sequential)]
@@ -108,12 +108,12 @@ public static class HyadeOSSSystemKeys {
       if (isCtrl) ctrlDown = down;
       if (isShift) shiftDown = down;
       // The Win release can go missing (Windows locked with Win+L takes it, or another
-      // window came to the front): never keep taking keys outside hyadeOSS because of it.
+      // window came to the front): never keep taking keys outside hyadeOS because of it.
       if (winHeld && (!enabled || GetForegroundWindow() != target)) winHeld = false;
 
       if (isWin) {
         if (down) {
-          // Taken only when it starts while hyadeOSS is in front, so a Win held from
+          // Taken only when it starts while hyadeOS is in front, so a Win held from
           // another app keeps working there.
           if (!winHeld && enabled && GetForegroundWindow() == target) { winHeld = true; comboUsed = false; }
           if (winHeld) return new IntPtr(1);
@@ -125,7 +125,7 @@ public static class HyadeOSSSystemKeys {
       } else if (winHeld && (isCtrl || isShift)) {
         // Modifiers pass through untouched and do not count as a combination on their own.
       } else if (winHeld) {
-        // Every other key pressed with the taken Win key belongs to hyadeOSS, known or not.
+        // Every other key pressed with the taken Win key belongs to hyadeOS, known or not.
         if (down) {
           comboUsed = true;
           string name = KeyName(key.vkCode);
@@ -145,4 +145,4 @@ public static class HyadeOSSSystemKeys {
 }
 '@
 
-[HyadeOSSSystemKeys]::Run([long]$Window, $ParentPid)
+[HyadeOSSystemKeys]::Run([long]$Window, $ParentPid)

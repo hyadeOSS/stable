@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hyadeOSS TV</title>
+    <title>hyadeOS TV</title>
     <script src="/desktop/assets/i18n-data.js"></script>
     <script src="/desktop/assets/i18n.js"></script>
     <script src="/desktop/assets/vendor/tailwind.js"></script>
@@ -117,7 +117,7 @@
     <!-- Top Navigation (Google TV style) -->
     <nav class="fixed top-0 left-0 w-full h-20 flex items-center px-12 z-50 bg-gradient-to-b from-[#0c0c0f] to-transparent">
         <div class="text-xl font-bold tracking-tighter mr-10 flex items-center gap-2">
-            <i class="fa-solid fa-tv text-blue-500"></i> hyadeOSS
+            <i class="fa-solid fa-tv text-blue-500"></i> hyadeOS
         </div>
         
         <div class="flex gap-4 items-center">
@@ -462,7 +462,7 @@
                 const posterEl = document.getElementById('modal-poster');
 
                 // Extract data from the card
-                let title = (el.hasAttribute('data-i18n') ? el.textContent.trim() : el.getAttribute('data-title')) || hyadeOSSI18n.t("tv.modal.unknown", "Unknown content");
+                let title = (el.hasAttribute('data-i18n') ? el.textContent.trim() : el.getAttribute('data-title')) || hyadeOSI18n.t("tv.modal.unknown", "Unknown content");
                 let bgImage = el.style.backgroundImage || "url('/desktop/tv/img/dde22f143780.jpg')";
                 
                 titleEl.textContent = title;

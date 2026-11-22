@@ -183,7 +183,7 @@
           <div class="icon-badge bg-keys"><span class="material-symbols-outlined">keyboard_command_key</span></div>
           <div>
             <div class="item-title" data-i18n="general.system-keys">Windows keys</div>
-            <div class="item-subtitle" data-i18n="general.system-keys.subtitle">Win, Win+D, Win+E, Win+L and Alt+F4 act on hyadeOSS</div>
+            <div class="item-subtitle" data-i18n="general.system-keys.subtitle">Win, Win+D, Win+E, Win+L and Alt+F4 act on hyadeOS</div>
           </div>
         </div>
         <label class="switch">
@@ -197,7 +197,7 @@
           <div class="icon-badge bg-keys"><span class="material-symbols-outlined">monitoring</span></div>
           <div>
             <div class="item-title" data-i18n="general.stats">Anonymous usage count</div>
-            <div class="item-subtitle" data-i18n="general.stats.subtitle">Once a day sends only the version and channel, to count hyadeOSS users</div>
+            <div class="item-subtitle" data-i18n="general.stats.subtitle">Once a day sends only the version and channel, to count hyadeOS users</div>
           </div>
         </div>
         <label class="switch">
@@ -312,8 +312,8 @@
 // Language: the choices come from /desktop/assets/locales/languages.json; the pick is
 // saved in the system settings, then Settings reloads in the new language.
 const languageSelect = document.getElementById('languageSelect');
-hyadeOSSI18n.ready.then(async () => {
-  Object.entries(hyadeOSSI18n.languages).forEach(([code, name]) => {
+hyadeOSI18n.ready.then(async () => {
+  Object.entries(hyadeOSI18n.languages).forEach(([code, name]) => {
     if (code === 'en') return;
     languageSelect.add(new Option(name, code));
   });
@@ -328,7 +328,7 @@ languageSelect.addEventListener('change', async () => {
     if (!response.ok) throw new Error(response.status);
     (window.parent || window).location.reload();
   } catch (e) {
-    languageSelect.value = hyadeOSSI18n.language;
+    languageSelect.value = hyadeOSI18n.language;
   }
 });
 

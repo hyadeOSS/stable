@@ -269,7 +269,7 @@ body.setup-page {
     .setup-word, .setup-stars, .setup-content, .setup-logo svg, .setup-done { animation: none; transition: none; }
 }
 
-/* ---- hyadeOSS 2 ----------------------------------------------------------------------------
+/* ---- hyadeOS 2 ----------------------------------------------------------------------------
    The setup screens share the system's surfaces: the same glass panel, radii and calm motion as
    the desktop (values from mw-design.css, repeated here because setup pages load only this file). */
 .setup-panel {

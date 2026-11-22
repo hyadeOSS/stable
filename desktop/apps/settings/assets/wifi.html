@@ -63,7 +63,7 @@
       document.getElementById('wifiToggle').checked = qs.wifi;
 
       if (!qs.wifi) {
-        document.getElementById('networksPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.wifi.disabled", "Wi-Fi is disabled.")}</div></div>`;
+        document.getElementById('networksPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.wifi.disabled", "Wi-Fi is disabled.")}</div></div>`;
         return;
       }
 
@@ -97,7 +97,7 @@
                   <span class="material-symbols-outlined" style="color: ${net.connected ? 'var(--sys-accent-text)' : 'white'}">wifi</span>
                   <div>
                     <div class="title" style="color: ${net.connected ? 'var(--sys-accent-text)' : 'white'}">${net.ssid}</div>
-                    <div class="subtitle" id="status-${safeId}">${net.connected ? hyadeOSSI18n.t("settings.wifi.connected", "Connected") : ''}</div>
+                    <div class="subtitle" id="status-${safeId}">${net.connected ? hyadeOSI18n.t("settings.wifi.connected", "Connected") : ''}</div>
                   </div>
                 </div>
                 ${net.secured ? '<span class="material-symbols-outlined" style="font-size: 18px; color: rgba(var(--mw-ink), 0.3);">lock</span>' : ''}
@@ -107,17 +107,17 @@
             if (net.secured) {
               html += `
                 <div class="pwd-dropdown" id="pwd-${safeId}">
-                  <input type="password" id="input-${safeId}" placeholder="${hyadeOSSI18n.t("settings.wifi.password-for", "Enter password for {network}", { network: net.ssid })}" onkeydown="if(event.key === 'Enter') doConnect('${safeId}', '${net.ssid}')">
-                  <button onclick="doConnect('${safeId}', '${net.ssid}')">${hyadeOSSI18n.t("settings.wifi.join", "Join")}</button>
+                  <input type="password" id="input-${safeId}" placeholder="${hyadeOSI18n.t("settings.wifi.password-for", "Enter password for {network}", { network: net.ssid })}" onkeydown="if(event.key === 'Enter') doConnect('${safeId}', '${net.ssid}')">
+                  <button onclick="doConnect('${safeId}', '${net.ssid}')">${hyadeOSI18n.t("settings.wifi.join", "Join")}</button>
                 </div>
               `;
             }
           });
         } else {
-          html = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.wifi.no-networks", "No networks found.")}</div></div>`;
+          html = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.wifi.no-networks", "No networks found.")}</div></div>`;
         }
       } else {
-        html = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.wifi.no-networks", "No networks found.")}</div></div>`;
+        html = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.wifi.no-networks", "No networks found.")}</div></div>`;
       }
       document.getElementById('networksPanel').innerHTML = html;
     }
@@ -153,7 +153,7 @@
 
       const statusEl = document.getElementById(`status-${safeId}`);
       if (statusEl) {
-        statusEl.innerText = hyadeOSSI18n.t("settings.wifi.connecting", "Connecting…");
+        statusEl.innerText = hyadeOSI18n.t("settings.wifi.connecting", "Connecting…");
         statusEl.style.color = "rgba(255,255,255,0.5)";
       }
 

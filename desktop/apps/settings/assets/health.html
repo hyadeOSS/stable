@@ -51,20 +51,20 @@
 <body>
   <button class="back" type="button" onclick="history.back()"><span class="material-symbols-outlined">arrow_back_ios_new</span><span data-i18n="common.back">Back</span></button>
   <h1 data-i18n="settings.health.title">System health</h1>
-  <div class="sub" data-i18n="settings.health.subtitle">How hyadeOSS is doing right now, and what went wrong lately in plain words.</div>
+  <div class="sub" data-i18n="settings.health.subtitle">How hyadeOS is doing right now, and what went wrong lately in plain words.</div>
   <div id="report"><div class="empty" data-i18n="settings.health.loading">Checking…</div></div>
   <button class="refresh" type="button" id="refresh"><span data-i18n="settings.health.refresh">Check again</span></button>
 
 <script>
 const EXPLAIN = {
-  'file-in-use': [hyadeOSSI18n.t('settings.health.kind.file-in-use', 'A file was in use'), hyadeOSSI18n.t('settings.health.kind.file-in-use.help', 'Windows did not let hyadeOSS change a file because another program was using it. Usually harmless: it is retried next time.')],
-  'restart-needed': [hyadeOSSI18n.t('settings.health.kind.restart-needed', 'A restart was needed'), hyadeOSSI18n.t('settings.health.kind.restart-needed.help', 'Part of hyadeOSS was updated while it was open. Close hyadeOSS completely and open it again.')],
-  'offline': [hyadeOSSI18n.t('settings.health.kind.offline', 'No connection'), hyadeOSSI18n.t('settings.health.kind.offline.help', 'A service on the internet could not be reached. Check the network; updates and the Store need it.')],
-  'port-in-use': [hyadeOSSI18n.t('settings.health.kind.port-in-use', 'hyadeOSS opened twice'), hyadeOSSI18n.t('settings.health.kind.port-in-use.help', 'Another copy of hyadeOSS was already running. Close every copy and start it once.')],
-  'missing-file': [hyadeOSSI18n.t('settings.health.kind.missing-file', 'A file was missing'), hyadeOSSI18n.t('settings.health.kind.missing-file.help', 'Something hyadeOSS looked for was not there. If it keeps happening, run the update again or repair from Recovery.')],
-  'keys': [hyadeOSSI18n.t('settings.health.kind.keys', 'Windows keys'), hyadeOSSI18n.t('settings.health.kind.keys.help', 'The helper that gives the Windows key to hyadeOSS had a problem. Windows keeps its own keys until the next start.')],
-  'update': [hyadeOSSI18n.t('settings.health.kind.update', 'Update'), hyadeOSSI18n.t('settings.health.kind.update.help', 'Something happened while updating. If the system starts fine, it was solved; otherwise Recovery can restore the previous version.')],
-  'other': [hyadeOSSI18n.t('settings.health.kind.other', 'Other message'), hyadeOSSI18n.t('settings.health.kind.other.help', 'A technical message from the system. Share it with the developers if something does not work.')]
+  'file-in-use': [hyadeOSI18n.t('settings.health.kind.file-in-use', 'A file was in use'), hyadeOSI18n.t('settings.health.kind.file-in-use.help', 'Windows did not let hyadeOS change a file because another program was using it. Usually harmless: it is retried next time.')],
+  'restart-needed': [hyadeOSI18n.t('settings.health.kind.restart-needed', 'A restart was needed'), hyadeOSI18n.t('settings.health.kind.restart-needed.help', 'Part of hyadeOS was updated while it was open. Close hyadeOS completely and open it again.')],
+  'offline': [hyadeOSI18n.t('settings.health.kind.offline', 'No connection'), hyadeOSI18n.t('settings.health.kind.offline.help', 'A service on the internet could not be reached. Check the network; updates and the Store need it.')],
+  'port-in-use': [hyadeOSI18n.t('settings.health.kind.port-in-use', 'hyadeOS opened twice'), hyadeOSI18n.t('settings.health.kind.port-in-use.help', 'Another copy of hyadeOS was already running. Close every copy and start it once.')],
+  'missing-file': [hyadeOSI18n.t('settings.health.kind.missing-file', 'A file was missing'), hyadeOSI18n.t('settings.health.kind.missing-file.help', 'Something hyadeOS looked for was not there. If it keeps happening, run the update again or repair from Recovery.')],
+  'keys': [hyadeOSI18n.t('settings.health.kind.keys', 'Windows keys'), hyadeOSI18n.t('settings.health.kind.keys.help', 'The helper that gives the Windows key to hyadeOS had a problem. Windows keeps its own keys until the next start.')],
+  'update': [hyadeOSI18n.t('settings.health.kind.update', 'Update'), hyadeOSI18n.t('settings.health.kind.update.help', 'Something happened while updating. If the system starts fine, it was solved; otherwise Recovery can restore the previous version.')],
+  'other': [hyadeOSI18n.t('settings.health.kind.other', 'Other message'), hyadeOSI18n.t('settings.health.kind.other.help', 'A technical message from the system. Share it with the developers if something does not work.')]
 };
 const GB = 1024 ** 3;
 const size = bytes => bytes >= GB ? (bytes / GB).toFixed(1) + ' GB' : Math.round(bytes / 1024 ** 2) + ' MB';
@@ -91,10 +91,10 @@ async function load() {
   let report;
   try {
     const response = await fetch('/api/system/health-report', { cache: 'no-store' });
-    if (response.status === 403) { target.replaceChildren(el('div', 'empty', hyadeOSSI18n.t('settings.health.admin-only', 'Only an administrator can see the system health.'))); return; }
+    if (response.status === 403) { target.replaceChildren(el('div', 'empty', hyadeOSI18n.t('settings.health.admin-only', 'Only an administrator can see the system health.'))); return; }
     report = await response.json();
   } catch (e) {
-    target.replaceChildren(el('div', 'empty', hyadeOSSI18n.t('settings.health.failed', 'Could not read the system health.')));
+    target.replaceChildren(el('div', 'empty', hyadeOSI18n.t('settings.health.failed', 'Could not read the system health.')));
     return;
   }
   const problems = report.log.problems;
@@ -104,25 +104,25 @@ async function load() {
   const hero = el('div', 'hero ' + (worrying ? 'warn' : 'ok'));
   const dot = el('div', 'dot'); dot.append(el('span', 'material-symbols-outlined', worrying ? 'error' : 'check_circle'));
   const words = el('div');
-  words.append(el('b', '', worrying ? hyadeOSSI18n.t('settings.health.needs-look', 'Worth a look') : hyadeOSSI18n.t('settings.health.all-good', 'Everything is fine')),
-    el('span', '', hyadeOSSI18n.t('settings.health.summary', 'hyadeOSS {version} · {channel} channel · on for {uptime}', { version: report.version || '?', channel: report.channel, uptime: duration(report.uptime) })));
+  words.append(el('b', '', worrying ? hyadeOSI18n.t('settings.health.needs-look', 'Worth a look') : hyadeOSI18n.t('settings.health.all-good', 'Everything is fine')),
+    el('span', '', hyadeOSI18n.t('settings.health.summary', 'hyadeOS {version} · {channel} channel · on for {uptime}', { version: report.version || '?', channel: report.channel, uptime: duration(report.uptime) })));
   hero.append(dot, words);
 
   const grid = el('div', 'grid');
-  grid.append(card('memory', hyadeOSSI18n.t('settings.health.memory', 'Memory'), size(report.memory.total - report.memory.free) + ' / ' + size(report.memory.total),
-    hyadeOSSI18n.t('settings.health.kernel-memory', 'The kernel uses {size}', { size: size(report.memory.kernel) }), memUsed, 0.05));
-  if (report.disk) grid.append(card('hard_drive', hyadeOSSI18n.t('settings.health.disk', 'Disk'), hyadeOSSI18n.t('settings.health.disk-free', '{free} free', { free: size(report.disk.free) }),
-    hyadeOSSI18n.t('settings.health.disk-total', 'of {total}', { total: size(report.disk.total) }), diskUsed, 0.1));
+  grid.append(card('memory', hyadeOSI18n.t('settings.health.memory', 'Memory'), size(report.memory.total - report.memory.free) + ' / ' + size(report.memory.total),
+    hyadeOSI18n.t('settings.health.kernel-memory', 'The kernel uses {size}', { size: size(report.memory.kernel) }), memUsed, 0.05));
+  if (report.disk) grid.append(card('hard_drive', hyadeOSI18n.t('settings.health.disk', 'Disk'), hyadeOSI18n.t('settings.health.disk-free', '{free} free', { free: size(report.disk.free) }),
+    hyadeOSI18n.t('settings.health.disk-total', 'of {total}', { total: size(report.disk.total) }), diskUsed, 0.1));
   const update = report.lastUpdate;
-  grid.append(card('system_update', hyadeOSSI18n.t('settings.health.last-update', 'Last update'),
-    update && update.to ? `${update.from || '?'} → ${update.to}` : hyadeOSSI18n.t('settings.health.no-update', 'None yet'),
-    update ? (update.rolledBack ? hyadeOSSI18n.t('settings.health.rolled-back', 'It did not start and was undone automatically') : (update.at ? new Date(update.at).toLocaleString(hyadeOSSI18n.locale) : '')) : '', null, 0.15));
-  grid.append(card('apps', hyadeOSSI18n.t('settings.health.apps', 'Store apps'), String(report.apps), report.platform + ' · Node ' + report.node, null, 0.2));
+  grid.append(card('system_update', hyadeOSI18n.t('settings.health.last-update', 'Last update'),
+    update && update.to ? `${update.from || '?'} → ${update.to}` : hyadeOSI18n.t('settings.health.no-update', 'None yet'),
+    update ? (update.rolledBack ? hyadeOSI18n.t('settings.health.rolled-back', 'It did not start and was undone automatically') : (update.at ? new Date(update.at).toLocaleString(hyadeOSI18n.locale) : '')) : '', null, 0.15));
+  grid.append(card('apps', hyadeOSI18n.t('settings.health.apps', 'Store apps'), String(report.apps), report.platform + ' · Node ' + report.node, null, 0.2));
 
-  const heading = el('h2', '', hyadeOSSI18n.t('settings.health.problems', 'Recent problems'));
+  const heading = el('h2', '', hyadeOSI18n.t('settings.health.problems', 'Recent problems'));
   const list = el('div');
-  if (!report.log.available) list.append(el('div', 'empty', hyadeOSSI18n.t('settings.health.no-log', 'No log on this computer (hyadeOSS was not started with start-hidden.vbs).')));
-  else if (!problems.length) list.append(el('div', 'empty', hyadeOSSI18n.t('settings.health.no-problems', 'No problems in the log.')));
+  if (!report.log.available) list.append(el('div', 'empty', hyadeOSI18n.t('settings.health.no-log', 'No log on this computer (hyadeOS was not started with start-hidden.vbs).')));
+  else if (!problems.length) list.append(el('div', 'empty', hyadeOSI18n.t('settings.health.no-problems', 'No problems in the log.')));
   problems.forEach((problem, index) => {
     const [title, help] = EXPLAIN[problem.kind] || EXPLAIN.other;
     const row = el('div', 'problem'); row.style.animationDelay = (0.25 + index * 0.05) + 's';
@@ -135,7 +135,7 @@ async function load() {
   target.replaceChildren(hero, grid, heading, list);
 }
 document.getElementById('refresh').onclick = load;
-hyadeOSSI18n.ready.then(load);
+hyadeOSI18n.ready.then(load);
 </script>
 </body>
 </html>

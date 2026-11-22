@@ -1,6 +1,6 @@
-# Translating hyadeOSS
+# Translating hyadeOS
 
-hyadeOSS can be shown in other languages (Settings › General › Language).
+hyadeOS can be shown in other languages (Settings › General › Language).
 English is written directly in the pages; every other language is one JSON file.
 Anything not translated yet simply stays in English, so a partial translation is fine.
 
@@ -65,7 +65,7 @@ pull request.
 
 - Keep the file valid JSON: double quotes, a comma after every line except the last.
 - Keep translations short: they are buttons, menu items and titles.
-- Don't translate brand and feature names such as hyadeOSS, Wi-Fi, Bluetooth.
+- Don't translate brand and feature names such as hyadeOS, Wi-Fi, Bluetooth.
 - Use the forms the language's own operating systems use (e.g. formal vs. informal).
 - To see a text in context, search the repository for its key.
 
@@ -81,10 +81,10 @@ Every page loads, first thing in `<head>`:
 - In HTML, mark text with `data-i18n="area.key"` (or `data-i18n-placeholder`,
   `data-i18n-title`, `data-i18n-aria-label` for those attributes), keeping the English text in
   the page. Elements added later by scripts are translated too.
-- In scripts, write `hyadeOSSI18n.t("area.key", "English text")`, with values
-  `hyadeOSSI18n.t("area.key", "Deleted {count} files", { count })`. Always write the key and the
+- In scripts, write `hyadeOSI18n.t("area.key", "English text")`, with values
+  `hyadeOSI18n.t("area.key", "Deleted {count} files", { count })`. Always write the key and the
   English as plain strings: `tools/check-locales.js` reads them from the code.
-- For dates and numbers, pass `hyadeOSSI18n.locale` to `toLocaleString` / `Intl`.
+- For dates and numbers, pass `hyadeOSI18n.locale` to `toLocaleString` / `Intl`.
 
 Then add the key's Italian to `it.json`; `node tools/check-locales.js --missing it` lists any
 you forgot. The recovery screen shown when the system cannot start (`kernel-recovery.html`)

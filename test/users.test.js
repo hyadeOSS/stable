@@ -28,7 +28,7 @@ test("limits keep only valid values", () => {
 });
 
 test("the guest exists only while enabled and starts empty", t => {
-  const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-users-"));
+  const baseDir = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeos-users-"));
   t.after(() => fs.rmSync(baseDir, { recursive: true, force: true }));
   const config = {};
   const users = createUsers({ baseDir, getConfig: () => config, saveConfig: () => {} });
