@@ -1,4 +1,4 @@
-// hyadeOSS: ask once before contacting a third-party service (GDPR / ePrivacy).
+// hyadeOS: ask once before contacting a third-party service (GDPR / ePrivacy).
 // Loading an external service sends the user's IP address (and possibly cookies) to it,
 // so it only happens after an explicit choice, which is remembered per service.
 //   if (await mwExternalConsent("element", "Element (app.element.io)")) { ...load... }
@@ -8,15 +8,15 @@
 
   window.mwExternalConsent = async function (id, serviceLabel) {
     try { if (localStorage.getItem(key(id)) === "yes") return true; } catch (e) {}
-    const i18n = window.hyadeOSSI18n;
+    const i18n = window.hyadeOSI18n;
     const english = "This feature loads content from an external service: {service}.\n\nYour IP address and technical data will be sent to that service, which may also set its own cookies. See the Privacy notice for details.\n\nDo you want to continue?";
-    const message = (i18n ? hyadeOSSI18n.t("consent.message", "This feature loads content from an external service: {service}.\n\nYour IP address and technical data will be sent to that service, which may also set its own cookies. See the Privacy notice for details.\n\nDo you want to continue?") : english)
+    const message = (i18n ? hyadeOSI18n.t("consent.message", "This feature loads content from an external service: {service}.\n\nYour IP address and technical data will be sent to that service, which may also set its own cookies. See the Privacy notice for details.\n\nDo you want to continue?") : english)
       .replace("{service}", () => serviceLabel);
     const ok = window.mDialog
       ? await window.mDialog.confirm(message, {
-        title: (i18n ? hyadeOSSI18n.t("consent.title", "External service") : "External service"),
-        okText: (i18n ? hyadeOSSI18n.t("common.continue", "Continue") : "Continue"),
-        cancelText: (i18n ? hyadeOSSI18n.t("common.cancel", "Cancel") : "Cancel"),
+        title: (i18n ? hyadeOSI18n.t("consent.title", "External service") : "External service"),
+        okText: (i18n ? hyadeOSI18n.t("common.continue", "Continue") : "Continue"),
+        cancelText: (i18n ? hyadeOSI18n.t("common.cancel", "Cancel") : "Cancel"),
         kind: "info"
       })
       : window.confirm(message);

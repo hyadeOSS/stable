@@ -92,7 +92,7 @@
     <h3 data-i18n="fallback.settings.intro">Did you break something?</h3>
   </div>
 
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <script>
   const pages = {
     system: `
@@ -153,7 +153,7 @@
     reader.readAsDataURL(pfpFile);
   }
 
-  alert(hyadeOSSI18n.t("fallback.settings.profile-saved", "Profile saved."));
+  alert(hyadeOSI18n.t("fallback.settings.profile-saved", "Profile saved."));
 }
 
 function loadProfileEditor() {
@@ -170,7 +170,7 @@ function saveFromSettings() {
   const newPass = document.getElementById("settingsPassword").value.trim();
 
   if (!newUser || !newPass) {
-    alert(hyadeOSSI18n.t("fallback.settings.fields-empty", "Fields cannot be empty."));
+    alert(hyadeOSI18n.t("fallback.settings.fields-empty", "Fields cannot be empty."));
     return;
   }
 
@@ -180,14 +180,14 @@ function saveFromSettings() {
 
 // Passwords are stored only server-side (bcrypt) via /set-password.
 async function changePassword(username, newPassword) {
-  const currentPassword = prompt(hyadeOSSI18n.t("fallback.settings.current-password", "Current password:"));
+  const currentPassword = prompt(hyadeOSI18n.t("fallback.settings.current-password", "Current password:"));
   if (currentPassword === null) return;
   const res = await fetch("/set-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, newPassword, currentPassword })
   });
-  alert(res.ok ? hyadeOSSI18n.t("fallback.settings.credentials-updated", "Credentials updated.") : await res.text());
+  alert(res.ok ? hyadeOSI18n.t("fallback.settings.credentials-updated", "Credentials updated.") : await res.text());
 }
 
 

@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Rules</title>
@@ -206,10 +206,10 @@ async function loadRules() {
 }
 
 function describeRule(rule) {
-  if (rule.trigger === 'time') return hyadeOSSI18n.t('settings.manage-rules.desc-time', 'Daily at {time} · {action}', { time: rule.triggerValue || hyadeOSSI18n.t('settings.manage-rules.unscheduled', 'unscheduled'), action: rule.action });
-  if (rule.trigger === 'battery') return hyadeOSSI18n.t('settings.manage-rules.desc-battery', 'Battery at or below {level}% · {action}', { level: rule.triggerValue, action: rule.action });
-  if (rule.trigger === 'startup') return hyadeOSSI18n.t('settings.manage-rules.desc-startup', 'At desktop startup · {app}', { app: rule.actionParams?.appId || hyadeOSSI18n.t('settings.manage-rules.no-app', 'app not selected') });
-  return hyadeOSSI18n.t('settings.manage-rules.desc-other', 'Trigger: {trigger} | Action: {action}', { trigger: rule.trigger, action: rule.action });
+  if (rule.trigger === 'time') return hyadeOSI18n.t('settings.manage-rules.desc-time', 'Daily at {time} · {action}', { time: rule.triggerValue || hyadeOSI18n.t('settings.manage-rules.unscheduled', 'unscheduled'), action: rule.action });
+  if (rule.trigger === 'battery') return hyadeOSI18n.t('settings.manage-rules.desc-battery', 'Battery at or below {level}% · {action}', { level: rule.triggerValue, action: rule.action });
+  if (rule.trigger === 'startup') return hyadeOSI18n.t('settings.manage-rules.desc-startup', 'At desktop startup · {app}', { app: rule.actionParams?.appId || hyadeOSI18n.t('settings.manage-rules.no-app', 'app not selected') });
+  return hyadeOSI18n.t('settings.manage-rules.desc-other', 'Trigger: {trigger} | Action: {action}', { trigger: rule.trigger, action: rule.action });
 }
 
 function editRule(ruleId) {
@@ -222,9 +222,9 @@ function editRule(ruleId) {
 }
 
 async function deleteRule(ruleId) {
-  if (await mDialog.confirm(hyadeOSSI18n.t('settings.manage-rules.delete-confirm', 'Are you sure you want to delete this rule?'), { danger: true, okText: hyadeOSSI18n.t('common.delete', 'Delete') })) {
+  if (await mDialog.confirm(hyadeOSI18n.t('settings.manage-rules.delete-confirm', 'Are you sure you want to delete this rule?'), { danger: true, okText: hyadeOSI18n.t('common.delete', 'Delete') })) {
     const localRules = JSON.parse(localStorage.getItem('rules')) || [];
-    const ruleName = localRules.find(r => r.id === ruleId)?.name || hyadeOSSI18n.t('settings.manage-rules.unknown', 'Unknown');
+    const ruleName = localRules.find(r => r.id === ruleId)?.name || hyadeOSI18n.t('settings.manage-rules.unknown', 'Unknown');
     try {
       const response = await fetch('/api/rules');
       if (response.ok) {
@@ -234,10 +234,10 @@ async function deleteRule(ruleId) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rules: serverRules.filter(rule => Number(rule.id) !== ruleId) })
         });
-        if (!saveResponse.ok) throw new Error(hyadeOSSI18n.t('settings.manage-rules.delete-failed', 'Could not delete the saved rule.'));
+        if (!saveResponse.ok) throw new Error(hyadeOSI18n.t('settings.manage-rules.delete-failed', 'Could not delete the saved rule.'));
       }
     } catch (error) {
-      await mDialog.alert(error.message || hyadeOSSI18n.t('settings.manage-rules.delete-failed', 'Could not delete the saved rule.'));
+      await mDialog.alert(error.message || hyadeOSI18n.t('settings.manage-rules.delete-failed', 'Could not delete the saved rule.'));
       return;
     }
     localStorage.setItem('rules', JSON.stringify(localRules.filter(rule => Number(rule.id) !== ruleId)));

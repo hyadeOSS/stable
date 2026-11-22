@@ -1,5 +1,5 @@
-// hyadeOSS - server side of the Music app's "Online services" (Last.fm).
-// (C) 2026 mariowstech and the hyadeOSS team - Licensed under the Apache License, Version 2.0
+// hyadeOS - server side of the Music app's "Online services" (Last.fm).
+// (C) 2026 mariowstech and the hyadeOS team - Licensed under the Apache License, Version 2.0
 //
 // Last.fm shows what the user is listening to on ANY device or app that scrobbles to it,
 // including Spotify Free on a phone. It is read-only and needs only a username and a free
@@ -10,7 +10,7 @@ const API = "https://ws.audioscrobbler.com/2.0/";
 function registerOnlineServiceRoutes(app, { getConfig, saveConfig, requireAuth }) {
   async function lastfm(method, params, apiKey) {
     const query = new URLSearchParams({ method, api_key: apiKey, format: "json", ...params });
-    const response = await fetch(`${API}?${query}`, { headers: { "User-Agent": "hyadeOSS/1.0" } });
+    const response = await fetch(`${API}?${query}`, { headers: { "User-Agent": "hyadeOS/1.0" } });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || data.error) {
       const error = new Error(data.message || "Last.fm request failed.");

@@ -1,4 +1,4 @@
-/* hyadeOSS 2 shell: taskbar, apps menu, tray, control panel, notification centre, context menus,
+/* hyadeOS 2 shell: taskbar, apps menu, tray, control panel, notification centre, context menus,
  * window chrome, toasts, dialogs and task view, drawn with the tokens in mw-design.css.
  *
  * The desktop page links it after its own <style>, so these rules win by order at the same
@@ -311,7 +311,7 @@
 .dialog-btn { background: var(--mw-fill-strong); color: var(--mw-text); border-radius: var(--mw-radius-control); padding: 7px 16px; transition: background var(--mw-duration-fast) ease; }
 .dialog-btn:hover { background: var(--mw-fill-key-hover); }
 
-/* hyadeoss-dialogs.js (alert/confirm/prompt) in the shell. Its own <style> is injected at
+/* hyadeos-dialogs.js (alert/confirm/prompt) in the shell. Its own <style> is injected at
    runtime, after this file, so these carry one extra class of specificity. */
 .mdlg-backdrop.mdlg-backdrop { background: var(--mw-scrim); }
 .mdlg-backdrop .mdlg { background: var(--mw-glass-solid); color: var(--mw-text); border-radius: var(--mw-radius-xl); box-shadow: var(--mw-edge), var(--mw-shadow-lg); transform: translateY(8px); transition: transform var(--mw-duration-medium) var(--mw-ease-out); }

@@ -12,7 +12,7 @@ test("crc32 matches the standard value", () => {
 
 test("an archive reads back exactly what was written", () => {
   const entries = [
-    { name: "Documents/notes.txt", data: Buffer.from("hello hyadeOSS\n".repeat(50)) },
+    { name: "Documents/notes.txt", data: Buffer.from("hello hyadeOS\n".repeat(50)) },
     { name: "Pictures/tiny.bin", data: Buffer.from([0, 1, 2, 3, 255]) },
     { name: "Musica/città.txt", data: Buffer.from("àèìòù") },
     { name: "empty.txt", data: Buffer.alloc(0) }
@@ -25,7 +25,7 @@ test("an archive reads back exactly what was written", () => {
 test("other tools can open the archive", t => {
   let tool;
   try { execFileSync("tar", ["--version"], { stdio: "ignore" }); tool = "tar"; } catch { t.skip("no tar on this system"); return; }
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-zip-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "hyadeos-zip-"));
   try {
     fs.writeFileSync(path.join(dir, "a.zip"), createZip([{ name: "x/y.txt", data: Buffer.from("ok") }]));
     execFileSync(tool, ["-xf", "a.zip"], { cwd: dir, stdio: "ignore" });

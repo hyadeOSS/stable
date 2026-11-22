@@ -1,4 +1,4 @@
-/* hyadeOSS 2 design tokens, shared by the desktop and every system app. See docs/design.md.
+/* hyadeOS 2 design tokens, shared by the desktop and every system app. See docs/design.md.
  *
  * Load it in <head>, right after accent.js (and mw-theme.js):
  *   <script src="/desktop/assets/accent.js"></script>
@@ -100,7 +100,7 @@
   --mw-glass-solid: rgba(22, 25, 33, 0.97);
   --mw-glass-saturate: 180%;
 
-  /* Role aliases used by the apps since hyadeOSS 1. */
+  /* Role aliases used by the apps since hyadeOS 1. */
   --mw-glass-sidebar: rgba(18, 20, 27, 0.55);
   --mw-glass-panel: rgba(18, 20, 27, 0.6);
   --mw-glass-calc: rgba(20, 23, 31, 0.72);

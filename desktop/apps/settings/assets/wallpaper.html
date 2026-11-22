@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wallpaper Settings</title>
@@ -98,7 +98,7 @@ body {
 /* --- Controls, themed with the user's accent color (--accent) --- */
 :root { --accent: var(--sys-accent); }
 .seg { position: relative; display: flex; padding: 4px; background: rgba(var(--mw-shade), 0.28); border: 1px solid rgba(var(--mw-ink), 0.06); border-radius: 12px; }
-/* Appearance (hyadeOSS 2): dark, light or automatic, saved by mw-theme.js for every page. */
+/* Appearance (hyadeOS 2): dark, light or automatic, saved by mw-theme.js for every page. */
 .theme-seg button.on { background: var(--accent); color: var(--sys-accent-on); box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent); }
 .theme-seg button { transition: color .15s ease, background .15s ease; }
 .theme-hint { margin-top: 10px; font-size: 12px; color: var(--mw-text-muted); }
@@ -336,7 +336,7 @@ async function applyWallpaper() {
   const status = document.getElementById('status');
   const btn = document.getElementById('applyBtn');
   btn.disabled = true;
-  status.textContent = hyadeOSSI18n.t('settings.wallpaper.uploading', 'Uploading…');
+  status.textContent = hyadeOSI18n.t('settings.wallpaper.uploading', 'Uploading…');
   status.style.color = 'rgba(255,255,255,0.5)';
 
   const formData = new FormData();
@@ -346,7 +346,7 @@ async function applyWallpaper() {
     const res = await fetch('/upload-wallpaper', { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success) {
-      status.textContent = hyadeOSSI18n.t('settings.wallpaper.applied', 'Wallpaper applied successfully!');
+      status.textContent = hyadeOSI18n.t('settings.wallpaper.applied', 'Wallpaper applied successfully!');
       saveStyle({ wallpaperMode: 'image' });
       status.style.color = '#34c759';
       window.top.postMessage({ type: 'apply-wallpaper' }, location.origin);
@@ -354,18 +354,18 @@ async function applyWallpaper() {
       throw new Error(data.error);
     }
   } catch (err) {
-    status.textContent = hyadeOSSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: err.message });
+    status.textContent = hyadeOSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: err.message });
     status.style.color = '#ff453a';
   }
   btn.disabled = false;
 }
 
 async function resetToFactory() {
-  if (await mDialog.confirm(hyadeOSSI18n.t("settings.wallpaper.restore-confirm", "Restore the default factory wallpaper?"))) {
+  if (await mDialog.confirm(hyadeOSI18n.t("settings.wallpaper.restore-confirm", "Restore the default factory wallpaper?"))) {
     fetch('/api/system/reset-desktop', { method: 'POST' })
       .then(() => {
         saveStyle({ wallpaperMode: 'image' });
-        document.getElementById('status').textContent = hyadeOSSI18n.t('settings.wallpaper.restored', 'Factory wallpaper restored');
+        document.getElementById('status').textContent = hyadeOSI18n.t('settings.wallpaper.restored', 'Factory wallpaper restored');
         document.getElementById('status').style.color = '#34c759';
         document.getElementById('previewArea').style.display = 'none';
         document.getElementById('applyBtn').disabled = true;
@@ -390,7 +390,7 @@ dropArea.addEventListener('drop', (e) => {
 });
 
 // --- Personalisation: saved in localStorage "desktopStyle", applied live by the desktop ---
-// Keep defaults and gradients in sync with DESKTOP_STYLE_DEFAULTS in com.hyadeoss.desktop.html.
+// Keep defaults and gradients in sync with DESKTOP_STYLE_DEFAULTS in com.hyadeos.desktop.html.
 const STYLE_DEFAULTS = {
   accent: '#0a84ff', wallpaperMode: 'image', wallpaperColor: '#1c2333', gradient: 'aurora', fit: 'cover',
   brightness: 100, saturation: 100, blur: 0, radius: 16, glass: 75, iconScale: 100, uiFont: 'Poppins',
@@ -399,14 +399,14 @@ const STYLE_DEFAULTS = {
 const ACCENTS = ['#0a84ff', '#5e5ce6', '#bf5af2', '#ff375f', '#ff453a', '#ff9f0a', '#ffd60a', '#30d158', '#40c8e0', '#8e8e93'];
 const BG_COLORS = ['#1c2333', '#000000', '#2c2c2e', '#0b3d2e', '#3a1c4a', '#4a1c1c', '#1c3a4a', '#f2f2f7'];
 const GRADIENTS = {
-  aurora: [hyadeOSSI18n.t('settings.wallpaper.gradient-aurora', 'Aurora'), 'linear-gradient(135deg, #0f2027 0%, #203a43 45%, #2c5364 100%)'],
-  sunset: [hyadeOSSI18n.t('settings.wallpaper.gradient-sunset', 'Sunset'), 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #6a3093 100%)'],
-  ocean: [hyadeOSSI18n.t('settings.wallpaper.gradient-ocean', 'Ocean'), 'linear-gradient(160deg, #000428 0%, #004e92 100%)'],
-  forest: [hyadeOSSI18n.t('settings.wallpaper.gradient-forest', 'Forest'), 'linear-gradient(160deg, #0b3d2e 0%, #1d6b4f 55%, #a8e063 100%)'],
-  candy: [hyadeOSSI18n.t('settings.wallpaper.gradient-candy', 'Candy'), 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)'],
-  midnight: [hyadeOSSI18n.t('settings.wallpaper.gradient-midnight', 'Midnight'), 'radial-gradient(circle at 30% 20%, #3a3f73 0%, #141629 60%, #07080f 100%)'],
+  aurora: [hyadeOSI18n.t('settings.wallpaper.gradient-aurora', 'Aurora'), 'linear-gradient(135deg, #0f2027 0%, #203a43 45%, #2c5364 100%)'],
+  sunset: [hyadeOSI18n.t('settings.wallpaper.gradient-sunset', 'Sunset'), 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #6a3093 100%)'],
+  ocean: [hyadeOSI18n.t('settings.wallpaper.gradient-ocean', 'Ocean'), 'linear-gradient(160deg, #000428 0%, #004e92 100%)'],
+  forest: [hyadeOSI18n.t('settings.wallpaper.gradient-forest', 'Forest'), 'linear-gradient(160deg, #0b3d2e 0%, #1d6b4f 55%, #a8e063 100%)'],
+  candy: [hyadeOSI18n.t('settings.wallpaper.gradient-candy', 'Candy'), 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)'],
+  midnight: [hyadeOSI18n.t('settings.wallpaper.gradient-midnight', 'Midnight'), 'radial-gradient(circle at 30% 20%, #3a3f73 0%, #141629 60%, #07080f 100%)'],
   // Follows the time of day on the desktop; the swatch shows the colors of right now.
-  daylight: [hyadeOSSI18n.t('settings.wallpaper.gradient-daylight', 'Time of day'), (window.top.mwDaylightGradient || (() => 'linear-gradient(160deg, #ff7e5f, #2f80ed)'))()]
+  daylight: [hyadeOSI18n.t('settings.wallpaper.gradient-daylight', 'Time of day'), (window.top.mwDaylightGradient || (() => 'linear-gradient(160deg, #ff7e5f, #2f80ed)'))()]
 };
 const UNITS = { brightness: '%', saturation: '%', blur: 'px', radius: 'px', glass: '%', iconScale: '%', nightWarmth: '%' };
 
@@ -424,7 +424,7 @@ function saveStyle(patch) {
   window.top.postMessage({ type: 'apply-style' }, location.origin);
   renderStyle();
   clearTimeout(persistTimer);
-  document.getElementById('savedState').textContent = hyadeOSSI18n.t('settings.wallpaper.saving', 'Saving…');
+  document.getElementById('savedState').textContent = hyadeOSI18n.t('settings.wallpaper.saving', 'Saving…');
   persistTimer = setTimeout(persistStyle, 400);
 }
 async function persistStyle() {
@@ -432,9 +432,9 @@ async function persistStyle() {
   try {
     const res = await fetch('/api/desktop-style', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(style) });
     if (!res.ok) throw new Error();
-    label.textContent = hyadeOSSI18n.t('settings.wallpaper.saved', 'Saved');
+    label.textContent = hyadeOSI18n.t('settings.wallpaper.saved', 'Saved');
   } catch (e) {
-    label.textContent = hyadeOSSI18n.t('settings.wallpaper.save-failed', 'Could not save to the system: changes last only until restart');
+    label.textContent = hyadeOSI18n.t('settings.wallpaper.save-failed', 'Could not save to the system: changes last only until restart');
   }
 }
 function paintRange(input) {
@@ -464,7 +464,7 @@ function swatch(color, active, onPick) {
 function customSwatch(value, active, onPick) {
   const wrap = document.createElement('label');
   wrap.className = 'swatch custom' + (active ? ' on' : '');
-  wrap.title = hyadeOSSI18n.t('settings.wallpaper.custom-color', 'Custom color');
+  wrap.title = hyadeOSI18n.t('settings.wallpaper.custom-color', 'Custom color');
   const input = document.createElement('input');
   input.type = 'color';
   input.value = value;
@@ -474,7 +474,7 @@ function customSwatch(value, active, onPick) {
 }
 
 function renderStyle() {
-  window.hyadeOSSAccent.apply();
+  window.hyadeOSAccent.apply();
   document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === style.wallpaperMode));
   document.querySelectorAll('.mode-panel').forEach(p => { p.hidden = p.dataset.for !== style.wallpaperMode; });
   document.getElementById('fit').value = style.fit;
@@ -523,7 +523,7 @@ async function loadNightLight() {
   showNightState();
 }
 function showNightState() {
-  document.getElementById('nightState').textContent = document.getElementById('nightOn').checked ? hyadeOSSI18n.t('settings.wallpaper.night-on', 'On') : hyadeOSSI18n.t('settings.wallpaper.night-off', 'Off');
+  document.getElementById('nightState').textContent = document.getElementById('nightOn').checked ? hyadeOSI18n.t('settings.wallpaper.night-on', 'On') : hyadeOSI18n.t('settings.wallpaper.night-off', 'Off');
 }
 document.getElementById('nightOn').onchange = async e => {
   const on = e.target.checked;
@@ -560,7 +560,7 @@ async function loadLivePreview() {
     : Object.assign(document.createElement('img'), { src: url, alt: '' });
   const badge = document.createElement('span');
   badge.className = 'live-badge';
-  badge.textContent = hyadeOSSI18n.t('settings.wallpaper.live-badge', 'LIVE');
+  badge.textContent = hyadeOSI18n.t('settings.wallpaper.live-badge', 'LIVE');
   preview.replaceChildren(media, badge);
   preview.hidden = false;
   showLiveState();
@@ -568,7 +568,7 @@ async function loadLivePreview() {
 function uploadLiveWallpaper(file) {
   if (!file) return;
   if (!['video/mp4', 'video/webm', 'image/gif'].includes(file.type)) {
-    liveStatus.textContent = hyadeOSSI18n.t('settings.wallpaper.live-wrong-type', 'Choose an MP4, WebM or GIF file.');
+    liveStatus.textContent = hyadeOSI18n.t('settings.wallpaper.live-wrong-type', 'Choose an MP4, WebM or GIF file.');
     liveStatus.style.color = '#ff453a';
     return;
   }
@@ -579,7 +579,7 @@ function uploadLiveWallpaper(file) {
   const request = new XMLHttpRequest();
   request.open('POST', '/upload-live-wallpaper');
   progress.hidden = false; bar.style.width = '0%';
-  liveStatus.textContent = hyadeOSSI18n.t('settings.wallpaper.uploading', 'Uploading…');
+  liveStatus.textContent = hyadeOSI18n.t('settings.wallpaper.uploading', 'Uploading…');
   liveStatus.style.color = 'rgba(255,255,255,0.5)';
   request.upload.onprogress = event => { if (event.lengthComputable) bar.style.width = (event.loaded / event.total * 100) + '%'; };
   request.onload = () => {
@@ -587,11 +587,11 @@ function uploadLiveWallpaper(file) {
     let data = {};
     try { data = JSON.parse(request.responseText); } catch (e) {}
     if (request.status !== 200 || !data.success) {
-      liveStatus.textContent = hyadeOSSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: data.error || request.status });
+      liveStatus.textContent = hyadeOSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: data.error || request.status });
       liveStatus.style.color = '#ff453a';
       return;
     }
-    liveStatus.textContent = hyadeOSSI18n.t('settings.wallpaper.live-applied', 'Live wallpaper applied!');
+    liveStatus.textContent = hyadeOSI18n.t('settings.wallpaper.live-applied', 'Live wallpaper applied!');
     liveStatus.style.color = '#34c759';
     // A new live wallpaper starts moving: that is why it was picked.
     try { localStorage.setItem('liveWallpaper', 'true'); } catch (e) {}
@@ -601,7 +601,7 @@ function uploadLiveWallpaper(file) {
   };
   request.onerror = () => {
     progress.hidden = true;
-    liveStatus.textContent = hyadeOSSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: 'network' });
+    liveStatus.textContent = hyadeOSI18n.t('settings.wallpaper.error', 'Error: {message}', { message: 'network' });
     liveStatus.style.color = '#ff453a';
   };
   request.send(form);
@@ -616,7 +616,7 @@ liveAnimate.onchange = () => {
   showLiveState();
 };
 document.getElementById('liveRemove').onclick = async () => {
-  if (!(await mDialog.confirm(hyadeOSSI18n.t('settings.wallpaper.live-remove-confirm', 'Remove the live wallpaper? The picture wallpaper comes back.')))) return;
+  if (!(await mDialog.confirm(hyadeOSI18n.t('settings.wallpaper.live-remove-confirm', 'Remove the live wallpaper? The picture wallpaper comes back.')))) return;
   try {
     const response = await fetch('/api/wallpaper/live/remove', { method: 'POST' });
     if (!response.ok) throw new Error(response.status);
@@ -633,7 +633,7 @@ Object.keys(UNITS).forEach(id => {
 });
 
 async function resetStyle() {
-  if (!(await mDialog.confirm(hyadeOSSI18n.t('settings.wallpaper.reset-style-confirm', 'Reset accent color, adjustments, windows, icon size and font to their defaults?')))) return;
+  if (!(await mDialog.confirm(hyadeOSI18n.t('settings.wallpaper.reset-style-confirm', 'Reset accent color, adjustments, windows, icon size and font to their defaults?')))) return;
   style = { ...STYLE_DEFAULTS, wallpaperMode: style.wallpaperMode, wallpaperColor: style.wallpaperColor, gradient: style.gradient, fit: style.fit };
   saveStyle({});
 }
@@ -651,9 +651,9 @@ fetch('/get-settings').then(r => r.ok ? r.json() : null).then(cfg => {
 // Appearance: the choice is saved and applied to every page by /desktop/assets/mw-theme.js.
 (function () {
   const seg = document.getElementById('themeSeg');
-  if (!seg || !window.hyadeOSSTheme) return;
-  const render = () => seg.querySelectorAll('button').forEach(b => { const on = b.dataset.theme === hyadeOSSTheme.get(); b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
-  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { hyadeOSSTheme.set(b.dataset.theme); render(); }));
+  if (!seg || !window.hyadeOSTheme) return;
+  const render = () => seg.querySelectorAll('button').forEach(b => { const on = b.dataset.theme === hyadeOSTheme.get(); b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { hyadeOSTheme.set(b.dataset.theme); render(); }));
   window.addEventListener('storage', e => { if (e.key === 'mwTheme') render(); });
   render();
 })();

@@ -1,5 +1,5 @@
-// hyadeOSS - tells the desktop when a Bluetooth device connects or disconnects.
-// (C) 2026 mariowstech and the hyadeOSS team - Licensed under the Apache License, Version 2.0
+// hyadeOS - tells the desktop when a Bluetooth device connects or disconnects.
+// (C) 2026 mariowstech and the hyadeOS team - Licensed under the Apache License, Version 2.0
 //
 // A single helper (tools/bluetooth-watch.ps1) stays running while a desktop is listening, so
 // watching costs a few property reads rather than a new PowerShell every few seconds.

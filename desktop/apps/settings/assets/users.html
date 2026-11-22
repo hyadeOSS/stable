@@ -8,7 +8,7 @@
   <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-  <script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+  <script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <title data-i18n="settings.nav.users">Users</title>
   <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
   <style>
@@ -152,7 +152,7 @@ const confirmWithPassword = () => new Promise(resolve => {
 async function post(url, body) {
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.success) throw new Error(data.error || hyadeOSSI18n.t('settings.users.failed', 'That did not work.'));
+  if (!res.ok || !data.success) throw new Error(data.error || hyadeOSI18n.t('settings.users.failed', 'That did not work.'));
   return data;
 }
 function setStatus(id, text, kind) {
@@ -160,7 +160,7 @@ function setStatus(id, text, kind) {
   el.textContent = text || '';
   el.className = 'status' + (kind ? ' ' + kind : '');
 }
-const roleLabel = user => user.owner ? hyadeOSSI18n.t('settings.users.role-owner', 'Owner · Administrator') : user.admin ? hyadeOSSI18n.t('settings.users.role-admin', 'Administrator') : hyadeOSSI18n.t('settings.users.role-standard', 'Standard');
+const roleLabel = user => user.owner ? hyadeOSI18n.t('settings.users.role-owner', 'Owner · Administrator') : user.admin ? hyadeOSI18n.t('settings.users.role-admin', 'Administrator') : hyadeOSI18n.t('settings.users.role-standard', 'Standard');
 
 function render() {
   const list = document.getElementById('userList');
@@ -171,9 +171,9 @@ function render() {
     const name = document.createElement('div'); name.className = 'user-name';
     const nameText = document.createElement('span'); nameText.textContent = user.username;
     name.append(nameText);
-    if (user.id === me.id) { const you = document.createElement('span'); you.className = 'tag you'; you.textContent = hyadeOSSI18n.t('settings.users.you', 'You'); name.append(you); }
-    if (user.limits) { const limited = document.createElement('span'); limited.className = 'tag limited'; limited.textContent = hyadeOSSI18n.t('settings.users.limited', 'Limited'); name.append(limited); }
-    const role = document.createElement('div'); role.className = 'user-role'; role.textContent = user.guest ? hyadeOSSI18n.t('settings.users.role-guest', 'Guest · no password') : roleLabel(user);
+    if (user.id === me.id) { const you = document.createElement('span'); you.className = 'tag you'; you.textContent = hyadeOSI18n.t('settings.users.you', 'You'); name.append(you); }
+    if (user.limits) { const limited = document.createElement('span'); limited.className = 'tag limited'; limited.textContent = hyadeOSI18n.t('settings.users.limited', 'Limited'); name.append(limited); }
+    const role = document.createElement('div'); role.className = 'user-role'; role.textContent = user.guest ? hyadeOSI18n.t('settings.users.role-guest', 'Guest · no password') : roleLabel(user);
     text.append(name, role);
     row.append(img, text);
     const wrap = document.createElement('div'); wrap.className = 'user-wrap';
@@ -181,7 +181,7 @@ function render() {
     // Parental controls: only standard accounts and the guest can be limited.
     const limitsButton = () => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'btn';
-      button.textContent = hyadeOSSI18n.t('settings.users.limits', 'Limits');
+      button.textContent = hyadeOSI18n.t('settings.users.limits', 'Limits');
       button.onclick = () => toggleLimits(wrap, user);
       return button;
     };
@@ -194,11 +194,11 @@ function render() {
     if (me.admin && !user.owner && !user.guest) {
       const actions = document.createElement('div'); actions.className = 'actions';
       const select = document.createElement('select');
-      [['admin', hyadeOSSI18n.t('settings.users.role-admin', 'Administrator')], ['standard', hyadeOSSI18n.t('settings.users.role-standard', 'Standard')]].forEach(([value, label]) => {
+      [['admin', hyadeOSI18n.t('settings.users.role-admin', 'Administrator')], ['standard', hyadeOSI18n.t('settings.users.role-standard', 'Standard')]].forEach(([value, label]) => {
         const option = document.createElement('option'); option.value = value; option.textContent = label; select.append(option);
       });
       select.value = user.admin ? 'admin' : 'standard';
-      select.title = hyadeOSSI18n.t('settings.users.role', 'Account type');
+      select.title = hyadeOSI18n.t('settings.users.role', 'Account type');
       select.onchange = async () => {
         const admin = select.value === 'admin';
         if (!(await confirmWithPassword())) { select.value = user.admin ? 'admin' : 'standard'; return; }
@@ -206,21 +206,21 @@ function render() {
         catch (e) { await mDialog.alert(e.message); }
         load();
       };
-      const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'btn'; reset.textContent = hyadeOSSI18n.t('settings.users.reset-password', 'Reset password');
+      const reset = document.createElement('button'); reset.type = 'button'; reset.className = 'btn'; reset.textContent = hyadeOSI18n.t('settings.users.reset-password', 'Reset password');
       reset.onclick = async () => {
-        const password = await mDialog.prompt(hyadeOSSI18n.t('settings.users.new-password-for', 'New password for {name}', { name: user.username }), { type: 'password' });
+        const password = await mDialog.prompt(hyadeOSI18n.t('settings.users.new-password-for', 'New password for {name}', { name: user.username }), { type: 'password' });
         if (!password) return;
         if (!(await confirmWithPassword())) return;
-        try { await post('/api/users/reset-password', { id: user.id, password }); await mDialog.alert(hyadeOSSI18n.t('settings.users.password-reset', 'Password changed. {name} can sign in with it now.', { name: user.username })); }
+        try { await post('/api/users/reset-password', { id: user.id, password }); await mDialog.alert(hyadeOSI18n.t('settings.users.password-reset', 'Password changed. {name} can sign in with it now.', { name: user.username })); }
         catch (e) { await mDialog.alert(e.message); }
       };
       actions.append(select, reset);
       if (!user.admin) actions.append(limitsButton());
       if (user.id !== me.id) {
-        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'btn danger'; remove.textContent = hyadeOSSI18n.t('settings.users.remove', 'Remove');
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'btn danger'; remove.textContent = hyadeOSI18n.t('settings.users.remove', 'Remove');
         remove.onclick = async () => {
-          if (!(await mDialog.confirm(hyadeOSSI18n.t('settings.users.remove-confirm', 'Remove {name}? They will not be able to sign in any more.', { name: user.username }), { danger: true }))) return;
-          const deleteFiles = await mDialog.confirm(hyadeOSSI18n.t('settings.users.remove-files', 'Also delete {name}\'s files? Choose No to keep them on this computer.', { name: user.username }), { danger: true });
+          if (!(await mDialog.confirm(hyadeOSI18n.t('settings.users.remove-confirm', 'Remove {name}? They will not be able to sign in any more.', { name: user.username }), { danger: true }))) return;
+          const deleteFiles = await mDialog.confirm(hyadeOSI18n.t('settings.users.remove-files', 'Also delete {name}\'s files? Choose No to keep them on this computer.', { name: user.username }), { danger: true });
           if (!(await confirmWithPassword())) return;
           try { await post('/api/users/delete', { id: user.id, deleteFiles }); }
           catch (e) { await mDialog.alert(e.message); }
@@ -250,16 +250,16 @@ function toggleLimits(wrap, user) {
   if (open) { open.remove(); return; }
   const limits = user.limits || { blockedApps: [], from: null, to: null };
   const box = document.createElement('div'); box.className = 'limits';
-  const appsTitle = document.createElement('h4'); appsTitle.textContent = hyadeOSSI18n.t('settings.users.blocked-apps', 'Apps they cannot open');
+  const appsTitle = document.createElement('h4'); appsTitle.textContent = hyadeOSI18n.t('settings.users.blocked-apps', 'Apps they cannot open');
   const checks = document.createElement('div'); checks.className = 'app-checks';
-  const apps = [...BUILT_IN_APPS.map(([id, key, fallback]) => [id, hyadeOSSI18n.t(key, fallback)]), ...installedApps.map(app => [app.appId, app.title || app.appId])];
+  const apps = [...BUILT_IN_APPS.map(([id, key, fallback]) => [id, hyadeOSI18n.t(key, fallback)]), ...installedApps.map(app => [app.appId, app.title || app.appId])];
   apps.forEach(([id, label]) => {
     const item = document.createElement('label');
     const input = document.createElement('input'); input.type = 'checkbox'; input.value = id; input.checked = limits.blockedApps.includes(id);
     item.append(input, document.createTextNode(label));
     checks.append(item);
   });
-  const hoursTitle = document.createElement('h4'); hoursTitle.textContent = hyadeOSSI18n.t('settings.users.hours', 'When they can use the computer');
+  const hoursTitle = document.createElement('h4'); hoursTitle.textContent = hyadeOSI18n.t('settings.users.hours', 'When they can use the computer');
   const hours = document.createElement('div'); hours.className = 'hours';
   const limitHours = document.createElement('input'); limitHours.type = 'checkbox'; limitHours.checked = !!limits.from;
   const from = document.createElement('input'); from.type = 'time'; from.value = limits.from || '08:00';
@@ -267,11 +267,11 @@ function toggleLimits(wrap, user) {
   const syncHours = () => { from.disabled = to.disabled = !limitHours.checked; };
   limitHours.onchange = syncHours; syncHours();
   const onlyLabel = document.createElement('label'); onlyLabel.style.display = 'flex'; onlyLabel.style.gap = '8px'; onlyLabel.style.alignItems = 'center';
-  onlyLabel.append(limitHours, document.createTextNode(hyadeOSSI18n.t('settings.users.hours-only', 'Only from')));
-  hours.append(onlyLabel, from, document.createTextNode(hyadeOSSI18n.t('settings.users.hours-to', 'to')), to);
+  onlyLabel.append(limitHours, document.createTextNode(hyadeOSI18n.t('settings.users.hours-only', 'Only from')));
+  hours.append(onlyLabel, from, document.createTextNode(hyadeOSI18n.t('settings.users.hours-to', 'to')), to);
   const foot = document.createElement('div'); foot.className = 'form-foot';
   const status = document.createElement('span'); status.className = 'status';
-  const save = document.createElement('button'); save.type = 'button'; save.className = 'btn primary'; save.textContent = hyadeOSSI18n.t('common.save', 'Save');
+  const save = document.createElement('button'); save.type = 'button'; save.className = 'btn primary'; save.textContent = hyadeOSI18n.t('common.save', 'Save');
   save.onclick = async () => {
     if (!(await confirmWithPassword())) return;
     const next = { blockedApps: [...checks.querySelectorAll('input:checked')].map(input => input.value), from: limitHours.checked ? from.value : null, to: limitHours.checked ? to.value : null };
@@ -308,13 +308,13 @@ document.getElementById('backupFile').onchange = async event => {
   const file = event.target.files[0];
   event.target.value = '';
   if (!file) return;
-  if (!(await mDialog.confirm(hyadeOSSI18n.t('settings.users.backup-confirm', 'Restore "{name}"? Files with the same name in your folders are replaced.', { name: file.name })))) return;
-  setStatus('backupStatus', hyadeOSSI18n.t('settings.users.backup-restoring', 'Restoring…'));
+  if (!(await mDialog.confirm(hyadeOSI18n.t('settings.users.backup-confirm', 'Restore "{name}"? Files with the same name in your folders are replaced.', { name: file.name })))) return;
+  setStatus('backupStatus', hyadeOSI18n.t('settings.users.backup-restoring', 'Restoring…'));
   try {
     const response = await fetch('/api/users/restore', { method: 'POST', headers: { 'Content-Type': 'application/zip' }, body: file });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.success) throw new Error(data.error || response.status);
-    setStatus('backupStatus', hyadeOSSI18n.t('settings.users.backup-restored', '{count} files restored. Restart the desktop to see your style.', { count: data.files }), 'ok');
+    setStatus('backupStatus', hyadeOSI18n.t('settings.users.backup-restored', '{count} files restored. Restart the desktop to see your style.', { count: data.files }), 'ok');
     window.top.postMessage({ type: 'apply-wallpaper' }, location.origin);
   } catch (e) { setStatus('backupStatus', e.message, 'error'); }
 };
@@ -323,13 +323,13 @@ document.getElementById('addForm').onsubmit = async e => {
   e.preventDefault();
   const username = document.getElementById('newName').value.trim();
   const password = document.getElementById('newPassword').value;
-  if (!username) return setStatus('addStatus', hyadeOSSI18n.t('settings.users.need-name', 'Give the account a name.'), 'error');
-  if (password !== document.getElementById('newPassword2').value) return setStatus('addStatus', hyadeOSSI18n.t('settings.users.mismatch', 'The passwords do not match.'), 'error');
+  if (!username) return setStatus('addStatus', hyadeOSI18n.t('settings.users.need-name', 'Give the account a name.'), 'error');
+  if (password !== document.getElementById('newPassword2').value) return setStatus('addStatus', hyadeOSI18n.t('settings.users.mismatch', 'The passwords do not match.'), 'error');
   if (!(await confirmWithPassword())) return;
   try {
     await post('/api/users/create', { username, password, admin: document.getElementById('newAdmin').checked });
     e.target.reset();
-    setStatus('addStatus', hyadeOSSI18n.t('settings.users.created', '{name} can now sign in from the login screen.', { name: username }), 'ok');
+    setStatus('addStatus', hyadeOSI18n.t('settings.users.created', '{name} can now sign in from the login screen.', { name: username }), 'ok');
     load();
   } catch (err) { setStatus('addStatus', err.message, 'error'); }
 };
@@ -337,11 +337,11 @@ document.getElementById('addForm').onsubmit = async e => {
 document.getElementById('passwordForm').onsubmit = async e => {
   e.preventDefault();
   const newPassword = document.getElementById('ownNew').value;
-  if (newPassword !== document.getElementById('ownNew2').value) return setStatus('passwordStatus', hyadeOSSI18n.t('settings.users.mismatch', 'The passwords do not match.'), 'error');
+  if (newPassword !== document.getElementById('ownNew2').value) return setStatus('passwordStatus', hyadeOSI18n.t('settings.users.mismatch', 'The passwords do not match.'), 'error');
   try {
     await post('/api/users/password', { currentPassword: document.getElementById('currentPassword').value, newPassword });
     e.target.reset();
-    setStatus('passwordStatus', hyadeOSSI18n.t('settings.users.password-changed', 'Password changed.'), 'ok');
+    setStatus('passwordStatus', hyadeOSI18n.t('settings.users.password-changed', 'Password changed.'), 'ok');
   } catch (err) { setStatus('passwordStatus', err.message, 'error'); }
 };
 

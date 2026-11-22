@@ -1,4 +1,4 @@
-// hyadeOSS builder note: the widgets panel (Win+W or the widgets button on the bar). It
+// hyadeOS builder note: the widgets panel (Win+W or the widgets button on the bar). It
 // slides in from the left over the desktop and shows, live while it is open:
 //   clock and date · weather (Open-Meteo through the kernel, after the user agrees and picks
 //   a city) · today's calendar events · the latest notes · what is playing, with controls.
@@ -54,15 +54,15 @@
 
   const CARDS = ['clock', 'weather', 'calendar', 'notes', 'media'];
   const CARD_NAMES = {
-    clock: () => hyadeOSSI18n.t('desktop.widgets.clock', 'Clock'), weather: () => hyadeOSSI18n.t('desktop.widgets.weather', 'Weather'),
-    calendar: () => hyadeOSSI18n.t('desktop.widgets.calendar', 'Today'), notes: () => hyadeOSSI18n.t('desktop.widgets.notes', 'Notes'),
-    media: () => hyadeOSSI18n.t('desktop.widgets.media', 'Now playing')
+    clock: () => hyadeOSI18n.t('desktop.widgets.clock', 'Clock'), weather: () => hyadeOSI18n.t('desktop.widgets.weather', 'Weather'),
+    calendar: () => hyadeOSI18n.t('desktop.widgets.calendar', 'Today'), notes: () => hyadeOSI18n.t('desktop.widgets.notes', 'Notes'),
+    media: () => hyadeOSI18n.t('desktop.widgets.media', 'Now playing')
   };
   let shown = read('mwWidgetCards', CARDS);
   let editing = false, timer = 0, weatherData = null, weatherAt = 0, notesData = null, notesAt = 0;
 
   const panel = el('aside'); panel.id = 'mwWidgets';
-  panel.setAttribute('aria-label', hyadeOSSI18n.t('desktop.widgets.title', 'Widgets'));
+  panel.setAttribute('aria-label', hyadeOSI18n.t('desktop.widgets.title', 'Widgets'));
   document.body.appendChild(panel);
 
   function card(name, symbol, title) {
@@ -74,8 +74,8 @@
   function clockCard() {
     const box = card('clock');
     const now = new Date();
-    box.append(el('div', 'mw-clock', now.toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit' })),
-      el('div', 'mw-date', now.toLocaleDateString(hyadeOSSI18n.locale, { weekday: 'long', day: 'numeric', month: 'long' })));
+    box.append(el('div', 'mw-clock', now.toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' })),
+      el('div', 'mw-date', now.toLocaleDateString(hyadeOSI18n.locale, { weekday: 'long', day: 'numeric', month: 'long' })));
     return box;
   }
 
@@ -85,16 +85,16 @@
     const city = read('mwWidgetCity', '');
     if (!city || (!force && weatherData && Date.now() - weatherAt < 10 * 60 * 1000)) return;
     try {
-      const lang = String(hyadeOSSI18n.locale || 'en').slice(0, 2);
+      const lang = String(hyadeOSI18n.locale || 'en').slice(0, 2);
       const data = await fetch(`/api/widgets/weather?city=${encodeURIComponent(city)}&lang=${lang}`, { cache: 'no-store' }).then(r => r.json());
       weatherData = data; weatherAt = Date.now();
-    } catch (e) { weatherData = { success: false, error: hyadeOSSI18n.t('desktop.widgets.weather-offline', 'Weather is not reachable right now') }; }
+    } catch (e) { weatherData = { success: false, error: hyadeOSI18n.t('desktop.widgets.weather-offline', 'Weather is not reachable right now') }; }
     render();
   }
   async function chooseCity() {
     if (!(await mwExternalConsent('open-meteo', 'Open-Meteo (open-meteo.com)'))) return;
-    const city = await mDialog.prompt(hyadeOSSI18n.t('desktop.widgets.city-prompt', 'Which city should the weather show?'),
-      { title: hyadeOSSI18n.t('desktop.widgets.weather', 'Weather'), defaultValue: read('mwWidgetCity', ''), okText: hyadeOSSI18n.t('common.save', 'Save') });
+    const city = await mDialog.prompt(hyadeOSI18n.t('desktop.widgets.city-prompt', 'Which city should the weather show?'),
+      { title: hyadeOSI18n.t('desktop.widgets.weather', 'Weather'), defaultValue: read('mwWidgetCity', ''), okText: hyadeOSI18n.t('common.save', 'Save') });
     if (!city || !city.trim()) return;
     write('mwWidgetCity', city.trim());
     weatherData = null;
@@ -104,14 +104,14 @@
     const box = card('weather', 'partly_cloudy_day', CARD_NAMES.weather());
     const city = read('mwWidgetCity', '');
     if (!city) {
-      const button = el('button', 'mw-link', hyadeOSSI18n.t('desktop.widgets.weather-setup', 'Show the weather'));
+      const button = el('button', 'mw-link', hyadeOSI18n.t('desktop.widgets.weather-setup', 'Show the weather'));
       button.onclick = chooseCity;
       box.append(button);
       return box;
     }
-    if (!weatherData) { box.append(el('div', 'mw-muted', hyadeOSSI18n.t('desktop.widgets.loading', 'Loading…'))); loadWeather(); return box; }
+    if (!weatherData) { box.append(el('div', 'mw-muted', hyadeOSI18n.t('desktop.widgets.loading', 'Loading…'))); loadWeather(); return box; }
     if (!weatherData.success) {
-      box.append(el('div', 'mw-muted', weatherData.error === 'City not found' ? hyadeOSSI18n.t('desktop.widgets.city-missing', 'City not found: pick another one') : (weatherData.error || '')));
+      box.append(el('div', 'mw-muted', weatherData.error === 'City not found' ? hyadeOSI18n.t('desktop.widgets.city-missing', 'City not found: pick another one') : (weatherData.error || '')));
     } else {
       const row = el('div', 'mw-weather');
       const text = el('div');
@@ -120,7 +120,7 @@
       row.append(icon(weatherIcon(weatherData.code, weatherData.isDay)), text);
       box.append(row);
     }
-    const change = el('button', 'mw-link', hyadeOSSI18n.t('desktop.widgets.city-change', 'Change city'));
+    const change = el('button', 'mw-link', hyadeOSI18n.t('desktop.widgets.city-change', 'Change city'));
     change.style.marginTop = '10px';
     change.onclick = chooseCity;
     box.append(change);
@@ -131,10 +131,10 @@
     const box = card('calendar', 'event', CARD_NAMES.calendar());
     const today = (window.CalendarCore && CalendarCore.ymd) ? CalendarCore.ymd(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) : new Date().toISOString().slice(0, 10);
     const events = typeof calEventsOn === 'function' ? calEventsOn(today) : [];
-    if (!events.length) box.append(el('div', 'mw-muted', hyadeOSSI18n.t('desktop.widgets.no-events', 'Nothing planned today')));
+    if (!events.length) box.append(el('div', 'mw-muted', hyadeOSI18n.t('desktop.widgets.no-events', 'Nothing planned today')));
     events.slice(0, 5).forEach(ev => {
       const row = el('div', 'mw-row');
-      row.append(el('span', 'mw-dot'), el('span', 'mw-muted', ev.allDay ? hyadeOSSI18n.t('desktop.widgets.all-day', 'All day') : (ev.start || '')), el('span', '', ev.title || ''));
+      row.append(el('span', 'mw-dot'), el('span', 'mw-muted', ev.allDay ? hyadeOSI18n.t('desktop.widgets.all-day', 'All day') : (ev.start || '')), el('span', '', ev.title || ''));
       row.onclick = () => { close(); openCalendarApp(today); };
       box.append(row);
     });
@@ -152,10 +152,10 @@
   }
   function notesCard() {
     const box = card('notes', 'sticky_note_2', CARD_NAMES.notes());
-    if (!notesData) { loadNotes(); box.append(el('div', 'mw-muted', hyadeOSSI18n.t('desktop.widgets.loading', 'Loading…'))); return box; }
+    if (!notesData) { loadNotes(); box.append(el('div', 'mw-muted', hyadeOSI18n.t('desktop.widgets.loading', 'Loading…'))); return box; }
     const notes = notesData.filter(note => noteText(note))
       .sort((a, b) => (Number(b.updatedAt || b.modified || b.date || 0) - Number(a.updatedAt || a.modified || a.date || 0))).slice(0, 3);
-    if (!notes.length) box.append(el('div', 'mw-muted', hyadeOSSI18n.t('desktop.widgets.no-notes', 'No notes yet')));
+    if (!notes.length) box.append(el('div', 'mw-muted', hyadeOSI18n.t('desktop.widgets.no-notes', 'No notes yet')));
     notes.forEach(note => {
       const row = el('div', 'mw-row');
       row.append(icon('description'), el('span', '', noteText(note).slice(0, 80)));
@@ -170,7 +170,7 @@
     const media = typeof currentMediaState === 'object' ? currentMediaState : null;
     // With no media session the desktop keeps a placeholder ("No media"): treat it as silence.
     const idle = !media || !media.title || (typeof activeMediaId !== 'undefined' && !activeMediaId);
-    if (idle) { box.append(el('div', 'mw-muted', hyadeOSSI18n.t('desktop.widgets.no-media', 'Nothing is playing'))); return box; }
+    if (idle) { box.append(el('div', 'mw-muted', hyadeOSI18n.t('desktop.widgets.no-media', 'Nothing is playing'))); return box; }
     const row = el('div', 'mw-media');
     const cover = el('div', 'mw-cover');
     if (media.cover) cover.style.backgroundImage = `url("${String(media.cover).replace(/["\\\n]/g, encodeURIComponent)}")`; else cover.append(icon('music_note'));
@@ -189,7 +189,7 @@
   }
 
   function editCard() {
-    const box = card('edit', 'tune', hyadeOSSI18n.t('desktop.widgets.choose', 'Choose widgets'));
+    const box = card('edit', 'tune', hyadeOSI18n.t('desktop.widgets.choose', 'Choose widgets'));
     const list = el('div', 'mw-edit');
     CARDS.forEach(name => {
       const label = el('label'); const check = el('input'); check.type = 'checkbox'; check.checked = shown.includes(name);
@@ -205,12 +205,12 @@
   function render() {
     if (!panel.classList.contains('open')) return;
     const head = el('header');
-    const edit = el('button', 'mw-w-btn'); edit.type = 'button'; edit.title = hyadeOSSI18n.t('desktop.widgets.choose', 'Choose widgets'); edit.append(icon(editing ? 'check' : 'tune'));
+    const edit = el('button', 'mw-w-btn'); edit.type = 'button'; edit.title = hyadeOSI18n.t('desktop.widgets.choose', 'Choose widgets'); edit.append(icon(editing ? 'check' : 'tune'));
     edit.onclick = () => { editing = !editing; render(); };
-    const shut = el('button', 'mw-w-btn'); shut.type = 'button'; shut.title = hyadeOSSI18n.t('common.close', 'Close'); shut.append(icon('close'));
+    const shut = el('button', 'mw-w-btn'); shut.type = 'button'; shut.title = hyadeOSI18n.t('common.close', 'Close'); shut.append(icon('close'));
     shut.onclick = close;
     const actions = el('div'); actions.style.display = 'flex'; actions.append(edit, shut);
-    head.append(el('b', '', hyadeOSSI18n.t('desktop.widgets.title', 'Widgets')), actions);
+    head.append(el('b', '', hyadeOSI18n.t('desktop.widgets.title', 'Widgets')), actions);
     const cards = shown.filter(name => BUILDERS[name]).map(name => BUILDERS[name]());
     panel.replaceChildren(head, ...(editing ? [editCard()] : []), ...cards);
   }

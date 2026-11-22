@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
     <link href="/desktop/assets/setup.css" rel="stylesheet">
-    <title data-i18n="setup.title">hyadeOSS Setup</title>
+    <title data-i18n="setup.title">hyadeOS Setup</title>
     <style>
         * {
             margin: 0;
@@ -16,7 +16,7 @@
             font-family: 'Poppins', sans-serif;
         }
     </style>
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 </head>
 <body class="setup-page" data-step="3">
 
@@ -25,7 +25,7 @@
     <main class="setup-stage">
         <div class="setup-content">
             <div class="setup-panel">
-                <h2 data-i18n="setup.preferences.heading">Help improve hyadeOSS daily?</h2>
+                <h2 data-i18n="setup.preferences.heading">Help improve hyadeOS daily?</h2>
                 <p><span data-i18n="setup.preferences.description">Receive daily emails with links to Discord flags and issue updates. Stay updated on the latest problems and features. Optional: you can turn it off at any time.</span> <a href="/desktop/privacy.html" data-i18n="setup.privacy-notice">Privacy notice</a></p>
 
                 <div class="toggle-container" id="mainToggle" role="switch" tabindex="0" aria-labelledby="toggleLabel">
@@ -36,12 +36,12 @@
                 </div>
 
                 <div class="toggle-container" id="statsToggle" role="switch" tabindex="0" aria-labelledby="statsLabel" style="margin-top: 12px;">
-                    <span class="toggle-label" id="statsLabel" data-i18n="setup.preferences.stats">Count this PC in the anonymous total of hyadeOSS users</span>
+                    <span class="toggle-label" id="statsLabel" data-i18n="setup.preferences.stats">Count this PC in the anonymous total of hyadeOS users</span>
                     <div class="switch">
                         <div class="circle"></div>
                     </div>
                 </div>
-                <p style="font-size: 13px; opacity: .7; margin-top: 8px;" data-i18n="setup.preferences.stats-detail">Once a day only the hyadeOSS version and update channel are sent. No name, no ID, nothing about this PC.</p>
+                <p style="font-size: 13px; opacity: .7; margin-top: 8px;" data-i18n="setup.preferences.stats-detail">Once a day only the hyadeOS version and update channel are sent. No name, no ID, nothing about this PC.</p>
             </div>
         </div>
     </main>
@@ -85,20 +85,20 @@
 
         // Double opt-in: the digest can only be enabled for a verified address.
         async function verifyEmail() {
-            const email = await mDialog.prompt(hyadeOSSI18n.t("setup.preferences.email-prompt", "Enter the email address that will receive the daily digest:"),
-                { title: hyadeOSSI18n.t("setup.preferences.email-title", "Verify your email"), type: "email", placeholder: hyadeOSSI18n.t("setup.preferences.email-placeholder", "name@example.com"), okText: hyadeOSSI18n.t("setup.preferences.send-code", "Send code") });
+            const email = await mDialog.prompt(hyadeOSI18n.t("setup.preferences.email-prompt", "Enter the email address that will receive the daily digest:"),
+                { title: hyadeOSI18n.t("setup.preferences.email-title", "Verify your email"), type: "email", placeholder: hyadeOSI18n.t("setup.preferences.email-placeholder", "name@example.com"), okText: hyadeOSI18n.t("setup.preferences.send-code", "Send code") });
             if (!email) return false;
             let res = await fetch('/api/email/send-code', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email })
             }).then(r => r.json());
-            if (!res.success) { await mDialog.alert(res.error || hyadeOSSI18n.t("setup.preferences.send-code-failed", "Could not send the code."), { kind: 'error' }); return false; }
-            const code = await mDialog.prompt(hyadeOSSI18n.t("setup.preferences.code-prompt", "We sent a 6-digit code to {email}. Enter it here:", { email }),
-                { title: hyadeOSSI18n.t("setup.preferences.code-title", "Verification code"), placeholder: "123456", okText: hyadeOSSI18n.t("setup.preferences.verify", "Verify") });
+            if (!res.success) { await mDialog.alert(res.error || hyadeOSI18n.t("setup.preferences.send-code-failed", "Could not send the code."), { kind: 'error' }); return false; }
+            const code = await mDialog.prompt(hyadeOSI18n.t("setup.preferences.code-prompt", "We sent a 6-digit code to {email}. Enter it here:", { email }),
+                { title: hyadeOSI18n.t("setup.preferences.code-title", "Verification code"), placeholder: "123456", okText: hyadeOSI18n.t("setup.preferences.verify", "Verify") });
             if (!code) return false;
             res = await fetch('/api/email/verify-code', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code: code.trim() })
             }).then(r => r.json());
-            if (!res.success) { await mDialog.alert(res.error || hyadeOSSI18n.t("setup.preferences.invalid-code", "Invalid code."), { kind: 'error' }); return false; }
+            if (!res.success) { await mDialog.alert(res.error || hyadeOSI18n.t("setup.preferences.invalid-code", "Invalid code."), { kind: 'error' }); return false; }
             emailVerified = true;
             return true;
         }
@@ -114,10 +114,10 @@
                     body: JSON.stringify({ sendReports: enable })
                 }).then(r => r.json());
                 if (data.success) toggle.classList.toggle('active', enable);
-                else await mDialog.alert(data.error || hyadeOSSI18n.t("setup.preferences.save-failed", "Could not save the preference."), { kind: 'error' });
+                else await mDialog.alert(data.error || hyadeOSI18n.t("setup.preferences.save-failed", "Could not save the preference."), { kind: 'error' });
             } catch (err) {
                 console.error('Error saving preference:', err);
-                await mDialog.alert(hyadeOSSI18n.t("setup.preferences.save-failed-later", "Could not save the preference. Try again later."), { kind: 'error' });
+                await mDialog.alert(hyadeOSI18n.t("setup.preferences.save-failed-later", "Could not save the preference. Try again later."), { kind: 'error' });
             } finally {
                 busy = false;
             }

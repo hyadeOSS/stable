@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
-  <title>hyadeOSS Recovery</title>
+  <title>hyadeOS Recovery</title>
   <!-- Shown by launcher.js from disk when the kernel failed to start several times in a
-       row. It needs no kernel: every action goes through window.hyadeOSSElectron.kernelRecovery. -->
+       row. It needs no kernel: every action goes through window.hyadeOSElectron.kernelRecovery. -->
   <style>
     :root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; }
     * { box-sizing: border-box; }
@@ -40,7 +40,7 @@
 <body>
   <main>
     <span class="badge" data-i18n="badge">RECOVERY</span>
-    <h1 data-i18n="title">hyadeOSS could not start</h1>
+    <h1 data-i18n="title">hyadeOS could not start</h1>
     <p><span data-i18n="intro">The system kernel stopped several times while starting.</span> <span id="version"></span>
       <span data-i18n="safe">Your files and settings have not been touched. Choose what to do next.</span></p>
     <div class="rollback" id="rollback" hidden></div>
@@ -65,7 +65,7 @@
     // Local page, no kernel: the strings live here. Language follows the system's.
     const STRINGS = {
       en: {
-        badge: "RECOVERY", title: "hyadeOSS could not start",
+        badge: "RECOVERY", title: "hyadeOS could not start",
         intro: "The system kernel stopped several times while starting.",
         safe: "Your files and settings have not been touched. Choose what to do next.",
         version: v => `(version ${v})`,
@@ -74,17 +74,17 @@
         report: "Send report to the developers",
         reportNote: "Sends only the error text above, without your name, email or file paths. Nothing is sent unless you press the button.",
         rollback: (to, from) => `The last update (${to}) can be undone, going back to ${from}.`,
-        starting: "Starting hyadeOSS...", restoring: "Restoring the previous version...",
+        starting: "Starting hyadeOS...", restoring: "Restoring the previous version...",
         repairing: "Reinstalling system components, this can take a minute...",
         sending: "Sending the report...", sent: "Report sent. Thank you!",
         failRestart: "Could not restart.", failRestore: "Could not restore the previous version.",
         failRepair: "Repair failed. Check your internet connection and try again.",
         failReport: "The report could not be sent. Check your internet connection.",
-        unavailable: "Recovery tools are not available. Restart hyadeOSS.",
+        unavailable: "Recovery tools are not available. Restart hyadeOS.",
         newVersion: "new version", previousVersion: "the previous version"
       },
       it: {
-        badge: "RIPRISTINO", title: "hyadeOSS non riesce ad avviarsi",
+        badge: "RIPRISTINO", title: "hyadeOS non riesce ad avviarsi",
         intro: "Il kernel di sistema si è fermato più volte durante l'avvio.",
         safe: "I tuoi file e le impostazioni non sono stati toccati. Scegli cosa fare.",
         version: v => `(versione ${v})`,
@@ -93,13 +93,13 @@
         report: "Invia segnalazione agli sviluppatori",
         reportNote: "Invia solo il testo dell'errore qui sopra, senza nome, email o percorsi dei file. Non viene inviato nulla se non premi il pulsante.",
         rollback: (to, from) => `L'ultimo aggiornamento (${to}) può essere annullato, tornando a ${from}.`,
-        starting: "Avvio di hyadeOSS...", restoring: "Ripristino della versione precedente...",
+        starting: "Avvio di hyadeOS...", restoring: "Ripristino della versione precedente...",
         repairing: "Reinstallazione dei componenti di sistema, può richiedere un minuto...",
         sending: "Invio della segnalazione...", sent: "Segnalazione inviata. Grazie!",
         failRestart: "Impossibile riavviare.", failRestore: "Impossibile ripristinare la versione precedente.",
         failRepair: "Riparazione non riuscita. Controlla la connessione a Internet e riprova.",
         failReport: "Impossibile inviare la segnalazione. Controlla la connessione a Internet.",
-        unavailable: "Gli strumenti di ripristino non sono disponibili. Riavvia hyadeOSS.",
+        unavailable: "Gli strumenti di ripristino non sono disponibili. Riavvia hyadeOS.",
         newVersion: "nuova versione", previousVersion: "la versione precedente"
       }
     };
@@ -112,7 +112,7 @@
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = T[el.dataset.i18n]; });
 
-    const api = window.hyadeOSSElectron && window.hyadeOSSElectron.kernelRecovery;
+    const api = window.hyadeOSElectron && window.hyadeOSElectron.kernelRecovery;
     const $ = id => document.getElementById(id);
     const buttons = [...document.querySelectorAll("button")];
     const setBusy = (busy, message) => {

@@ -8,7 +8,7 @@
   <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <meta charset="UTF-8">
   <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
   <link rel="stylesheet" href="/desktop/assets/fonts/fonts.css"/>
@@ -62,21 +62,21 @@
                     <div class="subtitle">${app.appId}</div>
                   </div>
                 </div>
-                <button class="btn-danger" onclick="uninstallApp('${app.appId}')">${hyadeOSSI18n.t("settings.apps.uninstall", "Uninstall")}</button>
+                <button class="btn-danger" onclick="uninstallApp('${app.appId}')">${hyadeOSI18n.t("settings.apps.uninstall", "Uninstall")}</button>
               </div>
             `;
           });
         } else {
-          html = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.apps.empty", "No applications installed. Open Store to discover apps.")}</div></div>`;
+          html = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.apps.empty", "No applications installed. Open Store to discover apps.")}</div></div>`;
         }
         document.getElementById('appsPanel').innerHTML = html;
       } catch (e) {
-        document.getElementById('appsPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSSI18n.t("settings.apps.load-error", "Error loading apps.")}</div></div>`;
+        document.getElementById('appsPanel').innerHTML = `<div class="row"><div class="subtitle">${hyadeOSI18n.t("settings.apps.load-error", "Error loading apps.")}</div></div>`;
       }
     }
 
     async function uninstallApp(appId) {
-      if (!await mDialog.confirm(hyadeOSSI18n.t("settings.apps.uninstall-confirm", "Are you sure you want to uninstall {app}?", { app: appId }), { danger: true, okText: hyadeOSSI18n.t("settings.apps.uninstall", "Uninstall") })) return;
+      if (!await mDialog.confirm(hyadeOSI18n.t("settings.apps.uninstall-confirm", "Are you sure you want to uninstall {app}?", { app: appId }), { danger: true, okText: hyadeOSI18n.t("settings.apps.uninstall", "Uninstall") })) return;
       
       await fetch('/api/store/uninstall', {
         method: 'POST',

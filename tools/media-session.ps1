@@ -1,4 +1,4 @@
-# hyadeOSS - bridge to the Windows media session (System Media Transport Controls).
+# hyadeOS - bridge to the Windows media session (System Media Transport Controls).
 # Reads what any media app (Spotify desktop, browsers, ...) is playing and controls it,
 # with no account or API: the same data Windows shows in its volume flyout.
 #

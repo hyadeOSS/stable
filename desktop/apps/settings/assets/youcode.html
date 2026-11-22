@@ -162,7 +162,7 @@ async function verifyCode() {
   const errorDiv = document.getElementById('error');
 
   if (!code || code.length !== 6) {
-    errorDiv.textContent = hyadeOSSI18n.t("settings.you.invalid-code", "Please enter a valid 6-digit code.");
+    errorDiv.textContent = hyadeOSI18n.t("settings.you.invalid-code", "Please enter a valid 6-digit code.");
     return;
   }
 
@@ -179,21 +179,21 @@ async function verifyCode() {
       });
 
       if (!uploadResponse.ok) {
-        throw new Error(hyadeOSSI18n.t("settings.you.upload-failed-status", "Upload failed ({status})", { status: uploadResponse.status }));
+        throw new Error(hyadeOSI18n.t("settings.you.upload-failed-status", "Upload failed ({status})", { status: uploadResponse.status }));
       }
 
       const contentType = uploadResponse.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        throw new Error(hyadeOSSI18n.t("settings.you.not-json", "Server response is not JSON"));
+        throw new Error(hyadeOSI18n.t("settings.you.not-json", "Server response is not JSON"));
       }
 
       const uploadData = await uploadResponse.json();
       if (!uploadData.success) {
-        throw new Error(uploadData.error || hyadeOSSI18n.t("settings.you.upload-error", "Upload error"));
+        throw new Error(uploadData.error || hyadeOSI18n.t("settings.you.upload-error", "Upload error"));
       }
 
     } catch (err) {
-      errorDiv.textContent = hyadeOSSI18n.t("settings.you.upload-avatar-error", "Error uploading avatar: {message}", { message: err.message });
+      errorDiv.textContent = hyadeOSI18n.t("settings.you.upload-avatar-error", "Error uploading avatar: {message}", { message: err.message });
       return;
     }
   }
@@ -208,11 +208,11 @@ async function verifyCode() {
     if (data.success) {
       window.location.href = 'youafter.html';
     } else {
-      errorDiv.textContent = data.error || hyadeOSSI18n.t("settings.you.code-invalid", "Invalid code.");
+      errorDiv.textContent = data.error || hyadeOSI18n.t("settings.you.code-invalid", "Invalid code.");
     }
   })
   .catch(err => {
-    errorDiv.textContent = hyadeOSSI18n.t("settings.you.verify-code-error", "Error verifying code: {message}", { message: err.message });
+    errorDiv.textContent = hyadeOSI18n.t("settings.you.verify-code-error", "Error verifying code: {message}", { message: err.message });
   });
 }
 </script>

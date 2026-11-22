@@ -1,4 +1,8 @@
-// hyadeOSS desktop extras, loaded at the end of com.hyadeoss.desktop.html (it uses the
+// Legacy name: right after an update the open window still runs the old preload.js, which exposes
+// window.hyadeOSSElectron (the name before the rename) until the shell restarts.
+if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron = window.hyadeOSSElectron;
+
+// hyadeOS desktop extras, loaded at the end of com.hyadeos.desktop.html (it uses the
 // desktop's own functions: openPopup, minimizePopup, applySnap, showNotification...).
 //
 //   Windows    Win+←/→ snap, "genie" minimize, virtual desktops (Win+Ctrl+←/→/D/F4)
@@ -10,7 +14,7 @@
 // Motion follows the system: Functions Lab › Performance and the OS "reduce motion"
 // setting turn the decorative animations off.
 (() => {
-  const electron = window.hyadeOSSElectron || {};
+  const electron = window.hyadeOSElectron || {};
   const reducedMotion = () => document.body.classList.contains('lab-performance') || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
   const readStore = (key, fallback) => { try { const value = localStorage.getItem(key); return value == null ? fallback : JSON.parse(value); } catch (e) { return fallback; } };
@@ -248,8 +252,8 @@
     const left = (to - minutes + 1440) % 1440;
     if (inside && left <= 5 && !hoursWarned) {
       hoursWarned = true;
-      flashIsland({ icon: 'hourglass_top', big: true, title: hyadeOSSI18n.t('desktop.limits.soon', 'Time is almost up'), sub: hyadeOSSI18n.t('desktop.limits.soon-sub', 'This account signs out at {time}. Save your work.', { time: limits.to }) }, 15000);
-      showNotification(hyadeOSSI18n.t('desktop.limits.soon', 'Time is almost up'), hyadeOSSI18n.t('desktop.limits.soon-sub', 'This account signs out at {time}. Save your work.', { time: limits.to }), 'hourglass_top');
+      flashIsland({ icon: 'hourglass_top', big: true, title: hyadeOSI18n.t('desktop.limits.soon', 'Time is almost up'), sub: hyadeOSI18n.t('desktop.limits.soon-sub', 'This account signs out at {time}. Save your work.', { time: limits.to }) }, 15000);
+      showNotification(hyadeOSI18n.t('desktop.limits.soon', 'Time is almost up'), hyadeOSI18n.t('desktop.limits.soon-sub', 'This account signs out at {time}. Save your work.', { time: limits.to }), 'hourglass_top');
     }
     if (!inside) signOut();
   }, 20000);
@@ -258,7 +262,7 @@
   const showAutoUpdates = () => fetch('/api/store/auto-update?take=1', { cache: 'no-store' }).then(response => response.json()).then(data => {
     if (!data.updated || !data.updated.length) return;
     const names = data.updated.map(item => item.title).join(', ');
-    flashIsland({ icon: 'upgrade', title: hyadeOSSI18n.t('desktop.store.auto-updated', 'Apps updated'), sub: names }, 5000);
+    flashIsland({ icon: 'upgrade', title: hyadeOSI18n.t('desktop.store.auto-updated', 'Apps updated'), sub: names }, 5000);
   }).catch(() => {});
   setTimeout(showAutoUpdates, 15000);
   setInterval(showAutoUpdates, 10 * 60 * 1000);
@@ -267,12 +271,12 @@
   electron.onRestartNeeded?.(() => {
     flashIsland({
       icon: 'restart_alt', big: true,
-      title: hyadeOSSI18n.t('desktop.restart.title', 'Restart to finish the update'),
-      sub: hyadeOSSI18n.t('desktop.restart.sub', 'Part of hyadeOSS was updated'),
+      title: hyadeOSI18n.t('desktop.restart.title', 'Restart to finish the update'),
+      sub: hyadeOSI18n.t('desktop.restart.sub', 'Part of hyadeOS was updated'),
       buttons: [['restart_alt', () => electron.relaunch?.()], ['close', () => { islandFlash = null; renderIsland(); }]]
     }, 120000);
-    showNotification(hyadeOSSI18n.t('desktop.restart.title', 'Restart to finish the update'),
-      hyadeOSSI18n.t('desktop.restart.message', 'Restart hyadeOSS from the island at the top when you are ready.'), 'restart_alt');
+    showNotification(hyadeOSI18n.t('desktop.restart.title', 'Restart to finish the update'),
+      hyadeOSI18n.t('desktop.restart.message', 'Restart hyadeOS from the island at the top when you are ready.'), 'restart_alt');
   });
 
   /* ───────────── Windows: snap keys ───────────── */
@@ -306,7 +310,7 @@
   function showDeskHud() {
     const dots = el('div', 'dots');
     for (let i = 0; i < deskCount; i++) dots.append(el('i', i === currentDesk ? 'on' : ''));
-    hud.replaceChildren(el('span', '', hyadeOSSI18n.t('desktop.desks.name', 'Desktop {number}', { number: currentDesk + 1 })), dots);
+    hud.replaceChildren(el('span', '', hyadeOSI18n.t('desktop.desks.name', 'Desktop {number}', { number: currentDesk + 1 })), dots);
     hud.classList.add('show');
     clearTimeout(deskHudTimer);
     deskHudTimer = setTimeout(() => hud.classList.remove('show'), 1200);
@@ -423,18 +427,18 @@
     if (openPanel?.id === 'mwClipboard') { closePanel(); return; }
     if (!electron.clipboardHistory) return;
     const panel = el('div', 'mw-panel'); panel.id = 'mwClipboard';
-    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'content_paste'), el('span', '', hyadeOSSI18n.t('desktop.clipboard.title', 'Clipboard')));
-    const clear = el('button', '', hyadeOSSI18n.t('desktop.clipboard.clear', 'Clear all')); clear.type = 'button';
+    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'content_paste'), el('span', '', hyadeOSI18n.t('desktop.clipboard.title', 'Clipboard')));
+    const clear = el('button', '', hyadeOSI18n.t('desktop.clipboard.clear', 'Clear all')); clear.type = 'button';
     head.append(clear);
     const list = el('div', 'list');
     panel.append(head, list);
     const render = items => {
-      if (!items.length) { list.replaceChildren(el('div', 'empty', hyadeOSSI18n.t('desktop.clipboard.empty', 'Copy something and it shows up here.'))); return; }
+      if (!items.length) { list.replaceChildren(el('div', 'empty', hyadeOSI18n.t('desktop.clipboard.empty', 'Copy something and it shows up here.'))); return; }
       list.replaceChildren(...items.map((item, index) => {
         const button = el('button', 'clip'); button.type = 'button';
         button.style.animationDelay = Math.min(index, 10) * 35 + 'ms';
         button.append(document.createTextNode(item.text.length > 300 ? item.text.slice(0, 300) + '…' : item.text));
-        button.append(el('small', '', new Date(item.at).toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit' })));
+        button.append(el('small', '', new Date(item.at).toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' })));
         button.onclick = () => { closePanel(); electron.clipboardHistory.paste(item.text); };
         return button;
       }));
@@ -460,8 +464,8 @@
     // The text goes back to the field that had the focus (an app frame or a desktop field).
     const previousFocus = document.activeElement;
     const panel = el('div', 'mw-panel'); panel.id = 'mwEmoji';
-    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'mood'), el('span', '', hyadeOSSI18n.t('desktop.emoji.title', 'Emoji')));
-    const search = el('input'); search.type = 'search'; search.placeholder = hyadeOSSI18n.t('desktop.emoji.search', 'Search emoji');
+    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'mood'), el('span', '', hyadeOSI18n.t('desktop.emoji.title', 'Emoji')));
+    const search = el('input'); search.type = 'search'; search.placeholder = hyadeOSI18n.t('desktop.emoji.search', 'Search emoji');
     const tabs = el('div', 'mw-emoji-tabs');
     const grid = el('div', 'mw-emoji-grid');
     const recentKey = 'mwRecentEmoji';
@@ -508,7 +512,7 @@
   const statusRight = document.querySelector('.status-right');
   const timerButton = el('button', 'system-tray-btn');
   timerButton.id = 'mwTimerBtn'; timerButton.type = 'button';
-  timerButton.title = hyadeOSSI18n.t('desktop.timer.title', 'Timer');
+  timerButton.title = hyadeOSI18n.t('desktop.timer.title', 'Timer');
   timerButton.append(el('span', 'material-symbols-outlined', 'timer'));
   timerButton.style.opacity = '1';
   if (statusRight) statusRight.prepend(timerButton);
@@ -530,13 +534,13 @@
       sounds.done();
       const box = island.getBoundingClientRect();
       burst(box.left + box.width / 2, 40, { count: 110, spread: 1.2, rise: -0.4 });
-      showNotification(hyadeOSSI18n.t('desktop.timer.title', 'Timer'), done.pomodoro
-        ? (done.pomodoro.work ? hyadeOSSI18n.t('desktop.timer.pomodoro-break', 'Focus session done! Time for a break.') : hyadeOSSI18n.t('desktop.timer.pomodoro-work', 'Break over: back to focus.'))
-        : hyadeOSSI18n.t('desktop.timer.done', '{label} is up!', { label: done.label }), 'alarm');
+      showNotification(hyadeOSI18n.t('desktop.timer.title', 'Timer'), done.pomodoro
+        ? (done.pomodoro.work ? hyadeOSI18n.t('desktop.timer.pomodoro-break', 'Focus session done! Time for a break.') : hyadeOSI18n.t('desktop.timer.pomodoro-work', 'Break over: back to focus.'))
+        : hyadeOSI18n.t('desktop.timer.done', '{label} is up!', { label: done.label }), 'alarm');
       if (done.pomodoro) {
         const { round, work } = done.pomodoro;
-        if (work) startTimer(round % 4 === 0 ? 15 : 5, hyadeOSSI18n.t('desktop.timer.break', 'Break'), { round, work: false });
-        else startTimer(25, hyadeOSSI18n.t('desktop.timer.focus', 'Focus'), { round: round + 1, work: true });
+        if (work) startTimer(round % 4 === 0 ? 15 : 5, hyadeOSI18n.t('desktop.timer.break', 'Break'), { round, work: false });
+        else startTimer(25, hyadeOSI18n.t('desktop.timer.focus', 'Focus'), { round: round + 1, work: true });
       }
       return;
     }
@@ -550,12 +554,12 @@
     if (openPanel?.id === 'mwTimer') { closePanel(); return; }
     const panel = el('div', 'mw-panel'); panel.id = 'mwTimer';
     panel.style.width = '300px';
-    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'timer'), el('span', '', hyadeOSSI18n.t('desktop.timer.title', 'Timer')));
+    const head = el('header'); head.append(el('span', 'material-symbols-outlined', 'timer'), el('span', '', hyadeOSI18n.t('desktop.timer.title', 'Timer')));
     panel.append(head);
     if (timer) {
       const run = el('div', 'mw-timer-run');
       const left = el('b', '', format(timer.end - Date.now())); left.style.fontSize = '26px';
-      const stop = el('button', '', hyadeOSSI18n.t('desktop.timer.stop', 'Stop')); stop.type = 'button';
+      const stop = el('button', '', hyadeOSI18n.t('desktop.timer.stop', 'Stop')); stop.type = 'button';
       stop.onclick = () => { stopTimer(); closePanel(); };
       run.append(left, el('span', '', timer.label), stop);
       panel.append(run);
@@ -563,14 +567,14 @@
       const presets = el('div', 'mw-timer-presets');
       [1, 5, 10, 15, 30, 60].forEach(minutes => {
         const button = el('button'); button.type = 'button';
-        button.append(el('b', '', String(minutes)), document.createTextNode(hyadeOSSI18n.t('desktop.timer.minutes', 'min')));
-        button.onclick = () => startTimer(minutes, hyadeOSSI18n.t('desktop.timer.label', '{minutes} min timer', { minutes }));
+        button.append(el('b', '', String(minutes)), document.createTextNode(hyadeOSI18n.t('desktop.timer.minutes', 'min')));
+        button.onclick = () => startTimer(minutes, hyadeOSI18n.t('desktop.timer.label', '{minutes} min timer', { minutes }));
         presets.append(button);
       });
       const pomodoro = el('button', 'pomodoro'); pomodoro.type = 'button';
       const pomodoroTitle = el('b'); pomodoroTitle.append(el('span', 'material-symbols-outlined', 'timer'), document.createTextNode(' Pomodoro'));
-      pomodoro.append(pomodoroTitle, document.createTextNode(hyadeOSSI18n.t('desktop.timer.pomodoro-hint', '25 min focus · 5 min break')));
-      pomodoro.onclick = () => startTimer(25, hyadeOSSI18n.t('desktop.timer.focus', 'Focus'), { round: 1, work: true });
+      pomodoro.append(pomodoroTitle, document.createTextNode(hyadeOSI18n.t('desktop.timer.pomodoro-hint', '25 min focus · 5 min break')));
+      pomodoro.onclick = () => startTimer(25, hyadeOSI18n.t('desktop.timer.focus', 'Focus'), { round: 1, work: true });
       presets.append(pomodoro);
       panel.append(presets);
     }
@@ -584,7 +588,7 @@
     if (!electron.capture || document.getElementById('mwCapture')) return;
     closePanel();
     const layer = el('div'); layer.id = 'mwCapture';
-    const hint = el('div', 'hint', hyadeOSSI18n.t('desktop.capture.hint', 'Drag to capture an area · click for the whole screen · Esc to cancel'));
+    const hint = el('div', 'hint', hyadeOSI18n.t('desktop.capture.hint', 'Drag to capture an area · click for the whole screen · Esc to cancel'));
     layer.append(hint);
     document.body.appendChild(layer);
     let start = null, box = null;
@@ -614,9 +618,9 @@
         const flash = el('div'); flash.id = 'mwFlash'; document.body.appendChild(flash); setTimeout(() => flash.remove(), 500);
         const name = await saveCapture(dataUrl);
         flyThumbnail(dataUrl, rect, name);
-        flashIsland({ icon: 'screenshot_monitor', title: hyadeOSSI18n.t('desktop.capture.done', 'Screenshot saved'), sub: name ? hyadeOSSI18n.t('desktop.capture.where', 'Pictures › {name} · copied too', { name }) : hyadeOSSI18n.t('desktop.capture.copied', 'Copied to the clipboard') });
+        flashIsland({ icon: 'screenshot_monitor', title: hyadeOSI18n.t('desktop.capture.done', 'Screenshot saved'), sub: name ? hyadeOSI18n.t('desktop.capture.where', 'Pictures › {name} · copied too', { name }) : hyadeOSI18n.t('desktop.capture.copied', 'Copied to the clipboard') });
       } catch (error) {
-        showNotification(hyadeOSSI18n.t('desktop.capture.title', 'Screenshot'), hyadeOSSI18n.t('desktop.capture.failed', 'Could not take the screenshot.'), 'warning');
+        showNotification(hyadeOSI18n.t('desktop.capture.title', 'Screenshot'), hyadeOSI18n.t('desktop.capture.failed', 'Could not take the screenshot.'), 'warning');
       }
     });
   }
@@ -711,9 +715,9 @@
       card.append(el('span', 'material-symbols-outlined', ICONS[index % ICONS.length]), document.createTextNode(sentence));
       cards.append(card);
     });
-    const go = el('button', 'wn-go', hyadeOSSI18n.t('desktop.whatsnew.go', 'Let’s go')); go.type = 'button';
+    const go = el('button', 'wn-go', hyadeOSI18n.t('desktop.whatsnew.go', 'Let’s go')); go.type = 'button';
     go.onclick = () => { layer.classList.add('closing'); setTimeout(() => layer.remove(), 350); };
-    box.append(el('h1', '', hyadeOSSI18n.t('desktop.whatsnew.title', 'hyadeOSS {version} is here', { version: info.version })), el('div', 'wn-sub', hyadeOSSI18n.t('desktop.whatsnew.subtitle', 'Here’s what’s new')), cards, go);
+    box.append(el('h1', '', hyadeOSI18n.t('desktop.whatsnew.title', 'hyadeOS {version} is here', { version: info.version })), el('div', 'wn-sub', hyadeOSI18n.t('desktop.whatsnew.subtitle', 'Here’s what’s new')), cards, go);
     layer.append(box);
     setTimeout(() => { document.body.appendChild(layer); burst(innerWidth / 2, innerHeight * 0.3, { count: 90 }); }, 1600);
   }).catch(() => {});
@@ -729,21 +733,21 @@
     const start = document.getElementById('actionsBtn').getBoundingClientRect();
     for (let wave = 0; wave < 4; wave++) setTimeout(() => burst(start.left + start.width / 2, start.top, { count: 40, colors: ['#ffd60a', '#ffe680', '#ffb800', '#fff'], spread: 1.4, gravity: 1.6 }), wave * 260);
     sounds.done();
-    flashIsland({ icon: 'sports_esports', title: hyadeOSSI18n.t('desktop.konami', 'It’s-a me, hyadeOSS!') }, 3200);
+    flashIsland({ icon: 'sports_esports', title: hyadeOSI18n.t('desktop.konami', 'It’s-a me, hyadeOS!') }, 3200);
   });
 
   sounds.startup();
 
   /* ───────────── Quick settings: light / dark theme (mw-theme.js) ───────────── */
   function showThemeTile() {
-    const dark = !window.hyadeOSSTheme || hyadeOSSTheme.resolved() === 'dark';
+    const dark = !window.hyadeOSTheme || hyadeOSTheme.resolved() === 'dark';
     const sub = document.getElementById('subTheme'), iconEl = document.getElementById('iconTheme');
-    if (sub) sub.textContent = dark ? hyadeOSSI18n.t('desktop.qs.theme-dark', 'Dark') : hyadeOSSI18n.t('desktop.qs.theme-light', 'Light');
+    if (sub) sub.textContent = dark ? hyadeOSI18n.t('desktop.qs.theme-dark', 'Dark') : hyadeOSI18n.t('desktop.qs.theme-light', 'Light');
     if (iconEl) iconEl.textContent = dark ? 'dark_mode' : 'light_mode';
   }
   window.mwToggleTheme = () => {
-    if (!window.hyadeOSSTheme) return;
-    hyadeOSSTheme.set(hyadeOSSTheme.resolved() === 'dark' ? 'light' : 'dark');
+    if (!window.hyadeOSTheme) return;
+    hyadeOSTheme.set(hyadeOSTheme.resolved() === 'dark' ? 'light' : 'dark');
     showThemeTile();
   };
   window.addEventListener('storage', event => { if (event.key === 'mwTheme') showThemeTile(); });

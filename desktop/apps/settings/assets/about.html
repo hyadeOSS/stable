@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title data-i18n="settings.about.title">About hyadeOSS</title>
+  <title data-i18n="settings.about.title">About hyadeOS</title>
 
   <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
 
@@ -125,7 +125,7 @@
 <div class="container">
 
   <div class="brand-header">
-    <img src="branding.png" alt="hyadeOSS">
+    <img src="branding.png" alt="hyadeOS">
   </div>
 
   <div class="info-box">
@@ -168,8 +168,8 @@
     const d = new Date(iso);
     if (isNaN(d)) return null;
     const pad = n => String(n).padStart(2, '0');
-    if (hyadeOSSI18n.locale) {
-      const day = d.toLocaleDateString(hyadeOSSI18n.locale, { day: 'numeric', month: 'long', year: 'numeric' });
+    if (hyadeOSI18n.locale) {
+      const day = d.toLocaleDateString(hyadeOSI18n.locale, { day: 'numeric', month: 'long', year: 'numeric' });
       return `${day} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
     return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;

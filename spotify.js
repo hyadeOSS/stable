@@ -1,11 +1,12 @@
-// hyadeOSS - Spotify Connect remote for the Music app.
-// (C) 2026 mariowstech and the hyadeOSS team - Licensed under the Apache License, Version 2.0
+// hyadeOS - Spotify Connect remote for the Music app.
+// (C) 2026 mariowstech and the hyadeOS team - Licensed under the Apache License, Version 2.0
 //
 // Uses the Authorization Code flow with PKCE, so no client secret is shipped.
 // Tokens live only in system/spotify-token.json (mode 0600): they are never sent to
 // the browser, never included in /get-settings or backups, and are deleted on logout.
-// Audio is played by the user's own Spotify app/device; hyadeOSS only shows and controls it.
+// Audio is played by the user's own Spotify app/device; hyadeOS only shows and controls it.
 
+const { envVar } = require("./lib/env");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -30,7 +31,7 @@ function deleteToken() {
 
 function registerSpotifyRoutes(app, { getConfig, saveConfig, hasValidSession, port }) {
   const redirectUri = `http://127.0.0.1:${port}/api/spotify/callback`;
-  const clientId = () => getConfig().spotifyClientId || process.env.HYADEOSS_SPOTIFY_CLIENT_ID || "";
+  const clientId = () => getConfig().spotifyClientId || envVar("SPOTIFY_CLIENT_ID") || "";
 
   const requireAuth = (req, res, next) => {
     if (!getConfig().passwordHash || hasValidSession(req)) return next();

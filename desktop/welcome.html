@@ -3,12 +3,12 @@
 <head>
     <script src="/desktop/assets/i18n-data.js"></script>
     <script src="/desktop/assets/i18n.js"></script>
-    <script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+    <script src="/desktop/assets/hyadeos-dialogs.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
     <link href="/desktop/assets/setup.css" rel="stylesheet">
-    <title data-i18n="setup.title">hyadeOSS Setup</title>
+    <title data-i18n="setup.title">hyadeOS Setup</title>
     <style>
         * {
             margin: 0;
@@ -293,8 +293,8 @@
         </div>
 
         <!-- Screenshots -->
-        <img id="old-os" class="screenshot" src="/desktop/assets/oldmwos.png" alt="hyadeOSS Old">
-        <img id="new-os" class="screenshot" src="/desktop/assets/newmwos.png" alt="hyadeOSS New">
+        <img id="old-os" class="screenshot" src="/desktop/assets/oldmwos.png" alt="hyadeOS Old">
+        <img id="new-os" class="screenshot" src="/desktop/assets/newmwos.png" alt="hyadeOS New">
 
         <!-- Testi animati posizionati in basso sullo stesso esatto asse -->
         <div id="text-old" class="text-overlay">The desktop you know and love</div>
@@ -495,10 +495,10 @@
                     if(res.success) {
                         window.location.href = '/'; 
                     } else {
-                        mDialog.alert(hyadeOSSI18n.t("setup.welcome.restore-failed", "Restore failed: {error}", { error: res.error }));
+                        mDialog.alert(hyadeOSI18n.t("setup.welcome.restore-failed", "Restore failed: {error}", { error: res.error }));
                     }
                 })
-                .catch(err => mDialog.alert(hyadeOSSI18n.t("setup.welcome.restore-error", "Error restoring backup.")));
+                .catch(err => mDialog.alert(hyadeOSI18n.t("setup.welcome.restore-error", "Error restoring backup.")));
         }
     </script>
 </body>

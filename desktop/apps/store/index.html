@@ -6,14 +6,14 @@
   <script src="/desktop/assets/i18n-data.js"></script>
   <script src="/desktop/assets/i18n.js"></script>
   <script src="/desktop/assets/accent.js"></script>
-  <script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+  <script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <link rel="stylesheet" href="/desktop/assets/mw-design.css">
   <script src="/desktop/assets/mw-theme.js"></script>
   <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
   <link rel="stylesheet" href="/desktop/assets/fonts/fonts.css"/>
   
   <style>
-    /* Shared hyadeOSS app language: the same glass sidebar, accent, radii and
+    /* Shared hyadeOS app language: the same glass sidebar, accent, radii and
        type scale used by Files and Music, so the Store feels part of the system. */
     :root {
       --accent: var(--mw-accent);
@@ -561,7 +561,7 @@
         <div class="hero-grid" id="heroSection">
           <div class="hero-card" onclick="switchView('publish')">
             <div>
-              <h1 data-i18n="store.hero.build.title">Build for hyadeOSS</h1>
+              <h1 data-i18n="store.hero.build.title">Build for hyadeOS</h1>
               <p data-i18n="store.hero.build.text">Publish your own app to the Store straight from a GitHub repository.</p>
             </div>
             <span class="material-symbols-outlined hero-symbol">auto_awesome</span>
@@ -648,7 +648,7 @@
       <div id="view-publish" class="view">
         <h2 class="section-title" data-i18n="store.publish.title">Submit to App Store</h2>
         <div class="pub-card">
-          <input type="text" id="pubId" class="pub-input" placeholder="Bundle ID (e.g., com.hyadeoss.calc)" data-i18n-placeholder="store.publish.bundle-id">
+          <input type="text" id="pubId" class="pub-input" placeholder="Bundle ID (e.g., com.hyadeos.calc)" data-i18n-placeholder="store.publish.bundle-id">
           <input type="text" id="pubTitle" class="pub-input" placeholder="App Name" data-i18n-placeholder="store.publish.app-name">
           <input type="text" id="pubDev" class="pub-input" placeholder="Developer Name" data-i18n-placeholder="store.publish.developer">
           
@@ -673,7 +673,7 @@
         
         <div class="pub-card" style="margin-bottom: 24px;">
           <h3 class="lp-desc-title" data-i18n="store.settings.channel">Update Channel</h3>
-          <p class="lp-desc" style="margin-bottom: 12px;"><span data-i18n="store.settings.channel-text">Choose your preferred hyadeOSS update channel.</span> <strong data-i18n="store.settings.channel-email">Requires a verified email.</strong></p>
+          <p class="lp-desc" style="margin-bottom: 12px;"><span data-i18n="store.settings.channel-text">Choose your preferred hyadeOS update channel.</span> <strong data-i18n="store.settings.channel-email">Requires a verified email.</strong></p>
           <select id="updateChannelSelect" class="pub-input" onchange="changeUpdateChannel()" style="cursor: pointer;">
             <option value="stable" data-i18n="store.settings.channel.stable">Stable (Recommended)</option>
             <option value="beta" data-i18n="store.settings.channel.beta">Beta (Early Access)</option>
@@ -703,7 +703,7 @@
         <!-- About Footer -->
         <div style="margin-top: 40px; text-align: center; color: var(--text-dim); font-size: 11.5px; line-height: 1.6;">
           <img src="/desktop/assets/icons/stars.png" style="width: 32px; height: 32px; opacity: 0.5; margin-bottom: 8px; border-radius: 8px;"><br>
-          <strong>hyadeOSS Store</strong><br>
+          <strong>hyadeOS Store</strong><br>
           <span data-i18n="store.about.version">Version</span> 1.0.0<br>
           <span data-i18n="store.about.copyright">© 2026 mariowstech and contributors.</span>
         </div>
@@ -754,8 +754,8 @@
     fetch('/get-settings').then(r => r.json()).then(cfg => { if (typeof cfg.username === 'string' && cfg.username.trim()) document.getElementById('accountBtn').title = cfg.username.trim(); }).catch(() => {});
 
     // Texts that the scripts below change at runtime start translated too.
-    document.getElementById('gridTitle').textContent = hyadeOSSI18n.t("store.grid.new", "New & Updated");
-    document.getElementById('btnUpdateCatalog').textContent = hyadeOSSI18n.t("store.settings.update-catalog", "Update Catalog");
+    document.getElementById('gridTitle').textContent = hyadeOSI18n.t("store.grid.new", "New & Updated");
+    document.getElementById('btnUpdateCatalog').textContent = hyadeOSI18n.t("store.settings.update-catalog", "Update Catalog");
 
     // Catalog text and icons come from other people: always placed as text or as an <img> src.
     const symbol = name => Object.assign(document.createElement('span'), { className: 'material-symbols-outlined', textContent: name });
@@ -776,36 +776,37 @@
 
     // ---- Categories and the SDK permissions (lib/app-manifest.js has the same lists) ----
     const CATEGORIES = {
-      productivity: ['task_alt', () => hyadeOSSI18n.t("store.category.productivity", "Productivity")],
-      utilities: ['build', () => hyadeOSSI18n.t("store.category.utilities", "Utilities")],
-      games: ['sports_esports', () => hyadeOSSI18n.t("store.category.games", "Games")],
-      education: ['school', () => hyadeOSSI18n.t("store.category.education", "Education")],
-      entertainment: ['movie', () => hyadeOSSI18n.t("store.category.entertainment", "Entertainment")],
-      social: ['forum', () => hyadeOSSI18n.t("store.category.social", "Social")],
-      graphics: ['brush', () => hyadeOSSI18n.t("store.category.graphics", "Graphics & Design")],
-      developer: ['code', () => hyadeOSSI18n.t("store.category.developer", "Developer Tools")],
-      lifestyle: ['spa', () => hyadeOSSI18n.t("store.category.lifestyle", "Lifestyle")],
-      other: ['category', () => hyadeOSSI18n.t("store.category.other", "Other")]
+      productivity: ['task_alt', () => hyadeOSI18n.t("store.category.productivity", "Productivity")],
+      utilities: ['build', () => hyadeOSI18n.t("store.category.utilities", "Utilities")],
+      games: ['sports_esports', () => hyadeOSI18n.t("store.category.games", "Games")],
+      education: ['school', () => hyadeOSI18n.t("store.category.education", "Education")],
+      entertainment: ['movie', () => hyadeOSI18n.t("store.category.entertainment", "Entertainment")],
+      social: ['forum', () => hyadeOSI18n.t("store.category.social", "Social")],
+      graphics: ['brush', () => hyadeOSI18n.t("store.category.graphics", "Graphics & Design")],
+      developer: ['code', () => hyadeOSI18n.t("store.category.developer", "Developer Tools")],
+      lifestyle: ['spa', () => hyadeOSI18n.t("store.category.lifestyle", "Lifestyle")],
+      other: ['category', () => hyadeOSI18n.t("store.category.other", "Other")]
     };
     const SDK_PERMISSIONS = {
-      notifications: ['notifications', 'low', () => hyadeOSSI18n.t("store.sdkperm.notifications", "Show notifications")],
-      'files.documents': ['description', 'medium', () => hyadeOSSI18n.t("store.sdkperm.files-documents", "Read and save files in your Documents folder")],
-      'files.pictures': ['photo_library', 'medium', () => hyadeOSSI18n.t("store.sdkperm.files-pictures", "Read and save pictures in your Pictures folder")],
-      theme: ['palette', 'low', () => hyadeOSSI18n.t("store.sdkperm.theme", "Follow your accent color and theme")],
-      storage: ['database', 'low', () => hyadeOSSI18n.t("store.sdkperm.storage", "Keep its own data on this computer")],
-      'clipboard.write': ['content_paste', 'medium', () => hyadeOSSI18n.t("store.sdkperm.clipboard-write", "Copy text to your clipboard")],
-      'open-url': ['open_in_browser', 'low', () => hyadeOSSI18n.t("store.sdkperm.open-url", "Open web pages in the Browser")]
+      notifications: ['notifications', 'low', () => hyadeOSI18n.t("store.sdkperm.notifications", "Show notifications")],
+      'files.documents': ['description', 'medium', () => hyadeOSI18n.t("store.sdkperm.files-documents", "Read and save files in your Documents folder")],
+      'files.pictures': ['photo_library', 'medium', () => hyadeOSI18n.t("store.sdkperm.files-pictures", "Read and save pictures in your Pictures folder")],
+      theme: ['palette', 'low', () => hyadeOSI18n.t("store.sdkperm.theme", "Follow your accent color and theme")],
+      storage: ['database', 'low', () => hyadeOSI18n.t("store.sdkperm.storage", "Keep its own data on this computer")],
+      'clipboard.write': ['content_paste', 'medium', () => hyadeOSI18n.t("store.sdkperm.clipboard-write", "Copy text to your clipboard")],
+      'open-url': ['open_in_browser', 'low', () => hyadeOSI18n.t("store.sdkperm.open-url", "Open web pages in the Browser")]
     };
     const sdkPermissionIds = list => Array.isArray(list) ? Object.keys(SDK_PERMISSIONS).filter(id => id !== 'notifications' && list.includes(id)) : [];
     const categoryLabel = id => (CATEGORIES[id] || CATEGORIES.other)[1]();
     // Same owners as the kernel's isolation rule (server.js, THIRD-PARTY APP ISOLATION).
     function isTrustedRepo(repoUrl) {
       const owner = text(repoUrl).match(/^https:\/\/(?:raw\.githubusercontent\.com|github\.com)\/([^/]+)\//i);
-      return !!owner && ['hyadeoss', 'mariowstech'].includes(owner[1].toLowerCase());
+      // 'hyadeoss' is the account name before the rename: apps installed back then still point at it.
+      return !!owner && ['hyadeos', 'hyadeoss', 'mariowstech'].includes(owner[1].toLowerCase());
     }
     const repoOwner = repoUrl => { const m = text(repoUrl).match(/^https:\/\/github\.com\/([\w.-]+)\//i); return m ? m[1] : null; };
 
-    // hyadeoss.json of each catalog app, fetched through the kernel (cached there for an hour).
+    // hyadeos.json of each catalog app, fetched through the kernel (cached there for an hour).
     const manifests = new Map(); // repoUrl -> Promise<manifest|null>
     function getManifest(app) {
       if (!app || !/^https:\/\/github\.com\//i.test(text(app.repoUrl))) return Promise.resolve(null);
@@ -884,7 +885,7 @@
         card.className = 'featured-card';
         card.onclick = () => openLandpage(app.id);
         const badge = document.createElement('span'); badge.className = 'featured-badge';
-        badge.append(symbol('star'), document.createTextNode(hyadeOSSI18n.t("store.featured.badge", "Featured")));
+        badge.append(symbol('star'), document.createTextNode(hyadeOSI18n.t("store.featured.badge", "Featured")));
         const icon = document.createElement('div'); icon.className = 'card-icon'; icon.append(renderIcon(app.icon));
         const info = document.createElement('div'); info.className = 'card-info';
         info.append(
@@ -903,7 +904,7 @@
       const apps = storeCatalog.filter(app => appCategory(app) === id);
       document.getElementById('listIcon').replaceChildren(symbol(CATEGORIES[id][0]));
       document.getElementById('listTitle').textContent = categoryLabel(id);
-      document.getElementById('listSubtitle').textContent = hyadeOSSI18n.t("store.list.count", "{count} apps", { count: apps.length });
+      document.getElementById('listSubtitle').textContent = hyadeOSI18n.t("store.list.count", "{count} apps", { count: apps.length });
       document.getElementById('listGithub').hidden = true;
       renderGrid(apps, document.getElementById('listGrid'));
       switchView('list');
@@ -923,9 +924,9 @@
         img.onload = () => icon.replaceChildren(img);
         img.src = 'https://github.com/' + encodeURIComponent(owner) + '.png?size=112';
       }
-      document.getElementById('listTitle').textContent = developer || hyadeOSSI18n.t("store.eula.unknown-developer", "Unknown Developer");
-      document.getElementById('listSubtitle').textContent = (isTrustedRepo(apps[0] && apps[0].repoUrl) ? hyadeOSSI18n.t("store.developer.team", "hyadeOSS team") + ' · ' : '')
-        + hyadeOSSI18n.t("store.list.count", "{count} apps", { count: apps.length });
+      document.getElementById('listTitle').textContent = developer || hyadeOSI18n.t("store.eula.unknown-developer", "Unknown Developer");
+      document.getElementById('listSubtitle').textContent = (isTrustedRepo(apps[0] && apps[0].repoUrl) ? hyadeOSI18n.t("store.developer.team", "hyadeOS team") + ' · ' : '')
+        + hyadeOSI18n.t("store.list.count", "{count} apps", { count: apps.length });
       const github = document.getElementById('listGithub');
       github.hidden = !owner;
       github.onclick = () => window.open('https://github.com/' + encodeURIComponent(owner), '_blank');
@@ -995,13 +996,13 @@
 
       if (q === '') {
         heroSec.style.display = 'grid';
-        gridTitle.textContent = hyadeOSSI18n.t("store.grid.new", "New & Updated");
+        gridTitle.textContent = hyadeOSI18n.t("store.grid.new", "New & Updated");
         renderGrid(storeCatalog);
         renderFeatured();
       } else {
         heroSec.style.display = 'none';
         document.getElementById('featuredSection').hidden = true;
-        gridTitle.textContent = hyadeOSSI18n.t("store.grid.results", "Search Results");
+        gridTitle.textContent = hyadeOSI18n.t("store.grid.results", "Search Results");
         const filtered = storeCatalog.filter(app =>
           text(app.title).toLowerCase().includes(q) ||
           text(app.developer).toLowerCase().includes(q) ||
@@ -1014,7 +1015,7 @@
 
     function renderGrid(catalogArray, grid = document.getElementById('appGrid')) {
       if (catalogArray.length === 0) {
-        grid.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSSI18n.t("store.grid.empty", "No apps found.") }));
+        grid.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSI18n.t("store.grid.empty", "No apps found.") }));
         return;
       }
       grid.replaceChildren(...catalogArray.map(app => {
@@ -1031,7 +1032,7 @@
         );
         const button = document.createElement('button');
         button.className = 'btn-get' + (isInst ? ' installed' : '');
-        button.textContent = isInst ? hyadeOSSI18n.t("common.open", "Open") : hyadeOSSI18n.t("store.get", "Get");
+        button.textContent = isInst ? hyadeOSI18n.t("common.open", "Open") : hyadeOSI18n.t("store.get", "Get");
         button.onclick = event => { event.stopPropagation(); isInst ? openInstalledApp(app.id) : openLandpage(app.id); };
         card.append(icon, info, button);
         return card;
@@ -1039,16 +1040,16 @@
     }
 
     // What an app can do, before installing it. Third-party apps run apart from the system and
-    // reach it only through the SDK permissions in their hyadeoss.json; a catalog entry may
+    // reach it only through the SDK permissions in their hyadeos.json; a catalog entry may
     // also list informational "permissions", and its EULA may list "Requirements:".
     const PERMISSIONS = {
-      network: ['public', () => hyadeOSSI18n.t('store.perm.network', 'Uses the internet')],
-      files: ['folder_open', () => hyadeOSSI18n.t('store.perm.files', 'Reads and saves your files')],
-      location: ['location_on', () => hyadeOSSI18n.t('store.perm.location', 'Knows your location')],
-      camera: ['photo_camera', () => hyadeOSSI18n.t('store.perm.camera', 'Uses the camera')],
-      microphone: ['mic', () => hyadeOSSI18n.t('store.perm.microphone', 'Uses the microphone')],
-      notifications: ['notifications', () => hyadeOSSI18n.t('store.perm.notifications', 'Shows notifications')],
-      system: ['admin_panel_settings', () => hyadeOSSI18n.t('store.perm.system', 'Full access to the system')]
+      network: ['public', () => hyadeOSI18n.t('store.perm.network', 'Uses the internet')],
+      files: ['folder_open', () => hyadeOSI18n.t('store.perm.files', 'Reads and saves your files')],
+      location: ['location_on', () => hyadeOSI18n.t('store.perm.location', 'Knows your location')],
+      camera: ['photo_camera', () => hyadeOSI18n.t('store.perm.camera', 'Uses the camera')],
+      microphone: ['mic', () => hyadeOSI18n.t('store.perm.microphone', 'Uses the microphone')],
+      notifications: ['notifications', () => hyadeOSI18n.t('store.perm.notifications', 'Shows notifications')],
+      system: ['admin_panel_settings', () => hyadeOSI18n.t('store.perm.system', 'Full access to the system')]
     };
     function permissionRow(icon, title, note, kind) {
       const row = document.createElement('div'); row.className = 'lp-perm' + (kind ? ' ' + kind : '');
@@ -1070,17 +1071,17 @@
       const declared = Array.isArray(app.permissions) ? app.permissions.filter(name => PERMISSIONS[name]) : [];
       const sdk = sdkPermissionIds(manifest && manifest.permissions);
       const fullAccess = declared.includes('system') || requirements.some(line => /superuser|full|runtime/i.test(line));
-      if (fullAccess) add('admin_panel_settings', hyadeOSSI18n.t('store.perm.system', 'Full access to the system'), hyadeOSSI18n.t('store.perm.system-note', 'Install it only if you trust the developer.'), 'warn');
-      else if (isTrustedRepo(app.repoUrl)) add('verified', hyadeOSSI18n.t("store.perm.trusted", "Made by the hyadeOSS team"), hyadeOSSI18n.t("store.perm.trusted-note", "It runs with the system, like the built-in apps."), 'safe');
-      else add('shield', hyadeOSSI18n.t('store.perm.isolated', 'Runs apart from the system'), hyadeOSSI18n.t('store.perm.isolated-note', 'It cannot read your settings or other apps.'), 'safe');
+      if (fullAccess) add('admin_panel_settings', hyadeOSI18n.t('store.perm.system', 'Full access to the system'), hyadeOSI18n.t('store.perm.system-note', 'Install it only if you trust the developer.'), 'warn');
+      else if (isTrustedRepo(app.repoUrl)) add('verified', hyadeOSI18n.t("store.perm.trusted", "Made by the hyadeOS team"), hyadeOSI18n.t("store.perm.trusted-note", "It runs with the system, like the built-in apps."), 'safe');
+      else add('shield', hyadeOSI18n.t('store.perm.isolated', 'Runs apart from the system'), hyadeOSI18n.t('store.perm.isolated-note', 'It cannot read your settings or other apps.'), 'safe');
       sdk.forEach(id => {
         const [icon, risk, label] = SDK_PERMISSIONS[id];
-        add(icon, label(), isTrustedRepo(app.repoUrl) ? '' : hyadeOSSI18n.t("store.perm.asked", "You choose whether to allow it when installing."), risk === 'medium' ? 'risk-medium' : '');
+        add(icon, label(), isTrustedRepo(app.repoUrl) ? '' : hyadeOSI18n.t("store.perm.asked", "You choose whether to allow it when installing."), risk === 'medium' ? 'risk-medium' : '');
       });
       const covered = new Set(sdk.some(id => id.startsWith('files.')) ? ['files'] : []);
       declared.filter(name => name !== 'system' && !covered.has(name)).forEach(name => { const [icon, label] = PERMISSIONS[name]; add(icon, label()); });
-      requirements.forEach(line => add('rule', line, hyadeOSSI18n.t('store.perm.from-eula', 'Listed by the developer'), /superuser|full|runtime/i.test(line) ? 'warn' : ''));
-      if (manifest === undefined) add('hourglass_empty', hyadeOSSI18n.t("store.perm.loading", "Checking what the app asks for…"));
+      requirements.forEach(line => add('rule', line, hyadeOSI18n.t('store.perm.from-eula', 'Listed by the developer'), /superuser|full|runtime/i.test(line) ? 'warn' : ''));
+      if (manifest === undefined) add('hourglass_empty', hyadeOSI18n.t("store.perm.loading", "Checking what the app asks for…"));
       list.replaceChildren(...rows);
       document.getElementById('lpManagePerms').hidden = !(installedAppsList.includes(app.id) && sdk.length && !isTrustedRepo(app.repoUrl));
     }
@@ -1100,9 +1101,9 @@
         box.append(Object.assign(document.createElement('span'), { className: 'material-symbols-outlined', textContent: icon }), Object.assign(document.createElement('b'), { textContent: value }), document.createTextNode(label));
         stats.append(box);
       };
-      if (info.stars != null) stat('star', info.stars.toLocaleString(hyadeOSSI18n.locale), hyadeOSSI18n.t('store.detail.stars', 'on GitHub'), 'stars');
-      if (info.version) stat('new_releases', info.version, hyadeOSSI18n.t('store.detail.version', 'version'));
-      if (info.updatedAt) stat('update', new Date(info.updatedAt).toLocaleDateString(hyadeOSSI18n.locale, { day: 'numeric', month: 'short', year: 'numeric' }), hyadeOSSI18n.t('store.detail.updated', 'last change'));
+      if (info.stars != null) stat('star', info.stars.toLocaleString(hyadeOSI18n.locale), hyadeOSI18n.t('store.detail.stars', 'on GitHub'), 'stars');
+      if (info.version) stat('new_releases', info.version, hyadeOSI18n.t('store.detail.version', 'version'));
+      if (info.updatedAt) stat('update', new Date(info.updatedAt).toLocaleDateString(hyadeOSI18n.locale, { day: 'numeric', month: 'short', year: 'numeric' }), hyadeOSI18n.t('store.detail.updated', 'last change'));
       if (info.changelog) {
         document.getElementById('lpNew').textContent = info.changelog;
         document.getElementById('lpVersion').textContent = info.version || '';
@@ -1118,8 +1119,8 @@
       document.getElementById('lpIcon').replaceChildren(renderIcon(app.icon));
       document.getElementById('lpTitle').textContent = text(app.title);
       const dev = document.getElementById('lpDev');
-      dev.textContent = text(app.developer) || hyadeOSSI18n.t("store.eula.unknown-developer", "Unknown Developer");
-      dev.title = hyadeOSSI18n.t("store.developer.more", "More from this developer");
+      dev.textContent = text(app.developer) || hyadeOSI18n.t("store.eula.unknown-developer", "Unknown Developer");
+      dev.title = hyadeOSI18n.t("store.developer.more", "More from this developer");
       dev.onclick = () => openDeveloper(app.developer);
       const category = document.getElementById('lpCategory');
       const showCategory = () => {
@@ -1148,7 +1149,7 @@
       const btnU = document.getElementById('btnUninstall');
       const isInst = installedAppsList.includes(currentAppOpen.id);
 
-      btnI.textContent = isInst ? hyadeOSSI18n.t("common.open", "Open") : hyadeOSSI18n.t("store.get", "Get");
+      btnI.textContent = isInst ? hyadeOSI18n.t("common.open", "Open") : hyadeOSI18n.t("store.get", "Get");
       btnI.className = `btn-action primary ${isInst ? 'installed' : ''}`;
       btnI.style.background = isInst ? 'rgba(255, 255, 255, 0.1)' : '';
       btnI.style.color = isInst ? 'var(--text)' : '';
@@ -1156,8 +1157,8 @@
       btnI.disabled = false;
       btnI.title = '';
       if (!storeCanInstall && !isInst) {
-        btnI.textContent = hyadeOSSI18n.t("store.admin-only", "Ask an administrator");
-        btnI.title = hyadeOSSI18n.t("store.admin-only-hint", "Only administrators can install apps on this computer.");
+        btnI.textContent = hyadeOSI18n.t("store.admin-only", "Ask an administrator");
+        btnI.title = hyadeOSI18n.t("store.admin-only-hint", "Only administrators can install apps on this computer.");
         btnI.disabled = true;
       }
 
@@ -1166,7 +1167,7 @@
         : () => promptEula();
 
       btnU.style.display = isInst && storeCanInstall ? 'inline-block' : 'none';
-      btnU.textContent = hyadeOSSI18n.t("store.uninstall", "Uninstall");
+      btnU.textContent = hyadeOSI18n.t("store.uninstall", "Uninstall");
       btnU.onclick = () => actOnApp('uninstall');
     }
 
@@ -1180,10 +1181,10 @@
       const intro = document.getElementById("eula-intro");
       const appEl = document.getElementById("eula-app-title");
       const devEl = document.getElementById("eula-app-dev");
-      intro.replaceChildren(...hyadeOSSI18n.t("store.eula.intro", "Please review the terms for {app} by {developer}.")
+      intro.replaceChildren(...hyadeOSI18n.t("store.eula.intro", "Please review the terms for {app} by {developer}.")
         .split(/(\{app\}|\{developer\})/).map(part => part === "{app}" ? appEl : part === "{developer}" ? devEl : document.createTextNode(part)));
       appEl.innerText = currentAppOpen.title;
-      devEl.innerText = currentAppOpen.developer || hyadeOSSI18n.t("store.eula.unknown-developer", "Unknown Developer");
+      devEl.innerText = currentAppOpen.developer || hyadeOSI18n.t("store.eula.unknown-developer", "Unknown Developer");
       document.querySelector(".store-eula-box").innerText = eulaText;
       document.getElementById("store-eula-overlay").style.display = "flex";
     }
@@ -1198,7 +1199,7 @@
 
       const btn = document.getElementById('btnInstall');
       const origText = btn.textContent;
-      btn.textContent = hyadeOSSI18n.t("store.checking", "Checking…");
+      btn.textContent = hyadeOSI18n.t("store.checking", "Checking…");
       btn.disabled = true;
 
       let eula = null;
@@ -1225,7 +1226,7 @@
       approvePermissionsAndInstall();
     }
 
-    // After the EULA: the user approves (or unticks) each permission the app's hyadeoss.json
+    // After the EULA: the user approves (or unticks) each permission the app's hyadeos.json
     // asks for. Only the approved ones are sent; the kernel keeps them as grantedPermissions.
     let permDialogResolve = null;
     function closePermDialog(result) {
@@ -1233,11 +1234,11 @@
       if (permDialogResolve) { const resolve = permDialogResolve; permDialogResolve = null; resolve(result); }
     }
     function askPermissions(app, ids) {
-      document.getElementById('permIntro').textContent = hyadeOSSI18n.t("store.perm.approve-text", "{app} asks for these permissions. Untick what you do not want to allow: you can change it later in My apps.", { app: text(app.title) });
+      document.getElementById('permIntro').textContent = hyadeOSI18n.t("store.perm.approve-text", "{app} asks for these permissions. Untick what you do not want to allow: you can change it later in My apps.", { app: text(app.title) });
       const choices = document.getElementById('permChoices');
       choices.replaceChildren(...ids.map(id => {
         const [icon, risk, label] = SDK_PERMISSIONS[id];
-        const row = permissionRow(icon, label(), risk === 'medium' ? hyadeOSSI18n.t("store.perm.medium", "Touches your data") : '', 'perm-choice' + (risk === 'medium' ? ' risk-medium' : ''));
+        const row = permissionRow(icon, label(), risk === 'medium' ? hyadeOSI18n.t("store.perm.medium", "Touches your data") : '', 'perm-choice' + (risk === 'medium' ? ' risk-medium' : ''));
         const box = Object.assign(document.createElement('input'), { type: 'checkbox', checked: true, value: id });
         box.setAttribute('aria-label', label());
         row.prepend(box);
@@ -1258,7 +1259,7 @@
       btn.disabled = false;
       const ids = sdkPermissionIds(manifest && manifest.permissions);
       let granted = ids;
-      // Apps of the hyadeOSS team run with the system: there is nothing to choose.
+      // Apps of the hyadeOS team run with the system: there is nothing to choose.
       if (ids.length && !isTrustedRepo(app.repoUrl)) {
         granted = await askPermissions(app, ids);
         if (granted === null) return; // cancelled
@@ -1271,7 +1272,7 @@
       const origText = btn.textContent;
       const origBg = btn.style.background;
 
-      btn.textContent = hyadeOSSI18n.t("store.working", "Working…");
+      btn.textContent = hyadeOSI18n.t("store.working", "Working…");
       btn.disabled = true;
       document.getElementById('installError').textContent = '';
 
@@ -1307,7 +1308,7 @@
         renderPermissions(currentAppOpen, await getManifest(currentAppOpen));
         handleSearch(document.getElementById('searchInput').value);
       } catch (err) {
-        document.getElementById('installError').textContent = hyadeOSSI18n.t("store.error", "Error: {error}", { error: err.message });
+        document.getElementById('installError').textContent = hyadeOSI18n.t("store.error", "Error: {error}", { error: err.message });
         btn.textContent = origText;
         btn.style.background = origBg;
         btn.disabled = false;
@@ -1323,11 +1324,11 @@
         if (!data.success) throw new Error(data.error);
         apps = data.apps;
       } catch (e) {
-        list.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSSI18n.t("store.network-error", "Network error.") }));
+        list.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSI18n.t("store.network-error", "Network error.") }));
         return;
       }
       if (!apps.length) {
-        list.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSSI18n.t("store.myapps.empty", "You have not installed any app from the Store yet.") }));
+        list.replaceChildren(Object.assign(document.createElement('div'), { className: 'loading-text', textContent: hyadeOSI18n.t("store.myapps.empty", "You have not installed any app from the Store yet.") }));
         return;
       }
       list.replaceChildren(...apps.map(app => {
@@ -1337,30 +1338,30 @@
         const info = document.createElement('div'); info.className = 'card-info';
         info.append(
           Object.assign(document.createElement('h3'), { className: 'card-title', textContent: text(app.title) }),
-          Object.assign(document.createElement('small'), { textContent: app.trusted ? hyadeOSSI18n.t("store.perm.trusted", "Made by the hyadeOSS team") : hyadeOSSI18n.t("store.perm.isolated", "Runs apart from the system") })
+          Object.assign(document.createElement('small'), { textContent: app.trusted ? hyadeOSI18n.t("store.perm.trusted", "Made by the hyadeOS team") : hyadeOSI18n.t("store.perm.isolated", "Runs apart from the system") })
         );
         head.append(icon, info);
         if (storeCatalog.some(entry => entry.id === app.appId)) {
           const page = Object.assign(document.createElement('button'), { className: 'btn-soft', type: 'button' });
-          page.append(symbol('storefront'), document.createTextNode(hyadeOSSI18n.t("store.myapps.page", "Store page")));
+          page.append(symbol('storefront'), document.createTextNode(hyadeOSI18n.t("store.myapps.page", "Store page")));
           page.onclick = () => openLandpage(app.appId);
           head.append(page);
         }
-        const open = Object.assign(document.createElement('button'), { className: 'btn-get installed', type: 'button', textContent: hyadeOSSI18n.t("common.open", "Open") });
+        const open = Object.assign(document.createElement('button'), { className: 'btn-get installed', type: 'button', textContent: hyadeOSI18n.t("common.open", "Open") });
         open.onclick = () => openInstalledApp(app.appId);
         head.append(open);
         box.append(head);
 
         const ids = Object.keys(SDK_PERMISSIONS).filter(id => app.declared.includes(id) || app.granted.includes(id));
         if (app.trusted) {
-          box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSSI18n.t("store.perm.trusted-note", "It runs with the system, like the built-in apps.") }));
+          box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSI18n.t("store.perm.trusted-note", "It runs with the system, like the built-in apps.") }));
         } else if (!ids.length) {
-          box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSSI18n.t("store.myapps.no-permissions", "This app does not ask for any permission. It can show notifications and control its own window.") }));
+          box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSI18n.t("store.myapps.no-permissions", "This app does not ask for any permission. It can show notifications and control its own window.") }));
         } else {
           const perms = document.createElement('div'); perms.className = 'myapp-perms';
           ids.forEach(id => {
             const [iconName, risk, label] = SDK_PERMISSIONS[id];
-            const row = permissionRow(iconName, label(), app.declared.includes(id) ? '' : hyadeOSSI18n.t("store.myapps.no-longer-asked", "The app no longer asks for this."), risk === 'medium' ? 'risk-medium' : '');
+            const row = permissionRow(iconName, label(), app.declared.includes(id) ? '' : hyadeOSI18n.t("store.myapps.no-longer-asked", "The app no longer asks for this."), risk === 'medium' ? 'risk-medium' : '');
             const toggle = document.createElement('label'); toggle.className = 'store-switch';
             const input = Object.assign(document.createElement('input'), { type: 'checkbox', checked: app.granted.includes(id), disabled: !storeCanInstall });
             input.setAttribute('aria-label', label());
@@ -1370,7 +1371,7 @@
             perms.append(row);
           });
           box.append(perms);
-          if (!storeCanInstall) box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSSI18n.t("store.myapps.admin-only", "Only administrators can change what apps may do.") }));
+          if (!storeCanInstall) box.append(Object.assign(document.createElement('p'), { className: 'myapp-note', textContent: hyadeOSI18n.t("store.myapps.admin-only", "Only administrators can change what apps may do.") }));
         }
         return box;
       }));
@@ -1389,7 +1390,7 @@
         if (window.parent !== window) window.parent.postMessage({ type: 'app-permissions-changed', appId: app.appId }, location.origin);
       } catch (e) {
         input.checked = !input.checked;
-        const message = hyadeOSSI18n.t("store.error", "Error: {error}", { error: e.message });
+        const message = hyadeOSI18n.t("store.error", "Error: {error}", { error: e.message });
         if (window.mDialog) mDialog.alert(message); else console.warn(message);
       } finally {
         input.disabled = !storeCanInstall;
@@ -1399,7 +1400,7 @@
     async function submitApp() {
       const status = document.getElementById('publishStatus');
       status.style.color = 'var(--text-secondary)';
-      status.textContent = hyadeOSSI18n.t("store.publish.publishing", "Publishing...");
+      status.textContent = hyadeOSI18n.t("store.publish.publishing", "Publishing...");
 
       const idVal = document.getElementById('pubId').value.trim();
       const titleVal = document.getElementById('pubTitle').value.trim();
@@ -1412,7 +1413,7 @@
 
       if (!idVal || !titleVal || !devVal || !descVal || !repoVal) {
         status.style.color = '#FF453A';
-        status.textContent = hyadeOSSI18n.t("store.publish.required", "All fields are required.");
+        status.textContent = hyadeOSI18n.t("store.publish.required", "All fields are required.");
         return;
       }
 
@@ -1443,7 +1444,7 @@
         if (!r.success) throw new Error(r.error);
 
         status.style.color = '#32d74b';
-        status.textContent = hyadeOSSI18n.t("store.publish.success", "Success! Your app is now available on Discover.");
+        status.textContent = hyadeOSI18n.t("store.publish.success", "Success! Your app is now available on Discover.");
         // It is in this computer's catalog; offer to propose it for everyone's (a GitHub issue).
         offerOfficialCatalog({ id: idVal, title: titleVal, developer: devVal, desc: descVal, repoUrl: repoVal, icon: iconTextVal || undefined, eula: eulaVal || undefined });
 
@@ -1459,7 +1460,7 @@
         initStore(); // the new app is on Discover; this page stays for the "propose" button
       } catch (err) {
         status.style.color = '#FF453A';
-        status.textContent = hyadeOSSI18n.t("store.error", "Error: {error}", { error: err.message });
+        status.textContent = hyadeOSI18n.t("store.error", "Error: {error}", { error: err.message });
       }
     }
 
@@ -1481,7 +1482,7 @@
       const status = document.getElementById('channelStatus');
       const channel = select.value;
       
-      status.textContent = hyadeOSSI18n.t("store.settings.saving", "Saving...");
+      status.textContent = hyadeOSI18n.t("store.settings.saving", "Saving...");
       status.style.color = 'var(--text-secondary)';
       
       try {
@@ -1493,31 +1494,31 @@
         const data = await res.json();
         
         if (data.success) {
-          status.textContent = hyadeOSSI18n.t("store.settings.channel-changed", "Update channel changed successfully.");
+          status.textContent = hyadeOSI18n.t("store.settings.channel-changed", "Update channel changed successfully.");
           status.style.color = '#32d74b'; // Verde successo
           setTimeout(() => status.textContent = '', 2500);
         } else {
-          status.textContent = data.error || hyadeOSSI18n.t("store.settings.channel-failed", "Failed to change channel.");
+          status.textContent = data.error || hyadeOSI18n.t("store.settings.channel-failed", "Failed to change channel.");
           status.style.color = '#ff453a'; // Rosso errore
           fetchUpdateChannel(); // Ripristina il valore vecchio in caso di errore (es: no mail verificata)
         }
       } catch (e) {
-        status.textContent = hyadeOSSI18n.t("store.network-error", "Network error.");
+        status.textContent = hyadeOSI18n.t("store.network-error", "Network error.");
         status.style.color = '#ff453a';
         fetchUpdateChannel();
       }
     }
 
     // After publishing to this computer, a button opens a prefilled issue on the official
-    // catalog (hyadeOSS/store-catalog) in the browser; nothing is sent without the user.
+    // catalog (hyadeOS/store-catalog) in the browser; nothing is sent without the user.
     function offerOfficialCatalog(entry) {
       const status = document.getElementById('publishStatus');
       const button = document.createElement('button');
       button.className = 'btn-action'; button.style.marginTop = '12px'; button.style.width = '100%';
-      button.textContent = hyadeOSSI18n.t("store.publish.propose", "Propose it for everyone's Store too");
+      button.textContent = hyadeOSI18n.t("store.publish.propose", "Propose it for everyone's Store too");
       button.onclick = () => {
-        const body = 'Please add this app to the hyadeOSS Store catalog.\n\n```json\n' + JSON.stringify(entry, null, 2) + '\n```\n';
-        const url = 'https://github.com/hyadeOSS/store-catalog/issues/new?title=' + encodeURIComponent('New app: ' + entry.title) + '&body=' + encodeURIComponent(body);
+        const body = 'Please add this app to the hyadeOS Store catalog.\n\n```json\n' + JSON.stringify(entry, null, 2) + '\n```\n';
+        const url = 'https://github.com/hyadeOS/store-catalog/issues/new?title=' + encodeURIComponent('New app: ' + entry.title) + '&body=' + encodeURIComponent(body);
         window.open(url, '_blank');
       };
       status.after(button);
@@ -1533,7 +1534,7 @@
         if (!res.ok) throw new Error(res.status);
       } catch (e) {
         autoUpdateToggle.checked = !autoUpdateToggle.checked;
-        document.getElementById('autoUpdateStatus').textContent = hyadeOSSI18n.t("store.admin-only-hint", "Only administrators can install apps on this computer.");
+        document.getElementById('autoUpdateStatus').textContent = hyadeOSI18n.t("store.admin-only-hint", "Only administrators can install apps on this computer.");
       }
     });
 
@@ -1542,7 +1543,7 @@
       const status = document.getElementById('catalogStatus');
       
       btn.disabled = true;
-      btn.textContent = hyadeOSSI18n.t("store.settings.updating", "Updating...");
+      btn.textContent = hyadeOSI18n.t("store.settings.updating", "Updating...");
       status.textContent = '';
       status.style.color = 'var(--text-secondary)';
       
@@ -1551,18 +1552,18 @@
         const data = await res.json();
         if (data.success) {
           status.style.color = '#32d74b';
-          status.textContent = hyadeOSSI18n.t("store.settings.catalog-updated", "Catalog updated! Added {count} new apps.", { count: data.addedCount });
+          status.textContent = hyadeOSI18n.t("store.settings.catalog-updated", "Catalog updated! Added {count} new apps.", { count: data.addedCount });
           initStore(); // Ricarica la griglia con i nuovi dati per mostrare le nuove app
         } else {
           status.style.color = '#ff453a';
-          status.textContent = data.error || hyadeOSSI18n.t("store.settings.catalog-failed", "Failed to update catalog.");
+          status.textContent = data.error || hyadeOSI18n.t("store.settings.catalog-failed", "Failed to update catalog.");
         }
       } catch (e) {
         status.style.color = '#ff453a';
-        status.textContent = hyadeOSSI18n.t("store.settings.catalog-network-error", "Network error while updating catalog.");
+        status.textContent = hyadeOSI18n.t("store.settings.catalog-network-error", "Network error while updating catalog.");
       } finally {
         btn.disabled = false;
-        btn.textContent = hyadeOSSI18n.t("store.settings.update-catalog", "Update Catalog");
+        btn.textContent = hyadeOSI18n.t("store.settings.update-catalog", "Update Catalog");
       }
     }
 

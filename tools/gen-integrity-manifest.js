@@ -21,7 +21,7 @@ const SKIP_DIRS = new Set(["node_modules", "tools", "sandbox"]);
 const SKIP_FILES = new Set([
   "config.json", "keys.json", "session.key", "spotify-token.json",
   "integrity-manifest.json", "integrity-manifest.json.sig",
-  "hyadeoss.log", "mail-error.log", ".env", "boot-mode.json",
+  "hyadeos.log", "mail-error.log", ".env", "boot-mode.json",
   "sota-installed.json"
 ]);
 const SKIP_PATTERNS = [/\.log$/i, /\.user\.png$/i, /^desktop\/assets\/icon_.+\.png$/i,

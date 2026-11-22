@@ -7,7 +7,7 @@ const { createZip } = require("../lib/zip");
 const { gitBlobHash } = require("../lib/update-checks");
 const { stageReleaseZip } = require("../lib/release-zip");
 
-const stage = () => fs.mkdtempSync(path.join(os.tmpdir(), "hyadeoss-zip-stage-"));
+const stage = () => fs.mkdtempSync(path.join(os.tmpdir(), "hyadeos-zip-stage-"));
 
 test("a release ZIP is staged without its top folder, with Git blob hashes", () => {
   const dir = stage();

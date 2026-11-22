@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
@@ -183,36 +183,36 @@ html::-webkit-scrollbar {
 <script>
 const templates = {
   backup: {
-    name: hyadeOSSI18n.t('settings.rule-templates.backup', 'Daily Backup Reminder'), trigger: 'time', action: 'notify',
-    actionParams: { title: hyadeOSSI18n.t('settings.rule-templates.backup-notify-title', 'Backup reminder'), message: hyadeOSSI18n.t('settings.rule-templates.backup-notify-message', 'Remember to back up your files.'), icon: 'backup' }
+    name: hyadeOSI18n.t('settings.rule-templates.backup', 'Daily Backup Reminder'), trigger: 'time', action: 'notify',
+    actionParams: { title: hyadeOSI18n.t('settings.rule-templates.backup-notify-title', 'Backup reminder'), message: hyadeOSI18n.t('settings.rule-templates.backup-notify-message', 'Remember to back up your files.'), icon: 'backup' }
   },
   battery: {
-    name: hyadeOSSI18n.t('settings.rule-templates.battery', 'Low Battery Alert'), trigger: 'battery', action: 'notify',
-    actionParams: { title: hyadeOSSI18n.t('settings.rule-templates.battery-notify-title', 'Low battery'), message: hyadeOSSI18n.t('settings.rule-templates.battery-notify-message', 'Battery is below your selected threshold.'), icon: 'battery_alert' }
+    name: hyadeOSI18n.t('settings.rule-templates.battery', 'Low Battery Alert'), trigger: 'battery', action: 'notify',
+    actionParams: { title: hyadeOSI18n.t('settings.rule-templates.battery-notify-title', 'Low battery'), message: hyadeOSI18n.t('settings.rule-templates.battery-notify-message', 'Battery is below your selected threshold.'), icon: 'battery_alert' }
   },
-  shutdown: { name: hyadeOSSI18n.t('settings.rule-templates.shutdown', 'Auto Shutdown'), trigger: 'time', action: 'shutdown', actionParams: {} },
-  startup: { name: hyadeOSSI18n.t('settings.rule-templates.startup', 'App Launch on Startup'), trigger: 'startup', action: 'launch-app', actionParams: {} }
+  shutdown: { name: hyadeOSI18n.t('settings.rule-templates.shutdown', 'Auto Shutdown'), trigger: 'time', action: 'shutdown', actionParams: {} },
+  startup: { name: hyadeOSI18n.t('settings.rule-templates.startup', 'App Launch on Startup'), trigger: 'startup', action: 'launch-app', actionParams: {} }
 };
 
 async function loadInstalledApps() {
   const select = document.querySelector('[data-template="startup"]').closest('.template-item').querySelector('[data-field="appId"]');
   try {
     const response = await fetch('/get-settings');
-    if (!response.ok) throw new Error(hyadeOSSI18n.t('settings.rule-templates.apps-failed', 'Could not load installed apps'));
+    if (!response.ok) throw new Error(hyadeOSI18n.t('settings.rule-templates.apps-failed', 'Could not load installed apps'));
     const settings = await response.json();
     const apps = Array.isArray(settings.installedApps) ? settings.installedApps : [];
-    select.replaceChildren(new Option(apps.length ? hyadeOSSI18n.t('settings.rule-templates.select-app', 'Select an app') : hyadeOSSI18n.t('settings.rule-templates.no-apps', 'No installed apps'), ''));
+    select.replaceChildren(new Option(apps.length ? hyadeOSI18n.t('settings.rule-templates.select-app', 'Select an app') : hyadeOSI18n.t('settings.rule-templates.no-apps', 'No installed apps'), ''));
     apps.forEach(app => select.add(new Option(app.title, app.appId)));
     select.disabled = apps.length === 0;
   } catch (error) {
-    select.replaceChildren(new Option(hyadeOSSI18n.t('settings.rule-templates.apps-failed', 'Could not load installed apps'), ''));
+    select.replaceChildren(new Option(hyadeOSI18n.t('settings.rule-templates.apps-failed', 'Could not load installed apps'), ''));
     select.disabled = true;
   }
 }
 
 async function saveRule(rule) {
   const response = await fetch('/api/rules');
-  if (!response.ok) throw new Error(hyadeOSSI18n.t('settings.rule-templates.load-failed', 'Could not load saved rules'));
+  if (!response.ok) throw new Error(hyadeOSI18n.t('settings.rule-templates.load-failed', 'Could not load saved rules'));
   const rules = await response.json();
   rules.push(rule);
   const saveResponse = await fetch('/api/rules/save', {
@@ -220,7 +220,7 @@ async function saveRule(rule) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ rules })
   });
-  if (!saveResponse.ok) throw new Error(hyadeOSSI18n.t('settings.rule-templates.save-failed', 'Could not save this rule'));
+  if (!saveResponse.ok) throw new Error(hyadeOSI18n.t('settings.rule-templates.save-failed', 'Could not save this rule'));
 
   const localRules = JSON.parse(localStorage.getItem('rules')) || [];
   localRules.push(rule);
@@ -237,23 +237,23 @@ async function useTemplate(templateKey, button) {
   const appId = card.querySelector('[data-field="appId"]')?.value;
 
   if ((templateKey === 'backup' || templateKey === 'shutdown') && !time) {
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.choose-time', 'Choose a time for this rule.'));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.choose-time', 'Choose a time for this rule.'));
     return;
   }
   if (templateKey === 'battery' && (!Number.isInteger(threshold) || threshold < 5 || threshold > 80)) {
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.choose-threshold', 'Choose a battery threshold from 5% to 80%.'));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.choose-threshold', 'Choose a battery threshold from 5% to 80%.'));
     return;
   }
   if (templateKey === 'battery' && typeof navigator.getBattery !== 'function') {
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.no-battery', 'Battery monitoring is not supported on this device.'));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.no-battery', 'Battery monitoring is not supported on this device.'));
     return;
   }
   if (templateKey === 'shutdown' && !card.querySelector('[data-field="confirmShutdown"]').checked) {
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.confirm-shutdown', 'Confirm that you want this rule to shut down the computer.'));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.confirm-shutdown', 'Confirm that you want this rule to shut down the computer.'));
     return;
   }
   if (templateKey === 'startup' && !appId) {
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.select-app-alert', 'Select an installed app to launch.'));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.select-app-alert', 'Select an installed app to launch.'));
     return;
   }
 
@@ -280,10 +280,10 @@ async function useTemplate(templateKey, button) {
     history.push({ id: rule.id, ruleName: template.name, action: 'Created from template', timestamp: rule.created });
     localStorage.setItem('ruleHistory', JSON.stringify(history));
 
-    await mDialog.alert(hyadeOSSI18n.t('settings.rule-templates.saved', '"{name}" was saved and enabled.', { name: template.name }));
+    await mDialog.alert(hyadeOSI18n.t('settings.rule-templates.saved', '"{name}" was saved and enabled.', { name: template.name }));
     window.location.replace('/desktop/apps/settings/assets/rules.html');
   } catch (error) {
-    await mDialog.alert(error.message || hyadeOSSI18n.t('settings.rule-templates.save-failed-dot', 'Could not save this rule.'));
+    await mDialog.alert(error.message || hyadeOSI18n.t('settings.rule-templates.save-failed-dot', 'Could not save this rule.'));
     button.disabled = false;
   }
 }

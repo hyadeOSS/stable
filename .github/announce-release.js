@@ -10,9 +10,9 @@ if (!webhook) {
 const { version, changelog } = JSON.parse(fs.readFileSync("version.json", "utf8"));
 const channel = process.env.CHANNEL_NAME || "stable";
 const body = {
-  username: "hyadeOSS",
+  username: "hyadeOS",
   embeds: [{
-    title: `hyadeOSS ${version} is out`,
+    title: `hyadeOS ${version} is out`,
     url: process.env.REPOSITORY_URL || undefined,
     description: `${String(changelog || "").slice(0, 3500)}\n\nUpdate from **Settings › Updater**.`,
     color: 0x2e5d4a,
@@ -24,7 +24,7 @@ const body = {
 fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
   .then(response => {
     if (!response.ok) throw new Error(`Discord answered ${response.status}`);
-    console.log(`Announced hyadeOSS ${version}.`);
+    console.log(`Announced hyadeOS ${version}.`);
   })
   .catch(error => {
     console.error(error.message);

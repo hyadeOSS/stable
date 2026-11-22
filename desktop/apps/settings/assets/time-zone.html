@@ -8,7 +8,7 @@
 <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Time Zone Settings</title>
@@ -203,8 +203,8 @@ function updatePreviewClock() {
   s = s < 10 ? "0" + s : s;
   
   // English keeps the 12-hour clock; other languages use their own time format.
-  const txt = hyadeOSSI18n.locale
-    ? displayTime.toLocaleTimeString(hyadeOSSI18n.locale, { timeZone: 'UTC' })
+  const txt = hyadeOSI18n.locale
+    ? displayTime.toLocaleTimeString(hyadeOSI18n.locale, { timeZone: 'UTC' })
     : `${h}:${m}:${s} ${ampm}`;
   document.getElementById("previewClock").textContent = txt;
 }
@@ -217,7 +217,7 @@ async function setTimeZone() {
   localStorage.setItem('systemTimeOffset', 0);
   localStorage.setItem('manualTimeEnabled', 'false');
   
-  await mDialog.alert(hyadeOSSI18n.t('settings.time-zone.set', 'Time zone set to {zone}', { zone: `UTC${offset >= 0 ? '+' : ''}${offset}` }));
+  await mDialog.alert(hyadeOSI18n.t('settings.time-zone.set', 'Time zone set to {zone}', { zone: `UTC${offset >= 0 ? '+' : ''}${offset}` }));
   
   setTimeout(function() {
     window.history.back();

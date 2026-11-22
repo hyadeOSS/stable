@@ -1,5 +1,5 @@
 <!--
-  hyadeOSS Calendar - (C) 2026 mariowstech and the hyadeOSS team
+  hyadeOS Calendar - (C) 2026 mariowstech and the hyadeOS team
   Licensed under the Apache License, Version 2.0. Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 -->
 <!DOCTYPE html>
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
 <title data-i18n="calendar.title">Calendar</title>
 <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <script src="/desktop/assets/calendar-core.js"></script>
 <style>
   :root {
@@ -165,10 +165,10 @@
     .cell.has-events .cell-num::after { content: "•"; display: block; line-height: 4px; color: var(--sys-accent-text); }
     .month-title { font-size: 18px; width: 100%; }
   }
-/* ---- hyadeOSS 2 ---- shared selection and focus, as in Settings and Files. */
+/* ---- hyadeOS 2 ---- shared selection and focus, as in Settings and Files. */
   button:focus-visible, [tabindex]:focus-visible { outline: none; box-shadow: var(--mw-focus-ring); }
   input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; }
-  /* ---- end hyadeOSS 2 ---- */
+  /* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -252,7 +252,7 @@
 <script>
 const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'pink', 'teal'];
 // Month and weekday names in the system language (English when none is chosen).
-const LOCALE = hyadeOSSI18n.locale || 'en-US';
+const LOCALE = hyadeOSI18n.locale || 'en-US';
 const names = (count, options, at) => { const f = new Intl.DateTimeFormat(LOCALE, { ...options, timeZone: 'UTC' }); return Array.from({ length: count }, (_, i) => f.format(at(i))); };
 const MONTHS = names(12, { month: 'long' }, m => Date.UTC(2024, m, 1));
 const MONTHS_SHORT = names(12, { month: 'short' }, m => Date.UTC(2024, m, 1));
@@ -260,10 +260,10 @@ const DAYS = names(7, { weekday: 'long' }, d => Date.UTC(2024, 0, 7 + d)); // 7 
 const DAYS_SHORT = names(7, { weekday: 'short' }, d => Date.UTC(2024, 0, 7 + d));
 const cap = s => s.charAt(0).toLocaleUpperCase(LOCALE) + s.slice(1);
 const COLOR_NAMES = {
-  blue: hyadeOSSI18n.t("calendar.color.blue", "blue"), green: hyadeOSSI18n.t("calendar.color.green", "green"),
-  red: hyadeOSSI18n.t("calendar.color.red", "red"), orange: hyadeOSSI18n.t("calendar.color.orange", "orange"),
-  purple: hyadeOSSI18n.t("calendar.color.purple", "purple"), pink: hyadeOSSI18n.t("calendar.color.pink", "pink"),
-  teal: hyadeOSSI18n.t("calendar.color.teal", "teal")
+  blue: hyadeOSI18n.t("calendar.color.blue", "blue"), green: hyadeOSI18n.t("calendar.color.green", "green"),
+  red: hyadeOSI18n.t("calendar.color.red", "red"), orange: hyadeOSI18n.t("calendar.color.orange", "orange"),
+  purple: hyadeOSI18n.t("calendar.color.purple", "purple"), pink: hyadeOSI18n.t("calendar.color.pink", "pink"),
+  teal: hyadeOSI18n.t("calendar.color.teal", "teal")
 };
 const $ = id => document.getElementById(id);
 const { pad, ymd, parseYmd, addDays, daysBetween } = CalendarCore;
@@ -308,7 +308,7 @@ function eventsOn(date) {
   });
 }
 function timeLabel(ev) {
-  if (ev.allDay) return hyadeOSSI18n.t("calendar.all-day", "All day");
+  if (ev.allDay) return hyadeOSI18n.t("calendar.all-day", "All day");
   return ev.end ? `${ev.start} – ${ev.end}` : ev.start;
 }
 const isRepeating = ev => ev.repeat && ev.repeat !== 'none';
@@ -317,7 +317,7 @@ async function api(url, options = {}) {
   const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options });
   let data = null;
   try { data = await res.json(); } catch (e) {}
-  if (!res.ok || (data && data.success === false)) throw new Error((data && data.error) || hyadeOSSI18n.t("calendar.error.server", "Server error ({status}). Restart hyadeOSS if the problem persists.", { status: res.status }));
+  if (!res.ok || (data && data.success === false)) throw new Error((data && data.error) || hyadeOSI18n.t("calendar.error.server", "Server error ({status}). Restart hyadeOS if the problem persists.", { status: res.status }));
   return data;
 }
 async function loadEvents() {
@@ -374,7 +374,7 @@ function renderGrid() {
     if (dayEvents.length > maxChips) {
       const more = document.createElement('div');
       more.className = 'more';
-      more.textContent = hyadeOSSI18n.t("calendar.more", "+{count} more", { count: dayEvents.length - maxChips });
+      more.textContent = hyadeOSI18n.t("calendar.more", "+{count} more", { count: dayEvents.length - maxChips });
       cell.appendChild(more);
     }
     cell.addEventListener('click', () => { selected = date; render(); });
@@ -390,7 +390,7 @@ function renderGrid() {
 // move by the right amount.
 function makeDraggable(node, ev, date) {
   node.draggable = !isRepeating(ev);
-  if (isRepeating(ev)) node.title += ' · ' + hyadeOSSI18n.t("calendar.repeating-drag-hint", "repeating events are moved from the editor");
+  if (isRepeating(ev)) node.title += ' · ' + hyadeOSI18n.t("calendar.repeating-drag-hint", "repeating events are moved from the editor");
   node.addEventListener('dragstart', e => {
     e.dataTransfer.setData('text/plain', JSON.stringify({ id: ev.id, from: date }));
     e.dataTransfer.effectAllowed = 'move';
@@ -438,7 +438,7 @@ function renderWeek() {
   allday.className = 'wk-allday';
   const label = document.createElement('div');
   label.className = 'label';
-  label.textContent = hyadeOSSI18n.t("calendar.all-day-label", "all-day");
+  label.textContent = hyadeOSI18n.t("calendar.all-day-label", "all-day");
   allday.appendChild(label);
   dates.forEach(date => {
     const col = document.createElement('div');
@@ -553,18 +553,18 @@ function renderAgenda() {
   const agenda = $('agenda');
   agenda.innerHTML = '';
   if (loadError) {
-    $('sideDay').textContent = hyadeOSSI18n.t("common.error", "Error");
-    $('sideDate').textContent = hyadeOSSI18n.t("calendar.not-loaded", "Not loaded");
-    agenda.innerHTML = `<div class="empty error"><span class="material-symbols-outlined">cloud_off</span>${esc(hyadeOSSI18n.t("calendar.load-error", "Could not load your events."))}<br>${esc(loadError)}</div>`;
+    $('sideDay').textContent = hyadeOSI18n.t("common.error", "Error");
+    $('sideDate').textContent = hyadeOSI18n.t("calendar.not-loaded", "Not loaded");
+    agenda.innerHTML = `<div class="empty error"><span class="material-symbols-outlined">cloud_off</span>${esc(hyadeOSI18n.t("calendar.load-error", "Could not load your events."))}<br>${esc(loadError)}</div>`;
     return;
   }
   if (query) { renderSearch(); return; }
   const { y, m, d } = parseYmd(selected);
-  $('sideDay').textContent = selected === today ? hyadeOSSI18n.t("calendar.today", "Today") : cap(DAYS[weekday(selected)]);
+  $('sideDay').textContent = selected === today ? hyadeOSI18n.t("calendar.today", "Today") : cap(DAYS[weekday(selected)]);
   $('sideDate').textContent = `${d} ${MONTHS[m]} ${y}`;
   const list = eventsOn(selected);
   if (!list.length) {
-    agenda.innerHTML = `<div class="empty"><span class="material-symbols-outlined">event_available</span>${esc(hyadeOSSI18n.t("calendar.no-events", "No events."))}<br>${esc(hyadeOSSI18n.t("calendar.no-events-hint", "Double-click a day or press “New event”."))}</div>`;
+    agenda.innerHTML = `<div class="empty"><span class="material-symbols-outlined">event_available</span>${esc(hyadeOSI18n.t("calendar.no-events", "No events."))}<br>${esc(hyadeOSI18n.t("calendar.no-events-hint", "Double-click a day or press “New event”."))}</div>`;
   }
   list.forEach(ev => agenda.appendChild(eventCard(ev, null, selected)));
 
@@ -577,7 +577,7 @@ function renderAgenda() {
   if (upcoming.length) {
     const t = document.createElement('div');
     t.className = 'upcoming-title';
-    t.textContent = hyadeOSSI18n.t("calendar.coming-up", "Coming up");
+    t.textContent = hyadeOSI18n.t("calendar.coming-up", "Coming up");
     agenda.appendChild(t);
     upcoming.forEach(({ ev, date }) => agenda.appendChild(eventCard(ev, date, date)));
   }
@@ -600,12 +600,12 @@ function renderSearch() {
     .filter(ev => [ev.title, ev.location, ev.notes].some(f => (f || '').toLowerCase().includes(q)))
     .map(ev => ({ ev, date: nextOccurrence(ev, today) }))
     .sort((a, b) => (a.date < today) - (b.date < today) || (a.date < today ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date)));
-  $('sideDay').textContent = hyadeOSSI18n.t("common.search", "Search");
+  $('sideDay').textContent = hyadeOSI18n.t("common.search", "Search");
   $('sideDate').textContent = matches.length === 1
-    ? hyadeOSSI18n.t("calendar.search.result-one", "{count} result", { count: matches.length })
-    : hyadeOSSI18n.t("calendar.search.result-other", "{count} results", { count: matches.length });
+    ? hyadeOSI18n.t("calendar.search.result-one", "{count} result", { count: matches.length })
+    : hyadeOSI18n.t("calendar.search.result-other", "{count} results", { count: matches.length });
   const agenda = $('agenda');
-  if (!matches.length) agenda.innerHTML = `<div class="empty"><span class="material-symbols-outlined">search_off</span>${esc(hyadeOSSI18n.t("calendar.search.none", "No events match “{query}”.", { query }))}</div>`;
+  if (!matches.length) agenda.innerHTML = `<div class="empty"><span class="material-symbols-outlined">search_off</span>${esc(hyadeOSI18n.t("calendar.search.none", "No events match “{query}”.", { query }))}</div>`;
   matches.slice(0, 100).forEach(({ ev, date }) => {
     const card = eventCard(ev, date, date);
     card.addEventListener('click', () => { goTo(date); }, { capture: true });
@@ -646,10 +646,10 @@ function syncRepeat() {
   $('repeatExtra').classList.toggle('show', r !== 'none');
   const n = Number($('fInterval').value) || 1;
   const units = {
-    daily: [hyadeOSSI18n.t("calendar.unit.day-one", "day"), hyadeOSSI18n.t("calendar.unit.day-other", "days")],
-    weekly: [hyadeOSSI18n.t("calendar.unit.week-one", "week"), hyadeOSSI18n.t("calendar.unit.week-other", "weeks")],
-    monthly: [hyadeOSSI18n.t("calendar.unit.month-one", "month"), hyadeOSSI18n.t("calendar.unit.month-other", "months")],
-    yearly: [hyadeOSSI18n.t("calendar.unit.year-one", "year"), hyadeOSSI18n.t("calendar.unit.year-other", "years")]
+    daily: [hyadeOSI18n.t("calendar.unit.day-one", "day"), hyadeOSI18n.t("calendar.unit.day-other", "days")],
+    weekly: [hyadeOSI18n.t("calendar.unit.week-one", "week"), hyadeOSI18n.t("calendar.unit.week-other", "weeks")],
+    monthly: [hyadeOSI18n.t("calendar.unit.month-one", "month"), hyadeOSI18n.t("calendar.unit.month-other", "months")],
+    yearly: [hyadeOSI18n.t("calendar.unit.year-one", "year"), hyadeOSI18n.t("calendar.unit.year-other", "years")]
   };
   const unit = units[r] || units.weekly;
   $('intervalUnit').textContent = n === 1 ? unit[0] : unit[1];
@@ -673,7 +673,7 @@ function setEndOneHourAfter(start) {
 function openEditor(ev, date, time, occurrence) {
   editing = ev || null;
   editingDate = occurrence || null;
-  $('editorTitle').textContent = ev ? hyadeOSSI18n.t("calendar.edit-event", "Edit event") : hyadeOSSI18n.t("calendar.new-event", "New event");
+  $('editorTitle').textContent = ev ? hyadeOSI18n.t("calendar.edit-event", "Edit event") : hyadeOSI18n.t("calendar.new-event", "New event");
   $('deleteBtn').style.display = ev ? '' : 'none';
   $('duplicateBtn').style.display = ev ? '' : 'none';
   $('deleteChoice').classList.remove('show');
@@ -694,7 +694,7 @@ function openEditor(ev, date, time, occurrence) {
   [...$('fReminder').options].filter(o => o.dataset.custom).forEach(o => o.remove());
   $('fReminder').value = String(ev ? (ev.reminder ?? -1) : 10);
   if (ev && ![...$('fReminder').options].some(o => o.value === String(ev.reminder))) {
-    const opt = new Option(hyadeOSSI18n.t("calendar.reminder.minutes-before", "{count} minutes before", { count: ev.reminder }), String(ev.reminder));
+    const opt = new Option(hyadeOSI18n.t("calendar.reminder.minutes-before", "{count} minutes before", { count: ev.reminder }), String(ev.reminder));
     opt.dataset.custom = '1';
     $('fReminder').add(opt);
     $('fReminder').value = String(ev.reminder);
@@ -732,7 +732,7 @@ function readForm() {
 $('editor').addEventListener('submit', async e => {
   e.preventDefault();
   const body = readForm();
-  if (!body.title) { $('editorError').textContent = hyadeOSSI18n.t("calendar.error.no-title", "Please enter a title."); $('fTitle').focus(); return; }
+  if (!body.title) { $('editorError').textContent = hyadeOSI18n.t("calendar.error.no-title", "Please enter a title."); $('fTitle').focus(); return; }
   $('saveBtn').disabled = true;
   try {
     let saved;
@@ -774,9 +774,9 @@ $('deleteBtn').addEventListener('click', async () => {
   if (isRepeating(editing) && editingDate) { $('deleteChoice').classList.add('show'); return; }
   const target = editing;
   const question = isRepeating(target)
-    ? hyadeOSSI18n.t("calendar.delete.confirm-repeating", "Delete “{title}”?\nAll repetitions will be removed.", { title: target.title })
-    : hyadeOSSI18n.t("calendar.delete.confirm", "Delete “{title}”?", { title: target.title });
-  const ok = await mDialog.confirm(question, { danger: true, okText: hyadeOSSI18n.t("common.delete", "Delete"), title: hyadeOSSI18n.t("calendar.delete.title", "Delete event") });
+    ? hyadeOSI18n.t("calendar.delete.confirm-repeating", "Delete “{title}”?\nAll repetitions will be removed.", { title: target.title })
+    : hyadeOSI18n.t("calendar.delete.confirm", "Delete “{title}”?", { title: target.title });
+  const ok = await mDialog.confirm(question, { danger: true, okText: hyadeOSI18n.t("common.delete", "Delete"), title: hyadeOSI18n.t("calendar.delete.title", "Delete event") });
   if (ok) deleteSeries(target);
 });
 $('deleteCancelBtn').addEventListener('click', () => $('deleteChoice').classList.remove('show'));
@@ -839,7 +839,7 @@ async function moveEvent(id, fromDate, toDate, startMin) {
     render();
     notifySystem();
   } catch (err) {
-    mDialog.alert(hyadeOSSI18n.t("calendar.error.move", "Could not move the event: {error}", { error: err.message }));
+    mDialog.alert(hyadeOSI18n.t("calendar.error.move", "Could not move the event: {error}", { error: err.message }));
   }
 }
 
@@ -901,11 +901,11 @@ $('grid').addEventListener('wheel', e => {
 
 /* ---------- .ics import / export ---------- */
 $('exportBtn').addEventListener('click', () => {
-  if (!loaded) { mDialog.alert(hyadeOSSI18n.t("calendar.export.not-loaded", "Your events are not loaded yet, so there is nothing to export."), { kind: 'error' }); return; }
-  if (!events.length) { mDialog.alert(hyadeOSSI18n.t("calendar.export.empty", "There are no events to export yet."), { kind: 'info' }); return; }
+  if (!loaded) { mDialog.alert(hyadeOSI18n.t("calendar.export.not-loaded", "Your events are not loaded yet, so there is nothing to export."), { kind: 'error' }); return; }
+  if (!events.length) { mDialog.alert(hyadeOSI18n.t("calendar.export.empty", "There are no events to export yet."), { kind: 'info' }); return; }
   const a = document.createElement('a');
   a.href = '/api/calendar/export.ics';
-  a.download = 'hyadeOSS-calendar.ics';
+  a.download = 'hyadeOS-calendar.ics';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -920,16 +920,16 @@ $('importFile').addEventListener('change', async () => {
     const res = await fetch('/api/calendar/import', { method: 'POST', headers: { 'Content-Type': 'text/calendar' }, body: text });
     let data = null;
     try { data = await res.json(); } catch (e) {}
-    if (!res.ok || !data || !data.success) throw new Error((data && data.error) || hyadeOSSI18n.t("calendar.error.server-short", "Server error ({status}).", { status: res.status }));
+    if (!res.ok || !data || !data.success) throw new Error((data && data.error) || hyadeOSI18n.t("calendar.error.server-short", "Server error ({status}).", { status: res.status }));
     await loadEvents();
     notifySystem();
     const imported = data.imported === 1
-      ? hyadeOSSI18n.t("calendar.import.done-one", "Imported {count} event.", { count: data.imported })
-      : hyadeOSSI18n.t("calendar.import.done-other", "Imported {count} events.", { count: data.imported });
-    const skipped = data.skipped ? '\n' + hyadeOSSI18n.t("calendar.import.skipped", "{count} skipped (duplicates or unsupported).", { count: data.skipped }) : '';
-    mDialog.alert(imported + skipped, { kind: 'success', title: hyadeOSSI18n.t("calendar.import.done-title", "Import complete") });
+      ? hyadeOSI18n.t("calendar.import.done-one", "Imported {count} event.", { count: data.imported })
+      : hyadeOSI18n.t("calendar.import.done-other", "Imported {count} events.", { count: data.imported });
+    const skipped = data.skipped ? '\n' + hyadeOSI18n.t("calendar.import.skipped", "{count} skipped (duplicates or unsupported).", { count: data.skipped }) : '';
+    mDialog.alert(imported + skipped, { kind: 'success', title: hyadeOSI18n.t("calendar.import.done-title", "Import complete") });
   } catch (err) {
-    mDialog.alert(hyadeOSSI18n.t("calendar.import.failed", "Import failed: {error}", { error: err.message }));
+    mDialog.alert(hyadeOSI18n.t("calendar.import.failed", "Import failed: {error}", { error: err.message }));
   }
 });
 

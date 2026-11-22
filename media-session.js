@@ -1,5 +1,5 @@
-// hyadeOSS - what is playing on this PC, via the Windows media session (SMTC).
-// (C) 2026 mariowstech and the hyadeOSS team - Licensed under the Apache License, Version 2.0
+// hyadeOS - what is playing on this PC, via the Windows media session (SMTC).
+// (C) 2026 mariowstech and the hyadeOS team - Licensed under the Apache License, Version 2.0
 //
 // Works with the Spotify desktop app (and other players) without any account or API key,
 // so it is the fallback when the Spotify Web API is unavailable (e.g. no Premium).

@@ -1,6 +1,6 @@
-# hyadeOSS 2 design language
+# hyadeOS 2 design language
 
-hyadeOSS 2 has its own look: graphite glass with one hairline rim per sheet, a soft accent wash
+hyadeOS 2 has its own look: graphite glass with one hairline rim per sheet, a soft accent wash
 for selection (with a short accent bar at the leading edge of sidebars), rounded-square icon tiles
 with a diagonal gradient, and calm motion. It is not a copy of another desktop: no traffic lights,
 no Fluent acrylic, no hover magnification and no rubber-band springs.
@@ -62,11 +62,11 @@ deepens the dark surfaces.
 - in the top-level window only (desktop, lock screen, sign-in) fetches `/get-settings` once, in case
   the cache is missing or stale.
 
-API: `hyadeOSSTheme.get()` (saved choice), `hyadeOSSTheme.resolved()` (`"dark"`/`"light"`),
-`hyadeOSSTheme.set(choice)` (save, apply here, tell the top window and the frames),
-`hyadeOSSTheme.apply(choice)` (apply here only).
+API: `hyadeOSTheme.get()` (saved choice), `hyadeOSTheme.resolved()` (`"dark"`/`"light"`),
+`hyadeOSTheme.set(choice)` (save, apply here, tell the top window and the frames),
+`hyadeOSTheme.apply(choice)` (apply here only).
 
-To switch from code: `hyadeOSSTheme.set('light')`. From a page that does not load the script:
+To switch from code: `hyadeOSTheme.set('light')`. From a page that does not load the script:
 `window.top.postMessage({ type: 'mw-theme', theme: 'light' }, location.origin)`.
 
 Pages that always stay dark: Terminal (a terminal), the lock screen and the sign-in screen (they sit
@@ -191,7 +191,7 @@ UI glyphs are Material Symbols, never emoji. App icons are the SVG set in
 two-stop gradient (top-left to bottom-right), a soft top sheen, a 1px inner rim, and a white
 2.6px-stroke glyph. Files: `calculator.svg`, `calendar.svg`, `explorer.svg` (= `files.svg`),
 `help.svg`, `music.svg`, `notes.svg`, `pictures.svg`, `settings.svg`, `terminal.svg`,
-`videoplayer.svg` (= `videos.svg`), `store.svg`, and the logo mark `hyadeoss.svg`.
+`videoplayer.svg` (= `videos.svg`), `store.svg`, and the logo mark `hyadeos.svg`.
 
 Small icon tiles inside apps (Settings sidebar, Files places) use the same diagonal gradients.
 

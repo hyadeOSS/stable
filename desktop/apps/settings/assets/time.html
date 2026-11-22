@@ -109,10 +109,10 @@ function updateTime() {
   const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
   // English keeps the 12-hour clock; other languages use their own time format.
-  document.getElementById('clock').textContent = hyadeOSSI18n.locale
-    ? now.toLocaleTimeString(hyadeOSSI18n.locale, { hour: "numeric", minute: "2-digit" })
+  document.getElementById('clock').textContent = hyadeOSI18n.locale
+    ? now.toLocaleTimeString(hyadeOSI18n.locale, { hour: "numeric", minute: "2-digit" })
     : `${hours}:${minutes} ${ampm}`;
-  document.getElementById('date').textContent = now.toLocaleDateString(hyadeOSSI18n.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  document.getElementById('date').textContent = now.toLocaleDateString(hyadeOSI18n.locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 }
 
 updateTime();

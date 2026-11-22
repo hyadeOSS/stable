@@ -1,5 +1,5 @@
 <!--
-hyadeOSS Notes - (C) 2026 mariowstech and the hyadeOSS team
+hyadeOS Notes - (C) 2026 mariowstech and the hyadeOS team
 Licensed under the Apache License, Version 2.0
 -->
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ Licensed under the Apache License, Version 2.0
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
 <title data-i18n="notes.title">Notes</title>
 <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <style>
   :root {
     --accent: var(--mw-accent);
@@ -168,13 +168,13 @@ Licensed under the Apache License, Version 2.0
   }
   @media (min-width: 541px) { body.list-hidden .sidebar { margin-left: -281px; } }
   * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
-/* ---- hyadeOSS 2 ---- shared selection and focus, as in Settings and Files. */
+/* ---- hyadeOS 2 ---- shared selection and focus, as in Settings and Files. */
   .note-item { position: relative; }
   .note-item.active { background: var(--mw-accent-soft); }
   .note-item.active::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: var(--mw-radius-full); background: var(--mw-accent-text); }
   button:focus-visible, [tabindex]:focus-visible { outline: none; box-shadow: var(--mw-focus-ring); }
   input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; }
-  /* ---- end hyadeOSS 2 ---- */
+  /* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -303,20 +303,20 @@ function noteTitle(note) {
   const first = plainText(note.content).split('\n').find(line => line.trim());
   if (first) return first.trim().slice(0, 80);
   if (note.name && note.name !== 'Note') return note.name;
-  return hyadeOSSI18n.t('notes.new-note', 'New note');
+  return hyadeOSI18n.t('notes.new-note', 'New note');
 }
 function noteSnippet(note) {
   const lines = plainText(note.content).split('\n').map(l => l.trim()).filter(Boolean);
-  return (note.sourceName ? lines[0] : lines[1]) || hyadeOSSI18n.t('notes.no-text', 'No additional text');
+  return (note.sourceName ? lines[0] : lines[1]) || hyadeOSI18n.t('notes.no-text', 'No additional text');
 }
 function formatDate(ts) {
   if (!ts) return '';
   const d = new Date(ts), now = new Date();
   const days = Math.floor((new Date(now.toDateString()) - new Date(d.toDateString())) / 86400000);
-  if (days === 0) return d.toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit' });
-  if (days === 1) return hyadeOSSI18n.t('notes.date.yesterday', 'Yesterday');
-  if (days < 7) return d.toLocaleDateString(hyadeOSSI18n.locale, { weekday: 'long' });
-  return d.toLocaleDateString(hyadeOSSI18n.locale, { day: 'numeric', month: 'short', year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric' });
+  if (days === 0) return d.toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' });
+  if (days === 1) return hyadeOSI18n.t('notes.date.yesterday', 'Yesterday');
+  if (days < 7) return d.toLocaleDateString(hyadeOSI18n.locale, { weekday: 'long' });
+  return d.toLocaleDateString(hyadeOSI18n.locale, { day: 'numeric', month: 'short', year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric' });
 }
 function toast(message, action) {
   const node = document.createElement('div');
@@ -341,7 +341,7 @@ let dirtyAgain = false;
 function cacheLocally() { try { localStorage.setItem('multiNotes', JSON.stringify(notes)); } catch (e) {} }
 function scheduleSave() {
   cacheLocally();
-  setSaveStatus(hyadeOSSI18n.t('notes.status.saving', 'Saving…'));
+  setSaveStatus(hyadeOSI18n.t('notes.status.saving', 'Saving…'));
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveNow, 700);
 }
@@ -351,11 +351,11 @@ async function saveNow({ keepalive = false } = {}) {
   saving = true;
   try {
     const res = await fetch('/api/system/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(notes), keepalive });
-    if (res.status === 401) throw new Error(hyadeOSSI18n.t('notes.status.session-expired', 'Session expired: log in again to save'));
-    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || hyadeOSSI18n.t('notes.status.save-error', 'Could not save'));
-    setSaveStatus(hyadeOSSI18n.t('notes.status.saved', 'Saved'));
+    if (res.status === 401) throw new Error(hyadeOSI18n.t('notes.status.session-expired', 'Session expired: log in again to save'));
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || hyadeOSI18n.t('notes.status.save-error', 'Could not save'));
+    setSaveStatus(hyadeOSI18n.t('notes.status.saved', 'Saved'));
   } catch (error) {
-    setSaveStatus(error.message || hyadeOSSI18n.t('notes.status.save-error', 'Could not save'), true);
+    setSaveStatus(error.message || hyadeOSI18n.t('notes.status.save-error', 'Could not save'), true);
   } finally {
     saving = false;
     if (dirtyAgain) { dirtyAgain = false; saveNow(); }
@@ -423,18 +423,18 @@ function renderList() {
   const trashCount = notes.filter(n => n.deletedAt).length;
   $('trashCount').textContent = trashCount || '';
   $('trashLink').classList.toggle('on', showTrash);
-  $('sideTitle').textContent = showTrash ? hyadeOSSI18n.t('notes.trash', 'Recently deleted') : hyadeOSSI18n.t('notes.title', 'Notes');
+  $('sideTitle').textContent = showTrash ? hyadeOSI18n.t('notes.trash', 'Recently deleted') : hyadeOSI18n.t('notes.title', 'Notes');
   $('newBtn').style.visibility = showTrash ? 'hidden' : '';
 
   if (!shown.length) {
     const empty = document.createElement('div');
     empty.className = 'list-empty';
-    empty.textContent = query ? hyadeOSSI18n.t('notes.list.no-match', 'No notes match your search.') : showTrash ? hyadeOSSI18n.t('notes.list.trash-info', 'Deleted notes stay here for {days} days.', { days: TRASH_DAYS }) : hyadeOSSI18n.t('notes.list.empty', 'No notes yet. Create one with the pencil button.');
+    empty.textContent = query ? hyadeOSI18n.t('notes.list.no-match', 'No notes match your search.') : showTrash ? hyadeOSI18n.t('notes.list.trash-info', 'Deleted notes stay here for {days} days.', { days: TRASH_DAYS }) : hyadeOSI18n.t('notes.list.empty', 'No notes yet. Create one with the pencil button.');
     list.append(empty);
   }
   let lastGroup = null;
   shown.forEach((note, index) => {
-    const group = showTrash ? null : note.pinned ? hyadeOSSI18n.t('notes.list.pinned', 'Pinned') : hyadeOSSI18n.t('notes.title', 'Notes');
+    const group = showTrash ? null : note.pinned ? hyadeOSI18n.t('notes.list.pinned', 'Pinned') : hyadeOSI18n.t('notes.title', 'Notes');
     if (group && group !== lastGroup && shown.some(n => n.pinned)) {
       const label = document.createElement('div');
       label.className = 'list-label';
@@ -501,7 +501,7 @@ function openNote(id) {
 function renderEditor() {
   const note = current();
   $('emptyState').classList.toggle('show', !note);
-  $('emptyText').textContent = showTrash ? hyadeOSSI18n.t('notes.empty.trash', 'No deleted notes') : hyadeOSSI18n.t('notes.empty.start', 'Create a note to get started');
+  $('emptyText').textContent = showTrash ? hyadeOSI18n.t('notes.empty.trash', 'No deleted notes') : hyadeOSI18n.t('notes.empty.start', 'Create a note to get started');
   editor.style.visibility = note ? '' : 'hidden';
   $('trashBanner').classList.toggle('show', Boolean(note?.deletedAt));
   $('fileBadge').classList.toggle('show', Boolean(note?.sourcePath));
@@ -528,11 +528,11 @@ function flushEditor() {
 function updateStatus() {
   const note = current();
   if (!note) { $('statusEdited').textContent = ''; $('statusCount').textContent = ''; return; }
-  $('statusEdited').textContent = note.deletedAt ? hyadeOSSI18n.t('notes.status.deleted', 'Deleted {date}', { date: formatDate(note.deletedAt) }) : hyadeOSSI18n.t('notes.status.edited', 'Edited {date}', { date: formatDate(note.updatedAt) });
+  $('statusEdited').textContent = note.deletedAt ? hyadeOSI18n.t('notes.status.deleted', 'Deleted {date}', { date: formatDate(note.deletedAt) }) : hyadeOSI18n.t('notes.status.edited', 'Edited {date}', { date: formatDate(note.updatedAt) });
   const text = plainText(editor.innerHTML);
   const words = (text.match(/\S+/g) || []).length;
-  const wordsLabel = words === 1 ? hyadeOSSI18n.t('notes.status.words.one', '{count} word', { count: words }) : hyadeOSSI18n.t('notes.status.words.other', '{count} words', { count: words });
-  const charsLabel = text.length === 1 ? hyadeOSSI18n.t('notes.status.chars.one', '{count} character', { count: text.length }) : hyadeOSSI18n.t('notes.status.chars.other', '{count} characters', { count: text.length });
+  const wordsLabel = words === 1 ? hyadeOSI18n.t('notes.status.words.one', '{count} word', { count: words }) : hyadeOSI18n.t('notes.status.words.other', '{count} words', { count: words });
+  const charsLabel = text.length === 1 ? hyadeOSI18n.t('notes.status.chars.one', '{count} character', { count: text.length }) : hyadeOSI18n.t('notes.status.chars.other', '{count} characters', { count: text.length });
   $('statusCount').textContent = `${wordsLabel} · ${charsLabel}`;
 }
 
@@ -605,7 +605,7 @@ function currentBlock() {
   }
   return null;
 }
-const BLOCK_LABELS = { H1: hyadeOSSI18n.t('notes.style.title', 'Title'), H2: hyadeOSSI18n.t('notes.style.heading', 'Heading'), H3: hyadeOSSI18n.t('notes.style.subheading', 'Subheading'), BLOCKQUOTE: hyadeOSSI18n.t('notes.style.quote', 'Quote'), PRE: hyadeOSSI18n.t('notes.style.mono', 'Monospaced') };
+const BLOCK_LABELS = { H1: hyadeOSI18n.t('notes.style.title', 'Title'), H2: hyadeOSI18n.t('notes.style.heading', 'Heading'), H3: hyadeOSI18n.t('notes.style.subheading', 'Subheading'), BLOCKQUOTE: hyadeOSI18n.t('notes.style.quote', 'Quote'), PRE: hyadeOSI18n.t('notes.style.mono', 'Monospaced') };
 function updateToolbarState() {
   if (!editor.contains(window.getSelection().anchorNode)) return;
   ['bold', 'italic', 'underline', 'strikeThrough', 'insertUnorderedList', 'insertOrderedList'].forEach(cmd => {
@@ -617,9 +617,9 @@ function updateToolbarState() {
   });
   $('checklistBtn').classList.toggle('on', Boolean(currentList()?.classList.contains('checklist')));
   const block = currentBlock();
-  $('styleLabel').textContent = (block && BLOCK_LABELS[block.tagName]) || hyadeOSSI18n.t('notes.style.body', 'Body');
+  $('styleLabel').textContent = (block && BLOCK_LABELS[block.tagName]) || hyadeOSI18n.t('notes.style.body', 'Body');
 }
-$('styleLabel').textContent = hyadeOSSI18n.t('notes.style.body', 'Body');
+$('styleLabel').textContent = hyadeOSI18n.t('notes.style.body', 'Body');
 document.querySelectorAll('.tb[data-cmd]').forEach(b => {
   b.addEventListener('mousedown', e => e.preventDefault());
   b.onclick = () => exec(b.dataset.cmd);
@@ -658,7 +658,7 @@ editor.addEventListener('mousedown', e => {
   editor.dispatchEvent(new Event('input'));
 });
 
-// Links: Ctrl+click (or click when read-only) opens them in the hyadeOSS browser.
+// Links: Ctrl+click (or click when read-only) opens them in the hyadeOS browser.
 editor.addEventListener('click', e => {
   const a = e.target.closest('a[href]');
   if (!a) return;
@@ -672,17 +672,17 @@ editor.addEventListener('click', e => {
 });
 editor.addEventListener('mouseover', e => {
   const a = e.target.closest('a[href]');
-  if (a) a.title = `${a.href}\n${hyadeOSSI18n.t('notes.link.ctrl-click', 'Ctrl+click to open')}`;
+  if (a) a.title = `${a.href}\n${hyadeOSI18n.t('notes.link.ctrl-click', 'Ctrl+click to open')}`;
 });
 
 async function insertLink() {
   rememberSelection();
   const selected = savedRange && !savedRange.collapsed ? savedRange.toString() : '';
   const existing = currentBlock()?.closest?.('a');
-  const url = await mDialog.prompt(hyadeOSSI18n.t('notes.link.address', 'Link address'), { title: hyadeOSSI18n.t('notes.link.title', 'Insert link'), placeholder: 'https://example.com', defaultValue: existing?.href || '', okText: hyadeOSSI18n.t('notes.link.insert', 'Insert') });
+  const url = await mDialog.prompt(hyadeOSI18n.t('notes.link.address', 'Link address'), { title: hyadeOSI18n.t('notes.link.title', 'Insert link'), placeholder: 'https://example.com', defaultValue: existing?.href || '', okText: hyadeOSI18n.t('notes.link.insert', 'Insert') });
   if (!url) return;
   const href = /^[a-z]+:/i.test(url) ? url : `https://${url}`;
-  if (!/^(https?:|mailto:)/i.test(href)) { toast(hyadeOSSI18n.t('notes.link.not-allowed', 'Only web and e-mail links are allowed')); return; }
+  if (!/^(https?:|mailto:)/i.test(href)) { toast(hyadeOSI18n.t('notes.link.not-allowed', 'Only web and e-mail links are allowed')); return; }
   restoreSelection();
   if (selected) document.execCommand('createLink', false, href);
   else document.execCommand('insertHTML', false, `<a href="${escapeHtml(href)}">${escapeHtml(url)}</a>&nbsp;`);
@@ -717,7 +717,7 @@ async function insertImages(files) {
       const data = await compressImage(file);
       restoreSelection();
       document.execCommand('insertHTML', false, `<img src="${data}" alt=""><p><br></p>`);
-    } catch (e) { toast(hyadeOSSI18n.t('notes.image.error', 'Could not insert the image')); }
+    } catch (e) { toast(hyadeOSI18n.t('notes.image.error', 'Could not insert the image')); }
   }
   editor.dispatchEvent(new Event('input'));
 }
@@ -817,7 +817,7 @@ $('styleMenu').querySelectorAll('button').forEach(b => b.onclick = () => {
 });
 
 function buildSwatches(container, colors, onPick, withNone) {
-  if (withNone) { const n = document.createElement('button'); n.className = 'swatch none'; n.title = hyadeOSSI18n.t('notes.color.none', 'None'); n.onclick = () => onPick(null); container.append(n); }
+  if (withNone) { const n = document.createElement('button'); n.className = 'swatch none'; n.title = hyadeOSI18n.t('notes.color.none', 'None'); n.onclick = () => onPick(null); container.append(n); }
   colors.forEach(c => { const s = document.createElement('button'); s.className = 'swatch'; s.style.background = c; s.title = c; s.onclick = () => onPick(c); container.append(s); });
 }
 buildSwatches($('textSwatches'), TEXT_COLORS, c => { closeMenus(); exec('foreColor', c || '#ffffff'); });
@@ -843,28 +843,28 @@ function openNoteMenu(note, x, y) {
   const menu = $('noteMenu');
   menu.replaceChildren();
   if (note.deletedAt) {
-    menu.append(menuButton('restore_from_trash', hyadeOSSI18n.t('notes.restore', 'Restore'), () => restoreNote(note)),
-      menuButton('delete_forever', hyadeOSSI18n.t('notes.purge', 'Delete forever'), () => purgeNote(note), { danger: true }));
+    menu.append(menuButton('restore_from_trash', hyadeOSI18n.t('notes.restore', 'Restore'), () => restoreNote(note)),
+      menuButton('delete_forever', hyadeOSI18n.t('notes.purge', 'Delete forever'), () => purgeNote(note), { danger: true }));
   } else {
     menu.append(
-      menuButton('keep', note.pinned ? hyadeOSSI18n.t('notes.menu.unpin', 'Unpin') : hyadeOSSI18n.t('notes.menu.pin', 'Pin to top'), () => togglePin(note)),
-      menuButton('content_copy', hyadeOSSI18n.t('notes.menu.duplicate', 'Duplicate'), () => duplicateNote(note)));
-    const label = document.createElement('div'); label.className = 'label'; label.textContent = hyadeOSSI18n.t('notes.menu.color-label', 'Color label');
+      menuButton('keep', note.pinned ? hyadeOSI18n.t('notes.menu.unpin', 'Unpin') : hyadeOSI18n.t('notes.menu.pin', 'Pin to top'), () => togglePin(note)),
+      menuButton('content_copy', hyadeOSI18n.t('notes.menu.duplicate', 'Duplicate'), () => duplicateNote(note)));
+    const label = document.createElement('div'); label.className = 'label'; label.textContent = hyadeOSI18n.t('notes.menu.color-label', 'Color label');
     const sw = document.createElement('div'); sw.className = 'swatches';
     buildSwatches(sw, LABEL_COLORS, c => { closeMenus(); note.color = c || ''; note.updatedAt = Date.now(); scheduleSave(); renderList(); }, true);
     const hr = () => document.createElement('hr');
     menu.append(hr(), label, sw, hr(),
-      menuButton('download', hyadeOSSI18n.t('notes.menu.export-html', 'Export as HTML'), () => exportNote(note, 'html')),
-      menuButton('description', hyadeOSSI18n.t('notes.menu.export-text', 'Export as text'), () => exportNote(note, 'txt')),
-      menuButton('upload_file', hyadeOSSI18n.t('notes.menu.import', 'Import notes…'), () => $('importInput').click()),
+      menuButton('download', hyadeOSI18n.t('notes.menu.export-html', 'Export as HTML'), () => exportNote(note, 'html')),
+      menuButton('description', hyadeOSI18n.t('notes.menu.export-text', 'Export as text'), () => exportNote(note, 'txt')),
+      menuButton('upload_file', hyadeOSI18n.t('notes.menu.import', 'Import notes…'), () => $('importInput').click()),
       hr(),
-      menuButton('delete', hyadeOSSI18n.t('common.delete', 'Delete'), () => deleteNote(note), { danger: true, kbd: 'Ctrl+Del' }));
+      menuButton('delete', hyadeOSI18n.t('common.delete', 'Delete'), () => deleteNote(note), { danger: true, kbd: 'Ctrl+Del' }));
   }
   openMenu(menu, x, y);
 }
 $('moreBtn').onclick = () => {
   const note = current();
-  if (!note) { const menu = $('noteMenu'); menu.replaceChildren(menuButton('upload_file', hyadeOSSI18n.t('notes.menu.import', 'Import notes…'), () => $('importInput').click())); openMenu(menu, $('moreBtn')); return; }
+  if (!note) { const menu = $('noteMenu'); menu.replaceChildren(menuButton('upload_file', hyadeOSI18n.t('notes.menu.import', 'Import notes…'), () => $('importInput').click())); openMenu(menu, $('moreBtn')); return; }
   const r = $('moreBtn').getBoundingClientRect();
   openNoteMenu(note, r.right - 220, r.bottom + 6);
 };
@@ -876,7 +876,7 @@ function togglePin(note) {
   scheduleSave();
   renderList();
   renderEditorChrome();
-  toast(note.pinned ? hyadeOSSI18n.t('notes.toast.pinned', 'Pinned to the top') : hyadeOSSI18n.t('notes.toast.unpinned', 'Unpinned'));
+  toast(note.pinned ? hyadeOSI18n.t('notes.toast.pinned', 'Pinned to the top') : hyadeOSI18n.t('notes.toast.unpinned', 'Unpinned'));
 }
 function renderEditorChrome() {
   const note = current();
@@ -892,7 +892,7 @@ function duplicateNote(note) {
   scheduleSave();
   renderList();
   renderEditor();
-  toast(hyadeOSSI18n.t('notes.toast.duplicated', 'Note duplicated'));
+  toast(hyadeOSI18n.t('notes.toast.duplicated', 'Note duplicated'));
 }
 function deleteNote(note) {
   flushEditor();
@@ -904,7 +904,7 @@ function deleteNote(note) {
   scheduleSave();
   renderList();
   renderEditor();
-  if (!empty) toast(hyadeOSSI18n.t('notes.toast.moved-to-trash', 'Moved to Recently deleted'), { label: hyadeOSSI18n.t('notes.toast.undo', 'Undo'), run: () => { delete note.deletedAt; currentId = note.id; scheduleSave(); renderList(); renderEditor(); } });
+  if (!empty) toast(hyadeOSI18n.t('notes.toast.moved-to-trash', 'Moved to Recently deleted'), { label: hyadeOSI18n.t('notes.toast.undo', 'Undo'), run: () => { delete note.deletedAt; currentId = note.id; scheduleSave(); renderList(); renderEditor(); } });
 }
 function restoreNote(note) {
   delete note.deletedAt;
@@ -914,10 +914,10 @@ function restoreNote(note) {
   scheduleSave();
   renderList();
   renderEditor();
-  toast(hyadeOSSI18n.t('notes.toast.restored', 'Note restored'));
+  toast(hyadeOSI18n.t('notes.toast.restored', 'Note restored'));
 }
 async function purgeNote(note) {
-  if (!(await mDialog.confirm(hyadeOSSI18n.t('notes.purge.confirm', 'Delete "{title}" forever? This cannot be undone.', { title: noteTitle(note) }), { title: hyadeOSSI18n.t('notes.purge', 'Delete forever'), okText: hyadeOSSI18n.t('common.delete', 'Delete'), danger: true }))) return;
+  if (!(await mDialog.confirm(hyadeOSI18n.t('notes.purge.confirm', 'Delete "{title}" forever? This cannot be undone.', { title: noteTitle(note) }), { title: hyadeOSI18n.t('notes.purge', 'Delete forever'), okText: hyadeOSI18n.t('common.delete', 'Delete'), danger: true }))) return;
   notes = notes.filter(n => n !== note);
   const next = visibleNotes()[0];
   currentId = next ? next.id : null;
@@ -942,7 +942,7 @@ function exportNote(note, format) {
   flushEditor();
   const safeName = noteTitle(note).replace(/[\\/:*?"<>|]+/g, '').slice(0, 60) || 'note';
   if (format === 'txt') { download(`${safeName}.txt`, 'text/plain', plainText(note.content)); return; }
-  const html = `<!DOCTYPE html>\n<html data-hyadeoss-note="true">\n<head>\n<meta charset="utf-8">\n<title>${escapeHtml(noteTitle(note))}</title>\n` +
+  const html = `<!DOCTYPE html>\n<html data-hyadeos-note="true">\n<head>\n<meta charset="utf-8">\n<title>${escapeHtml(noteTitle(note))}</title>\n` +
     `<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;line-height:1.6;color:#1d1d1f}` +
     `ul.checklist{list-style:none;padding-left:4px}ul.checklist li[data-checked=true]{text-decoration:line-through;color:#888}` +
     `ul.checklist li::before{content:'☐ '}ul.checklist li[data-checked=true]::before{content:'☑ '}img{max-width:100%}pre{background:#f2f2f7;padding:12px;border-radius:8px}` +
@@ -969,8 +969,8 @@ $('importInput').onchange = async e => {
     renderList();
     renderEditor();
     toast(files.length === 1
-      ? hyadeOSSI18n.t('notes.toast.imported.one', '{count} note imported', { count: files.length })
-      : hyadeOSSI18n.t('notes.toast.imported.other', '{count} notes imported', { count: files.length }));
+      ? hyadeOSI18n.t('notes.toast.imported.one', '{count} note imported', { count: files.length })
+      : hyadeOSI18n.t('notes.toast.imported.other', '{count} notes imported', { count: files.length }));
   }
   e.target.value = '';
 };
@@ -978,12 +978,12 @@ $('importInput').onchange = async e => {
 /* ── Files opened from Explorer ── */
 async function openFileInNotes(request) {
   if (!request || typeof request.path !== 'string' || !request.path.startsWith('/') ||
-      typeof request.name !== 'string' || !request.name || /[\\/]/.test(request.name)) { toast(hyadeOSSI18n.t('notes.file.cannot-open', 'Cannot open this file')); return; }
+      typeof request.name !== 'string' || !request.name || /[\\/]/.test(request.name)) { toast(hyadeOSI18n.t('notes.file.cannot-open', 'Cannot open this file')); return; }
   const existing = notes.find(n => n.sourcePath === request.path && n.sourceName === request.name && !n.deletedAt);
   if (existing) { showTrash = false; openNote(existing.id); return; }
   const extension = `.${request.name.split('.').pop().toLowerCase()}`;
   if (BINARY_EXTENSIONS.has(extension)) {
-    newNote(`<p>${escapeHtml(hyadeOSSI18n.t('notes.file.binary', 'This file cannot be edited in Notes because it is not a text file.'))}</p>`, { sourcePath: request.path, sourceName: request.name, sourceFormat: 'binary' });
+    newNote(`<p>${escapeHtml(hyadeOSI18n.t('notes.file.binary', 'This file cannot be edited in Notes because it is not a text file.'))}</p>`, { sourcePath: request.path, sourceName: request.name, sourceFormat: 'binary' });
     renderEditor();
     return;
   }
@@ -1003,7 +1003,7 @@ async function openFileInNotes(request) {
     renderEditor();
   } catch (error) {
     console.error('Could not open file in Notes:', error);
-    toast(hyadeOSSI18n.t('notes.file.open-error', 'Could not open the file'));
+    toast(hyadeOSI18n.t('notes.file.open-error', 'Could not open the file'));
   }
 }
 async function saveCurrentFile() {
@@ -1028,10 +1028,10 @@ async function saveCurrentFile() {
     if (!response.ok || !data.success) throw new Error(data.error || 'Unable to save file');
     scheduleSave();
     if (IS_EMBEDDED) window.parent.postMessage({ type: 'refresh-desktop' }, window.location.origin);
-    toast(hyadeOSSI18n.t('notes.file.saved', 'Saved to {name}', { name: note.sourceName }));
+    toast(hyadeOSI18n.t('notes.file.saved', 'Saved to {name}', { name: note.sourceName }));
   } catch (error) {
     console.error('Could not save file from Notes:', error);
-    toast(hyadeOSSI18n.t('notes.file.save-error', 'Could not save the file'));
+    toast(hyadeOSI18n.t('notes.file.save-error', 'Could not save the file'));
   }
 }
 $('saveFileBtn').onclick = saveCurrentFile;
@@ -1086,7 +1086,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     const note = current();
     if (note?.sourcePath && note.sourceFormat !== 'binary') saveCurrentFile();
-    else { flushEditor(); saveNow(); toast(hyadeOSSI18n.t('notes.status.saved', 'Saved')); }
+    else { flushEditor(); saveNow(); toast(hyadeOSI18n.t('notes.status.saved', 'Saved')); }
   }
   else if (key === 'k') { e.preventDefault(); insertLink(); }
   else if (key === 'l' && e.shiftKey) { e.preventDefault(); toggleChecklist(); }
@@ -1106,7 +1106,7 @@ function restoreDesktopHeader() {
     const header = doc.querySelector('#popup5 .popup-header');
     if (header && header.querySelector('#os-notes-tabs, #os-notes-actions')) {
       header.style.gap = '';
-      header.innerHTML = `<span>${escapeHtml(hyadeOSSI18n.t('notes.title', 'Notes'))}</span><div class="window-actions">` +
+      header.innerHTML = `<span>${escapeHtml(hyadeOSI18n.t('notes.title', 'Notes'))}</span><div class="window-actions">` +
         '<span class="material-symbols-outlined action-btn min-btn" onclick="minimizePopup(\'popup5\')">remove</span>' +
         '<span class="material-symbols-outlined action-btn max-btn" onclick="toggleMaximize(\'popup5\')">crop_square</span>' +
         '<span class="material-symbols-outlined action-btn close-btn" onclick="closePopup(\'popup5\')">close</span></div>';

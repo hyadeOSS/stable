@@ -1,4 +1,4 @@
-// hyadeOSS builder note: global search (Win+S, Win+Space, the search button). The desktop's
+// hyadeOS builder note: global search (Win+S, Win+Space, the search button). The desktop's
 // spotlight finds apps and offers a web search; this adds, in the same list:
 //   - a calculator ("12*3+4", "15% of 80" is written 80*15%),
 //   - Settings pages (by name and by what they contain, in English and Italian),
@@ -71,7 +71,7 @@
     ['system', 'general system language keys sounds time date generale sistema lingua tasti suoni ora data statistiche anonime'],
     ['updater', 'updates update channel insiders aggiornamenti aggiorna canale'],
     ['backup', 'backup restore reset factory ripristino ripristina fabbrica'],
-    ['about', 'about version info hyadeoss informazioni versione']
+    ['about', 'about version info hyadeos informazioni versione']
   ];
   const SETTINGS_TITLES = {
     you: 'You', wifi: 'Wi-Fi', bluetooth: 'Bluetooth', ethernet: 'Ethernet', apps: 'Apps', security: 'Security',
@@ -141,8 +141,8 @@
         const data = await fetch(`/api/system/files/search?path=${encodeURIComponent('/home')}&q=${encodeURIComponent(query)}`, { cache: 'no-store' }).then(r => r.json());
         if (token !== fileToken || !data.success) return;
         insertRows((data.results || []).slice(0, 6).map(item => row({
-          icon: fileIcon(item), title: item.name, sub: item.dir.replace(/^\/home/, hyadeOSSI18n.t('desktop.search.home', 'Home')),
-          tag: item.type === 'folder' ? hyadeOSSI18n.t('desktop.search.folder', 'Folder') : hyadeOSSI18n.t('desktop.search.file', 'File'),
+          icon: fileIcon(item), title: item.name, sub: item.dir.replace(/^\/home/, hyadeOSI18n.t('desktop.search.home', 'Home')),
+          tag: item.type === 'folder' ? hyadeOSI18n.t('desktop.search.folder', 'Folder') : hyadeOSI18n.t('desktop.search.file', 'File'),
           run: () => openFound(item)
         })));
       } catch (e) { /* offline or signed out: apps and settings still work */ }
@@ -157,19 +157,19 @@
     const rows = [];
     const value = calculate(text);
     if (value !== null) {
-      const shown = value.toLocaleString(hyadeOSSI18n.locale || undefined, { maximumFractionDigits: 10 });
-      const calc = row({ icon: 'calculate', title: `= ${shown}`, sub: hyadeOSSI18n.t('desktop.search.copy-result', 'Press Enter to copy the result'),
-        tag: hyadeOSSI18n.t('desktop.search.calculation', 'Calculation'), run: () => navigator.clipboard?.writeText(String(value)).catch(() => {}) });
+      const shown = value.toLocaleString(hyadeOSI18n.locale || undefined, { maximumFractionDigits: 10 });
+      const calc = row({ icon: 'calculate', title: `= ${shown}`, sub: hyadeOSI18n.t('desktop.search.copy-result', 'Press Enter to copy the result'),
+        tag: hyadeOSI18n.t('desktop.search.calculation', 'Calculation'), run: () => navigator.clipboard?.writeText(String(value)).catch(() => {}) });
       list.querySelector('.selected')?.classList.remove('selected');
       calc.classList.add('selected');
       list.prepend(calc);
     }
     const q = text.toLowerCase();
     SETTINGS.forEach(([key, words]) => {
-      const title = hyadeOSSI18n.t(`settings.nav.${key}`, SETTINGS_TITLES[key]);
+      const title = hyadeOSI18n.t(`settings.nav.${key}`, SETTINGS_TITLES[key]);
       if (q.length < 2 || !(title.toLowerCase().includes(q) || words.includes(q))) return;
-      rows.push(row({ icon: 'settings', title, sub: hyadeOSSI18n.t('desktop.search.settings-sub', 'Settings'),
-        tag: hyadeOSSI18n.t('desktop.search.setting', 'Setting'), run: () => openSettingsPage(key) }));
+      rows.push(row({ icon: 'settings', title, sub: hyadeOSI18n.t('desktop.search.settings-sub', 'Settings'),
+        tag: hyadeOSI18n.t('desktop.search.setting', 'Setting'), run: () => openSettingsPage(key) }));
     });
     insertRows(rows.slice(0, 4));
     searchFiles(text);

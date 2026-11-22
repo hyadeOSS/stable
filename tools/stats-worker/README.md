@@ -1,6 +1,6 @@
-# hyadeOSS anonymous usage counter
+# hyadeOS anonymous usage counter
 
-A Cloudflare Worker that counts how many hyadeOSS systems are on each day. Systems only
+A Cloudflare Worker that counts how many hyadeOS systems are on each day. Systems only
 ping it when their owner turned on **Settings › General › Anonymous usage count** (also
 offered in setup), at most once a day, with just `{ version, channel }`.
 
@@ -12,8 +12,8 @@ npx wrangler kv namespace create STATS   # paste the id into wrangler.toml
 npx wrangler deploy
 ```
 
-Wrangler prints the address, e.g. `https://hyadeoss-stats.<account>.workers.dev`.
-Put `https://…/ping` in `STATS_URL` in `server.js` (or set `HYADEOSS_STATS_URL`) and
+Wrangler prints the address, e.g. `https://hyadeos-stats.<account>.workers.dev`.
+Put `https://…/ping` in `STATS_URL` in `server.js` (or set `HYADEOS_STATS_URL`) and
 ship it in the next release. Until then the kernel sends nothing.
 
 ## Read the numbers

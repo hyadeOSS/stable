@@ -92,18 +92,18 @@
             <h1 id="overview" data-i18n="fallback.help.title">What's This?</h1>
             <p><span data-i18n="fallback.help.intro">This mode helps you recover from a broken desktop or corrupted configuration files.</span><br>
             <span data-i18n="fallback.help.options">You can access settings to reset your configuration or you can use the browser to access the repository and download the latest desktop.</span><br>
-            <span id="archive-line">Or, you can access the <a href="https://github.com/hyadeOSS/archive">archive</a> and download a full update package.</span></p>
+            <span id="archive-line">Or, you can access the <a href="https://github.com/hyadeOS/archive">archive</a> and download a full update package.</span></p>
             <p>&nbsp;</p>
             <p data-i18n="fallback.help.exit">You can exit this mode at any time by clicking the "Exit Fallback Mode" option in the Finder menu.</p>
         </div>
     </div>
 <script>
     // One sentence with a link inside: translated as a whole, with the link as {link}.
-    if (hyadeOSSI18n.locale) {
+    if (hyadeOSI18n.locale) {
         const link = document.createElement("a");
-        link.href = "https://github.com/hyadeOSS/archive";
-        link.textContent = hyadeOSSI18n.t("fallback.help.archive-link", "archive");
-        const [before, after = ""] = hyadeOSSI18n.t("fallback.help.archive", "Or, you can access the {link} and download a full update package.").split("{link}");
+        link.href = "https://github.com/hyadeOS/archive";
+        link.textContent = hyadeOSI18n.t("fallback.help.archive-link", "archive");
+        const [before, after = ""] = hyadeOSI18n.t("fallback.help.archive", "Or, you can access the {link} and download a full update package.").split("{link}");
         document.getElementById("archive-line").replaceChildren(before, link, after);
     }
 </script>

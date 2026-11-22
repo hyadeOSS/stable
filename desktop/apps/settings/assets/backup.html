@@ -8,7 +8,7 @@
   <script src="/desktop/assets/accent.js"></script>
 <script src="/desktop/assets/mw-theme.js"></script>
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="settings.nav.backup">Backup &amp; Restore</title>
@@ -93,9 +93,9 @@ function importBackup(e) {
     fetch('/api/system/restore', { method: 'POST', body: fd })
       .then(r => r.json()).then(res => {
         if(res.success) {
-          window.parent.postMessage({ type: 'show-notification', title: hyadeOSSI18n.t("settings.backup.restored", "Backup Restored"), msg: hyadeOSSI18n.t("settings.backup.restored.message", "System config updated successfully."), icon: 'cloud_done' }, '*');
+          window.parent.postMessage({ type: 'show-notification', title: hyadeOSI18n.t("settings.backup.restored", "Backup Restored"), msg: hyadeOSI18n.t("settings.backup.restored.message", "System config updated successfully."), icon: 'cloud_done' }, '*');
         } else {
-          mDialog.alert(hyadeOSSI18n.t("settings.backup.error", "Error: {message}", { message: res.error }));
+          mDialog.alert(hyadeOSI18n.t("settings.backup.error", "Error: {message}", { message: res.error }));
         }
       });
   }, () => {

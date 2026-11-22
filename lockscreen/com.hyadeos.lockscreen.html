@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- 
-hyadeOSS Lockscreen - (C) 2026 mariowstech and the hyadeOSS team 
+hyadeOS Lockscreen - (C) 2026 mariowstech and the hyadeOS team 
 Licensed under the Apache License, Version 2.0; you can use this file if you give credits to the original creators and you may not use this file except in compliance with the License. 
 Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 This project uses open source and free fonts sourced from Google Fonts. Google Fonts is a trademark of Google LLC, privacy docs are at https://developers.google.com/fonts/faq/privacy 
@@ -436,7 +436,7 @@ body.live-wallpaper-active.lock-standby { animation-play-state: paused !importan
   .hmos-media-card { background: rgba(20, 22, 28, 0.92); }
   .lockscreen-notif-item { background: rgba(20, 22, 28, 0.92); }
 }
-/* ---- hyadeOSS 2 ---- The lock screen sits on the wallpaper in both themes, so it keeps light
+/* ---- hyadeOS 2 ---- The lock screen sits on the wallpaper in both themes, so it keeps light
    text; surfaces are the shell's glass, motion is calm (no overshoot, no hover zoom). */
 .clock-cell.roll { animation: clockRoll .45s var(--mw-ease-out); }
 @keyframes clockRoll { from { opacity: 0; transform: translateY(30%); filter: blur(3px); } }
@@ -462,7 +462,7 @@ body.live-wallpaper-active.lock-standby { animation-play-state: paused !importan
 #closePopup { background: var(--mw-fill-strong); color: var(--mw-text); }
 #redirectPopup { background: var(--mw-accent); color: var(--mw-accent-on); }
 @supports not (backdrop-filter: blur(1px)) { .popup { background: var(--mw-surface-3); } }
-/* ---- end hyadeOSS 2 ---- */
+/* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -562,15 +562,15 @@ window.addEventListener('storage', (e) => {
   }
 });
 // Still while unlocked: embedded in the desktop, this page stays loaded behind it.
-window.lockLiveWallpaper = hyadeOSSLiveWallpaper.mount(document.getElementById('desktop-wallpaper'),
+window.lockLiveWallpaper = hyadeOSLiveWallpaper.mount(document.getElementById('desktop-wallpaper'),
   { paused: () => document.body.classList.contains('lock-standby') });
 window.lockLiveWallpaper.update().then(applyCustomSettings);
 applyCustomSettings();
 
 function updateDateTime() {
   const now = new Date();
-  const date = now.toLocaleDateString(hyadeOSSI18n.locale, { weekday: 'long', month: 'long', day: 'numeric' });
-  const time = now.toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+  const date = now.toLocaleDateString(hyadeOSI18n.locale, { weekday: 'long', month: 'long', day: 'numeric' });
+  const time = now.toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit', hour12: false });
   const dateNode = document.getElementById('date'), timeNode = document.getElementById('time');
   if (dateNode.textContent !== date) dateNode.textContent = date;
   if (timeNode.textContent !== time) rollClock(timeNode, time);
@@ -599,7 +599,7 @@ setInterval(updateDateTime, 1000);
 
 // Switch user: this session ends and the login screen lets someone else pick their account.
 document.getElementById('switchUser').addEventListener('click', () => {
-  fetch('/api/system/logout', { method: 'POST' }).catch(() => {}).finally(() => { window.top.location.href = '/loginui/com.hyadeoss.loginui.html'; });
+  fetch('/api/system/logout', { method: 'POST' }).catch(() => {}).finally(() => { window.top.location.href = '/loginui/com.hyadeos.loginui.html'; });
 });
 
 const passwordInput = document.getElementById('loginPassword');
@@ -635,8 +635,8 @@ async function attemptUnlock() {
     }
     if (!resp.ok) {
       loginStatus.textContent = resp.status === 409
-        ? hyadeOSSI18n.t('login.no-password', 'No password is configured. Use the recovery flow to set one.')
-        : hyadeOSSI18n.t('login.verify-failed', 'Unable to verify password right now. Please try again.');
+        ? hyadeOSI18n.t('login.no-password', 'No password is configured. Use the recovery flow to set one.')
+        : hyadeOSI18n.t('login.verify-failed', 'Unable to verify password right now. Please try again.');
       return;
     }
 
@@ -656,10 +656,10 @@ async function attemptUnlock() {
 
     setTimeout(() => {
       passwordInput.value = '';
-      window.location.href = '/desktop/com.hyadeoss.desktop.html';
+      window.location.href = '/desktop/com.hyadeos.desktop.html';
     }, 360);
   } catch (error) {
-    loginStatus.textContent = hyadeOSSI18n.t('login.unreachable', 'Unable to reach hyadeOSS. Please try again.');
+    loginStatus.textContent = hyadeOSI18n.t('login.unreachable', 'Unable to reach hyadeOS. Please try again.');
     console.error('Could not verify lockscreen password:', error);
   } finally {
     if (loginStatus.textContent || unlockPill.classList.contains('wrong')) {
@@ -670,7 +670,7 @@ async function attemptUnlock() {
 }
 
 function showWrong() {
-  loginStatus.textContent = hyadeOSSI18n.t('login.wrong-password', 'Incorrect password. Please try again.');
+  loginStatus.textContent = hyadeOSI18n.t('login.wrong-password', 'Incorrect password. Please try again.');
   unlockPill.classList.add('wrong');
   passwordInput.value = '';
   clearTimeout(wrongTimeout);
@@ -703,10 +703,10 @@ function updateMediaUI(data) {
   const hasMedia = data.title && data.title !== 'No media' && data.title !== 'Not playing';
   if (isPlaying || hasMedia) {
     banner.style.display = 'flex';
-    document.getElementById('mediaBannerTitle').textContent = data.title || hyadeOSSI18n.t("desktop.media.no-media", "No media");
-    document.getElementById('mediaBannerArtist').textContent = data.artist || hyadeOSSI18n.t("desktop.media.not-playing", "Not playing");
+    document.getElementById('mediaBannerTitle').textContent = data.title || hyadeOSI18n.t("desktop.media.no-media", "No media");
+    document.getElementById('mediaBannerArtist').textContent = data.artist || hyadeOSI18n.t("desktop.media.not-playing", "Not playing");
     document.getElementById('mediaBannerPlayIcon').textContent = isPlaying ? "pause" : "play_arrow";
-    document.getElementById('mediaAppName').textContent = data.app || hyadeOSSI18n.t("desktop.media.this-device", "This device");
+    document.getElementById('mediaAppName').textContent = data.app || hyadeOSI18n.t("desktop.media.this-device", "This device");
     const cover = /^(https:|blob:|\/|data:image\/)/i.test(String(data.cover || '')) ? String(data.cover) : '';
     const art = document.getElementById('mediaBannerArt');
     if (art.dataset.src !== cover) {
@@ -774,7 +774,7 @@ function updateNotificationsUI(notifs) {
     lockIcon.textContent = 'visibility_off';
 
     const hiddenText = document.createElement('span');
-    hiddenText.textContent = hyadeOSSI18n.t("lockscreen.hidden-content", "Notification content hidden");
+    hiddenText.textContent = hyadeOSI18n.t("lockscreen.hidden-content", "Notification content hidden");
 
     hiddenEl.append(lockIcon, hiddenText);
     contentEl.append(headerEl, hiddenEl);
@@ -833,7 +833,7 @@ closePopup.addEventListener('click', () => {
 });
 
 redirectPopup.addEventListener('click', () => {
-  window.location.href = '/desktop/fallback/com.hyadeoss.desktop.html';
+  window.location.href = '/desktop/fallback/com.hyadeos.desktop.html';
 });
 
 fetch("/desktop/assets/wallpaper.user.png", { method: "HEAD" })

@@ -1,15 +1,15 @@
-// hyadeOSS app SDK, desktop side. Load it in the desktop page after its own scripts.
+// hyadeOS app SDK, desktop side. Load it in the desktop page after its own scripts.
 //
 // Store apps (above all third-party ones, which run on their own origin in a sandboxed frame)
 // never call system APIs themselves. They post { type: 'mw-sdk', id, method, params } to the
-// desktop (see /desktop/assets/sdk/hyadeoss-app.js); this file finds which app window sent it,
+// desktop (see /desktop/assets/sdk/hyadeos-app.js); this file finds which app window sent it,
 // checks the permissions the user granted to that app (config.installedApps[i].grantedPermissions,
 // managed in Store > My apps), does the work with the system's own routes and answers that
 // window only: { type: 'mw-sdk-reply', id, ok, result | error: { code, message } }.
 // Nothing is ever done for an app without its permission. See docs/app-sdk.md.
 (function () {
   'use strict';
-  if (window.hyadeOSSSdkHost) return;
+  if (window.hyadeOSSdkHost) return;
 
   const HOST_VERSION = '2.0.0';
   const SETTINGS_TTL_MS = 10000;
@@ -35,12 +35,12 @@
   };
 
   const permissionLabel = id => ({
-    'files.documents': hyadeOSSI18n.t("sdk.perm.files-documents", "use your Documents folder"),
-    'files.pictures': hyadeOSSI18n.t("sdk.perm.files-pictures", "use your Pictures folder"),
-    'theme': hyadeOSSI18n.t("sdk.perm.theme", "follow your theme"),
-    'storage': hyadeOSSI18n.t("sdk.perm.storage", "keep its own data"),
-    'clipboard.write': hyadeOSSI18n.t("sdk.perm.clipboard-write", "copy to your clipboard"),
-    'open-url': hyadeOSSI18n.t("sdk.perm.open-url", "open web pages")
+    'files.documents': hyadeOSI18n.t("sdk.perm.files-documents", "use your Documents folder"),
+    'files.pictures': hyadeOSI18n.t("sdk.perm.files-pictures", "use your Pictures folder"),
+    'theme': hyadeOSI18n.t("sdk.perm.theme", "follow your theme"),
+    'storage': hyadeOSI18n.t("sdk.perm.storage", "keep its own data"),
+    'clipboard.write': hyadeOSI18n.t("sdk.perm.clipboard-write", "copy to your clipboard"),
+    'open-url': hyadeOSI18n.t("sdk.perm.open-url", "open web pages")
   }[id] || id);
 
   class SdkError extends Error {
@@ -85,7 +85,7 @@
       const granted = new Set((Array.isArray(app.grantedPermissions) ? app.grantedPermissions : []).filter(id => GRANTABLE.has(id)));
       return { app, appId, granted };
     }
-    // Apps of the hyadeOSS team run with the system on its own origin: they hold everything.
+    // Apps of the hyadeOS team run with the system on its own origin: they hold everything.
     if (event.origin !== window.location.origin) return null;
     return { app, appId, granted: new Set(GRANTABLE) };
   }
@@ -110,8 +110,8 @@
       notifiedDenials.add(key);
       const appName = String(ctx.app.title || ctx.appId).slice(0, 60);
       showNotification(
-        hyadeOSSI18n.t("sdk.denied.title", "{app} was blocked", { app: appName }),
-        hyadeOSSI18n.t("sdk.denied.text", "It tried to {action} without your permission. You can allow it in Store > My apps.", { action: permissionLabel(permission) }),
+        hyadeOSI18n.t("sdk.denied.title", "{app} was blocked", { app: appName }),
+        hyadeOSI18n.t("sdk.denied.text", "It tried to {action} without your permission. You can allow it in Store > My apps.", { action: permissionLabel(permission) }),
         'block'
       );
     }
@@ -307,14 +307,14 @@
   function currentTheme() {
     let accent = null;
     try { accent = JSON.parse(localStorage.getItem('desktopStyle') || '{}').accent; } catch (e) {}
-    const derived = window.hyadeOSSAccent && typeof window.hyadeOSSAccent.derive === 'function'
-      ? window.hyadeOSSAccent.derive(accent) : { accent: '#0a84ff', on: '#ffffff', text: '#4da3ff' };
+    const derived = window.hyadeOSAccent && typeof window.hyadeOSAccent.derive === 'function'
+      ? window.hyadeOSAccent.derive(accent) : { accent: '#0a84ff', on: '#ffffff', text: '#4da3ff' };
     return {
       accent: derived.accent,
       accentOn: derived.on,
       accentText: derived.text,
       dark: !(settingsCache && settingsCache.theme === 'light'),
-      language: (window.hyadeOSSI18n && hyadeOSSI18n.locale) || 'en'
+      language: (window.hyadeOSI18n && hyadeOSI18n.locale) || 'en'
     };
   }
   let lastThemeSent = '';
@@ -383,5 +383,5 @@
     }
   });
 
-  window.hyadeOSSSdkHost = Object.freeze({ version: HOST_VERSION });
+  window.hyadeOSSdkHost = Object.freeze({ version: HOST_VERSION });
 })();

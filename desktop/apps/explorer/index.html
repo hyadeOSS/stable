@@ -1,5 +1,5 @@
 <!--
-hyadeOSS Files - (C) 2026 mariowstech and the hyadeOSS team
+hyadeOS Files - (C) 2026 mariowstech and the hyadeOS team
 Licensed under the Apache License, Version 2.0
 -->
 <!DOCTYPE html>
@@ -15,7 +15,7 @@ Licensed under the Apache License, Version 2.0
 <link rel="stylesheet" href="/desktop/assets/mw-design.css">
 <title data-i18n="explorer.title">Files</title>
 <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
-<script src="/desktop/assets/hyadeoss-dialogs.js"></script>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <style>
   :root {
     --accent: var(--mw-accent);
@@ -44,7 +44,7 @@ Licensed under the Apache License, Version 2.0
   .side-item .ms { font-size: 19px; width: 20px; color: var(--sys-accent-text); }
   .side-item.trash .ms { color: rgba(var(--mw-ink), .7); }
   .side-item .badge { margin-left: auto; font-size: 11px; color: var(--dim); }
-  /* Colored gradient icon tiles — hyadeOSS "language", matching Settings. */
+  /* Colored gradient icon tiles — hyadeOS "language", matching Settings. */
   .side-item .icon-bg { width: 24px; height: 24px; flex: 0 0 24px; border-radius: 6px; display: flex;
     align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,.28); }
   .side-item .icon-bg .ms { font-size: 15px; width: auto; color: #fff; }
@@ -125,7 +125,7 @@ Licensed under the Apache License, Version 2.0
   .status { display: flex; align-items: center; gap: 14px; padding: 5px 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--dim); }
   .status .grow { flex: 1; }
 
-  /* Icons by type — colored gradient chips (Settings/hyadeOSS icon language) */
+  /* Icons by type — colored gradient chips (Settings/hyadeOS icon language) */
   .fchip { display: flex; align-items: center; justify-content: center; border-radius: 7px; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
   .fchip .ms { color: #fff; }
   .row .fchip { width: 30px; height: 30px; flex: 0 0 30px; }
@@ -185,7 +185,7 @@ Licensed under the Apache License, Version 2.0
   }
   * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
 
-  /* ── HarmonyOS-style layout, in the hyadeOSS dark glass ── */
+  /* ── HarmonyOS-style layout, in the hyadeOS dark glass ── */
   .sidebar { width: 236px; flex-basis: 236px; padding: 12px 10px; gap: 1px; }
   .side-item { padding: 8px 10px; font-size: 13.5px; border-radius: 11px; position: relative; }
   .side-item.home-item { margin-bottom: 6px; padding: 10px; font-weight: 500; }
@@ -247,7 +247,7 @@ Licensed under the Apache License, Version 2.0
 
   .status { justify-content: center; padding: 7px 14px; }
 
-  /* Tabs: in the window title bar inside hyadeOSS; this strip is for the page on its own. */
+  /* Tabs: in the window title bar inside hyadeOS; this strip is for the page on its own. */
   body.embedded .tabbar { display: none; }
   .tabbar { display: flex; align-items: center; gap: 4px; padding: 8px 10px 0; min-width: 0; }
   .tabs { display: flex; align-items: center; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
@@ -285,7 +285,7 @@ Licensed under the Apache License, Version 2.0
   .home-view .list-head { position: static; background: transparent; border-bottom: 0; padding: 4px 16px 6px; }
   .home-view .grid { padding: 0; }
   @media (max-width: 720px) { .search { width: 140px; } .pane.open { width: 0; } }
-/* ---- hyadeOSS 2 ---- tokens for surfaces and states, calm motion, focus rings. */
+/* ---- hyadeOS 2 ---- tokens for surfaces and states, calm motion, focus rings. */
   .sidebar { border-right: 0; box-shadow: inset -1px 0 0 var(--mw-divider); }
   .side-item { border-radius: var(--mw-radius-md); color: var(--mw-text-strong); transition: background var(--mw-duration-fast) ease; }
   .side-item.active { background: var(--mw-accent-soft); color: var(--mw-text); font-weight: 500; }
@@ -324,7 +324,7 @@ Licensed under the Apache License, Version 2.0
   .readonly-pill { background: var(--mw-warning-soft); color: var(--mw-warning); }
   button:focus-visible, .side-item:focus-visible, .row:focus-visible, .tile:focus-visible { outline: none; box-shadow: var(--mw-focus-ring-inset); }
   @keyframes pop { from { opacity: 0; transform: translateY(-3px); } }
-  /* ---- end hyadeOSS 2 ---- */
+  /* ---- end hyadeOS 2 ---- */
 </style>
 </head>
 <body>
@@ -396,16 +396,16 @@ const TRASH = 'trash:';
 // The start page: quick access and recent files, like the Home page of HarmonyOS Files.
 const HOME_VIEW = 'home:';
 const isVirtual = p => p === TRASH || p === HOME_VIEW;
-const RECENT_FILTERS = [['all', () => hyadeOSSI18n.t("explorer.filter.all", "All"), null], ['image', () => hyadeOSSI18n.t("explorer.filter.image", "Image"), ['image']], ['video', () => hyadeOSSI18n.t("explorer.filter.videos", "Videos"), ['video']],
-  ['doc', () => hyadeOSSI18n.t("explorer.filter.document", "Document"), ['doc', 'pdf', 'code']], ['audio', () => hyadeOSSI18n.t("explorer.filter.audio", "Audio"), ['audio']], ['archive', () => hyadeOSSI18n.t("explorer.filter.archives", "Archives"), ['archive']], ['other', () => hyadeOSSI18n.t("explorer.filter.others", "Others"), ['file', 'exe']]];
+const RECENT_FILTERS = [['all', () => hyadeOSI18n.t("explorer.filter.all", "All"), null], ['image', () => hyadeOSI18n.t("explorer.filter.image", "Image"), ['image']], ['video', () => hyadeOSI18n.t("explorer.filter.videos", "Videos"), ['video']],
+  ['doc', () => hyadeOSI18n.t("explorer.filter.document", "Document"), ['doc', 'pdf', 'code']], ['audio', () => hyadeOSI18n.t("explorer.filter.audio", "Audio"), ['audio']], ['archive', () => hyadeOSI18n.t("explorer.filter.archives", "Archives"), ['archive']], ['other', () => hyadeOSI18n.t("explorer.filter.others", "Others"), ['file', 'exe']]];
 const HOME_FOLDERS = [
-  { name: hyadeOSSI18n.t("explorer.home", "Home"), path: '/home', icon: 'home', color: 'home' },
-  { name: hyadeOSSI18n.t("explorer.folder.desktop", "Desktop"), path: '/home/Desktop', icon: 'desktop_windows', color: 'desktop' },
-  { name: hyadeOSSI18n.t("explorer.folder.documents", "Documents"), path: '/home/Documents', icon: 'description', color: 'documents' },
-  { name: hyadeOSSI18n.t("explorer.folder.downloads", "Downloads"), path: '/home/Downloads', icon: 'download', color: 'downloads' },
-  { name: hyadeOSSI18n.t("explorer.folder.pictures", "Pictures"), path: '/home/Pictures', icon: 'image', color: 'pictures' },
-  { name: hyadeOSSI18n.t("explorer.folder.music", "Music"), path: '/home/Music', icon: 'music_note', color: 'music' },
-  { name: hyadeOSSI18n.t("explorer.folder.videos", "Videos"), path: '/home/Videos', icon: 'movie', color: 'videos' }
+  { name: hyadeOSI18n.t("explorer.home", "Home"), path: '/home', icon: 'home', color: 'home' },
+  { name: hyadeOSI18n.t("explorer.folder.desktop", "Desktop"), path: '/home/Desktop', icon: 'desktop_windows', color: 'desktop' },
+  { name: hyadeOSI18n.t("explorer.folder.documents", "Documents"), path: '/home/Documents', icon: 'description', color: 'documents' },
+  { name: hyadeOSI18n.t("explorer.folder.downloads", "Downloads"), path: '/home/Downloads', icon: 'download', color: 'downloads' },
+  { name: hyadeOSI18n.t("explorer.folder.pictures", "Pictures"), path: '/home/Pictures', icon: 'image', color: 'pictures' },
+  { name: hyadeOSI18n.t("explorer.folder.music", "Music"), path: '/home/Music', icon: 'music_note', color: 'music' },
+  { name: hyadeOSI18n.t("explorer.folder.videos", "Videos"), path: '/home/Videos', icon: 'movie', color: 'videos' }
 ];
 const TYPES = {
   image: ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.svg', '.ico', '.avif'],
@@ -419,12 +419,12 @@ const TYPES = {
 };
 const TYPE_ICON = { folder: 'folder', image: 'image', audio: 'music_note', video: 'movie', pdf: 'picture_as_pdf', code: 'code', doc: 'description', archive: 'folder_zip', exe: 'terminal', file: 'draft', drive: 'hard_drive' };
 const TYPE_LABEL = {
-  folder: hyadeOSSI18n.t("explorer.type.folder", "Folder"), image: hyadeOSSI18n.t("explorer.type.image", "Image"),
-  audio: hyadeOSSI18n.t("explorer.type.audio", "Audio"), video: hyadeOSSI18n.t("explorer.type.video", "Video"),
-  pdf: hyadeOSSI18n.t("explorer.type.pdf", "PDF document"), code: hyadeOSSI18n.t("explorer.type.code", "Code"),
-  doc: hyadeOSSI18n.t("explorer.type.doc", "Document"), archive: hyadeOSSI18n.t("explorer.type.archive", "Archive"),
-  exe: hyadeOSSI18n.t("explorer.type.exe", "Program"), file: hyadeOSSI18n.t("explorer.type.file", "File"),
-  drive: hyadeOSSI18n.t("explorer.type.drive", "Drive")
+  folder: hyadeOSI18n.t("explorer.type.folder", "Folder"), image: hyadeOSI18n.t("explorer.type.image", "Image"),
+  audio: hyadeOSI18n.t("explorer.type.audio", "Audio"), video: hyadeOSI18n.t("explorer.type.video", "Video"),
+  pdf: hyadeOSI18n.t("explorer.type.pdf", "PDF document"), code: hyadeOSI18n.t("explorer.type.code", "Code"),
+  doc: hyadeOSI18n.t("explorer.type.doc", "Document"), archive: hyadeOSI18n.t("explorer.type.archive", "Archive"),
+  exe: hyadeOSI18n.t("explorer.type.exe", "Program"), file: hyadeOSI18n.t("explorer.type.file", "File"),
+  drive: hyadeOSI18n.t("explorer.type.drive", "Drive")
 };
 // Plural-aware counts ("1 item" / "3 items").
 const plural = (n, one, other) => (n === 1 ? one : other);
@@ -438,8 +438,8 @@ function kindOf(item) {
 }
 // Tabs, pins, the clipboard and recent files point into the signed-in account's own home,
 // so they are kept per account (all accounts share this browser's storage).
-const PER_ACCOUNT = new Set(['files-tabs', 'files-pinned', 'files-clipboard', 'hyadeoss_recent_files']);
-const storeKey = k => PER_ACCOUNT.has(k) && window.hyadeOSSUserKey ? window.hyadeOSSUserKey(k) : k;
+const PER_ACCOUNT = new Set(['files-tabs', 'files-pinned', 'files-clipboard', 'hyadeoss_recent_files']); // legacy name, kept so the saved list survives the rename
+const storeKey = k => PER_ACCOUNT.has(k) && window.hyadeOSUserKey ? window.hyadeOSUserKey(k) : k;
 const store = {
   get(k, d) { try { const v = JSON.parse(localStorage.getItem(storeKey(k))); return v ?? d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(storeKey(k), JSON.stringify(v)); } catch (e) {} }
@@ -469,7 +469,7 @@ let loadToken = 0;
 /* ───────────────────────── Helpers ───────────────────────── */
 function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 function icon(name, cls = '') { return el('span', 'ms ' + cls, name); }
-// Colored gradient chip for a file/folder type — matches the hyadeOSS Settings/sidebar icon language.
+// Colored gradient chip for a file/folder type — matches the hyadeOS Settings/sidebar icon language.
 function fileIconChip(kind) { const chip = el('div', 'icon-bg fchip c-' + kind); chip.append(icon(TYPE_ICON[kind])); return chip; }
 function joinPath(dir, name) { return (dir === '/' ? '' : dir.replace(/\/$/, '')) + '/' + name; }
 function parentOf(p) {
@@ -484,21 +484,21 @@ function formatSize(bytes) {
   const u = ['B', 'KB', 'MB', 'GB', 'TB'];
   let i = 0, v = bytes;
   while (v >= 1024 && i < u.length - 1) { v /= 1024; i++; }
-  const number = !i ? v : hyadeOSSI18n.locale ? v.toLocaleString(hyadeOSSI18n.locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : v.toFixed(1);
+  const number = !i ? v : hyadeOSI18n.locale ? v.toLocaleString(hyadeOSI18n.locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : v.toFixed(1);
   return `${number} ${u[i]}`;
 }
 function formatDate(ms, fallback) {
   if (!ms) return fallback && fallback !== '--' ? fallback : '';
   const d = new Date(ms), now = new Date();
   const sameDay = d.toDateString() === now.toDateString();
-  return sameDay ? hyadeOSSI18n.t("explorer.date.today", "Today {time}", { time: d.toLocaleTimeString(hyadeOSSI18n.locale, { hour: '2-digit', minute: '2-digit' }) }) : d.toLocaleString(hyadeOSSI18n.locale, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return sameDay ? hyadeOSI18n.t("explorer.date.today", "Today {time}", { time: d.toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' }) }) : d.toLocaleString(hyadeOSI18n.locale, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 async function api(url, options) {
   const res = await fetch(url, options);
   let data = null;
   try { data = await res.json(); } catch (e) {}
   if (!res.ok || (data && data.success === false)) {
-    const err = new Error(data?.error || (res.status === 401 ? hyadeOSSI18n.t("explorer.error.session-expired", "Session expired: log in again") : hyadeOSSI18n.t("explorer.error.request-failed", "Request failed ({status})", { status: res.status })));
+    const err = new Error(data?.error || (res.status === 401 ? hyadeOSI18n.t("explorer.error.session-expired", "Session expired: log in again") : hyadeOSI18n.t("explorer.error.request-failed", "Request failed ({status})", { status: res.status })));
     err.status = res.status;
     throw err;
   }
@@ -532,7 +532,7 @@ function sideItem(label, iconName, pathValue, extra = '', color = '') {
   if (extra.includes('pinned')) {
     makePinDraggable(item, pathValue);
     const pin = el('button', 'side-pin');
-    pin.title = hyadeOSSI18n.t("explorer.unpin", "Unpin from Quick access");
+    pin.title = hyadeOSI18n.t("explorer.unpin", "Unpin from Quick access");
     pin.append(icon('keep'));
     pin.onclick = e => { e.stopPropagation(); togglePin(pathValue); };
     item.append(pin);
@@ -549,7 +549,7 @@ function sideItem(label, iconName, pathValue, extra = '', color = '') {
 }
 // What a folder looks like in the sidebar and on the Home page.
 function folderLook(p) {
-  if (p === TRASH) return { name: hyadeOSSI18n.t("explorer.trash", "Trash"), icon: 'delete', color: 'trash' };
+  if (p === TRASH) return { name: hyadeOSI18n.t("explorer.trash", "Trash"), icon: 'delete', color: 'trash' };
   const known = HOME_FOLDERS.find(f => f.path === p);
   if (known) return { name: known.name, icon: known.icon, color: known.color };
   return { name: p.split('/').filter(Boolean).pop() || '/', icon: 'folder', color: 'documents' };
@@ -649,18 +649,18 @@ function treeItem(label, iconName, pathValue, color) {
 }
 async function renderSidebar() {
   const side = $('sidebar');
-  side.replaceChildren(sideItem(hyadeOSSI18n.t("explorer.home", "Home"), 'home', HOME_VIEW, 'home-item', 'home'));
+  side.replaceChildren(sideItem(hyadeOSI18n.t("explorer.home", "Home"), 'home', HOME_VIEW, 'home-item', 'home'));
   const quick = el('div', 'side-group');
   pinnedFolders().forEach(f => quick.append(sideItem(f.name, f.icon, f.path, 'pinned' + (f.path === TRASH ? ' trash' : ''), f.color)));
-  side.append(sideSection('quick', hyadeOSSI18n.t("explorer.side.quick-access", "Quick access"), quick), quick);
+  side.append(sideSection('quick', hyadeOSI18n.t("explorer.side.quick-access", "Quick access"), quick), quick);
   const places = el('div', 'side-group');
-  places.append(treeItem(hyadeOSSI18n.t("explorer.side.home-folder", "Home folder"), 'folder_shared', '/home', 'home'));
-  places.append(sideItem(hyadeOSSI18n.t("explorer.side.system", "System"), 'dns', '/', '', 'system'));
-  side.append(sideSection('storage', hyadeOSSI18n.t("explorer.side.storage-location", "Storage location"), places), places);
+  places.append(treeItem(hyadeOSI18n.t("explorer.side.home-folder", "Home folder"), 'folder_shared', '/home', 'home'));
+  places.append(sideItem(hyadeOSI18n.t("explorer.side.system", "System"), 'dns', '/', '', 'system'));
+  side.append(sideSection('storage', hyadeOSI18n.t("explorer.side.storage-location", "Storage location"), places), places);
   try {
     const data = await api('/api/system/files?path=/device');
     (data.contents || []).filter(v => v.isVolume || v.type === 'folder').forEach(v => places.append(sideItem(v.name, 'hard_drive', '/device/' + v.name, '', 'drive')));
-  } catch (e) { places.append(sideItem(hyadeOSSI18n.t("explorer.side.this-pc", "This PC"), 'computer', '/device', '', 'drive')); }
+  } catch (e) { places.append(sideItem(hyadeOSI18n.t("explorer.side.this-pc", "This PC"), 'computer', '/device', '', 'drive')); }
   const storage = el('div', 'storage');
   storage.id = 'storage';
   side.append(storage);
@@ -672,7 +672,7 @@ async function loadStorage() {
     const d = await api('/api/system/storage');
     const box = $('storage');
     if (!box || !d.totalBytes) return;
-    box.replaceChildren(el('div', null, hyadeOSSI18n.t("explorer.storage.used", "{used} of {total} used", { used: formatSize(d.usedBytes), total: formatSize(d.totalBytes) })));
+    box.replaceChildren(el('div', null, hyadeOSI18n.t("explorer.storage.used", "{used} of {total} used", { used: formatSize(d.usedBytes), total: formatSize(d.totalBytes) })));
     const bar = el('div', 'storage-bar'); const fill = el('span'); fill.style.width = Math.min(100, d.usagePercent || 0) + '%'; bar.append(fill); box.append(bar);
   } catch (e) {}
 }
@@ -735,7 +735,7 @@ async function load() {
     if (token !== loadToken) return;
     items = [];
     readOnly = true;
-    renderMessage(error.status === 404 ? hyadeOSSI18n.t("explorer.error.not-found", "This folder does not exist") : error.status === 403 ? hyadeOSSI18n.t("explorer.error.access-denied", "Access denied") : error.message, error.status === 404 ? 'folder_off' : 'block');
+    renderMessage(error.status === 404 ? hyadeOSI18n.t("explorer.error.not-found", "This folder does not exist") : error.status === 403 ? hyadeOSI18n.t("explorer.error.access-denied", "Access denied") : error.message, error.status === 404 ? 'folder_off' : 'block');
   }
 }
 function updateNavButtons() {
@@ -754,11 +754,11 @@ function renderCrumbs() {
   const look = currentPath === HOME_VIEW ? { icon: 'home', color: 'home' } : currentPath === TRASH ? folderLook(TRASH) : folderLook(currentPath);
   const tile = el('div', 'icon-bg ic-' + look.color); tile.append(icon(look.icon));
   $('addressIcon').replaceChildren(tile);
-  const where = currentPath === HOME_VIEW ? hyadeOSSI18n.t("explorer.home", "Home") : currentPath === TRASH ? hyadeOSSI18n.t("explorer.trash", "Trash") : currentPath === '/home' ? hyadeOSSI18n.t("explorer.side.home-folder", "Home folder") : (currentPath.split('/').filter(Boolean).pop() || '/');
-  $('searchInput').placeholder = hyadeOSSI18n.t("explorer.search-in", "Search \"{folder}\"", { folder: where });
+  const where = currentPath === HOME_VIEW ? hyadeOSI18n.t("explorer.home", "Home") : currentPath === TRASH ? hyadeOSI18n.t("explorer.trash", "Trash") : currentPath === '/home' ? hyadeOSI18n.t("explorer.side.home-folder", "Home folder") : (currentPath.split('/').filter(Boolean).pop() || '/');
+  $('searchInput').placeholder = hyadeOSI18n.t("explorer.search-in", "Search \"{folder}\"", { folder: where });
   if (tabs[activeTab]) { saveTabs(); renderTabs(); }
-  if (currentPath === HOME_VIEW) { box.append(el('span', 'crumb last', hyadeOSSI18n.t("explorer.home", "Home"))); return; }
-  if (currentPath === TRASH) { box.append(el('span', 'crumb last', hyadeOSSI18n.t("explorer.trash", "Trash"))); return; }
+  if (currentPath === HOME_VIEW) { box.append(el('span', 'crumb last', hyadeOSI18n.t("explorer.home", "Home"))); return; }
+  if (currentPath === TRASH) { box.append(el('span', 'crumb last', hyadeOSI18n.t("explorer.trash", "Trash"))); return; }
   const parts = currentPath.split('/').filter(Boolean);
   const root = el('span', 'crumb' + (parts.length ? '' : ' last'), '/');
   root.onclick = e => { e.stopPropagation(); navigate('/'); };
@@ -768,7 +768,7 @@ function renderCrumbs() {
     acc += '/' + part;
     const target = acc;
     box.append(icon('chevron_right', 'crumb-sep'));
-    const label = target === '/home' ? hyadeOSSI18n.t("explorer.home", "Home") : part;
+    const label = target === '/home' ? hyadeOSI18n.t("explorer.home", "Home") : part;
     const c = el('span', 'crumb' + (i === parts.length - 1 ? ' last' : ''), label);
     c.onclick = e => { e.stopPropagation(); navigate(target); };
     if (isHome(target) && i < parts.length - 1) makeDropTarget(c, () => target);
@@ -835,7 +835,7 @@ function render() {
     host = el('div', 'home-view');
     box.append(host);
     const folders = pinnedFolders();
-    host.append(homeHead(hyadeOSSI18n.t("explorer.side.quick-access", "Quick access"), folders.length));
+    host.append(homeHead(hyadeOSI18n.t("explorer.side.quick-access", "Quick access"), folders.length));
     const quick = el('div', 'home-quick');
     folders.forEach(f => {
       const card = el('div', 'quick-card');
@@ -845,7 +845,7 @@ function render() {
       if (f.path !== TRASH) makeDropTarget(card, () => f.path);
       quick.append(card);
     });
-    host.append(quick, homeHead(hyadeOSSI18n.t("explorer.recents", "Recents"), list.length));
+    host.append(quick, homeHead(hyadeOSI18n.t("explorer.recents", "Recents"), list.length));
     const chips = el('div', 'chips');
     RECENT_FILTERS.forEach(([id, label]) => {
       const chip = el('button', 'chip' + (id === recentFilter ? ' on' : ''), label());
@@ -853,17 +853,17 @@ function render() {
       chips.append(chip);
     });
     host.append(chips);
-    if (!list.length) { host.append(el('div', 'home-empty', hyadeOSSI18n.t("explorer.recents-empty", "Recently opened or created files will appear here"))); updateStatus(); updateActions(); return; }
+    if (!list.length) { host.append(el('div', 'home-empty', hyadeOSI18n.t("explorer.recents-empty", "Recently opened or created files will appear here"))); updateStatus(); updateActions(); return; }
   } else if (!list.length) {
-    renderMessage(searchResults ? hyadeOSSI18n.t("explorer.empty.no-results", "No results for \"{query}\"", { query: searchQuery })
-      : currentPath === TRASH ? hyadeOSSI18n.t("explorer.empty.trash", "The trash is empty")
-      : readOnly ? hyadeOSSI18n.t("explorer.empty.folder", "This folder is empty") : hyadeOSSI18n.t("explorer.empty.folder-drop", "This folder is empty · drop files here to upload"),
+    renderMessage(searchResults ? hyadeOSI18n.t("explorer.empty.no-results", "No results for \"{query}\"", { query: searchQuery })
+      : currentPath === TRASH ? hyadeOSI18n.t("explorer.empty.trash", "The trash is empty")
+      : readOnly ? hyadeOSI18n.t("explorer.empty.folder", "This folder is empty") : hyadeOSI18n.t("explorer.empty.folder-drop", "This folder is empty · drop files here to upload"),
       searchResults ? 'search_off' : currentPath === TRASH ? 'delete' : 'folder_open');
     return;
   }
   if (viewMode === 'list') {
     const head = el('div', 'list-head');
-    [['name', hyadeOSSI18n.t("explorer.column.name", "Name"), ''], ['date', currentPath === TRASH ? hyadeOSSI18n.t("explorer.column.deleted", "Deleted") : hyadeOSSI18n.t("explorer.column.modified", "Modified"), 'c-date'], ['type', searchResults ? hyadeOSSI18n.t("explorer.type.folder", "Folder") : hyadeOSSI18n.t("explorer.column.type", "Type"), 'c-type'], ['size', hyadeOSSI18n.t("explorer.column.size", "Size"), 'right']].forEach(([key, label, cls]) => {
+    [['name', hyadeOSI18n.t("explorer.column.name", "Name"), ''], ['date', currentPath === TRASH ? hyadeOSI18n.t("explorer.column.deleted", "Deleted") : hyadeOSI18n.t("explorer.column.modified", "Modified"), 'c-date'], ['type', searchResults ? hyadeOSI18n.t("explorer.type.folder", "Folder") : hyadeOSI18n.t("explorer.column.type", "Type"), 'c-type'], ['size', hyadeOSI18n.t("explorer.column.size", "Size"), 'right']].forEach(([key, label, cls]) => {
       const h = el('span', cls, label);
       if (sortKey === key) h.append(icon(sortDir > 0 ? 'arrow_upward' : 'arrow_downward'));
       h.onclick = () => { if (sortKey === key) sortDir = -sortDir; else { sortKey = key; sortDir = 1; } store.set('files-sort', sortKey); store.set('files-sort-dir', sortDir); render(); };
@@ -896,7 +896,7 @@ function render() {
       const name = el('div', 'name');
       name.append(iconEl, el('span', null, item.name));
       const date = el('div', 'meta m-date', formatDate(item.mtime, item.date));
-      const type = el('div', 'meta m-type', searchResults || currentPath === HOME_VIEW ? (item.dir === '/home' ? hyadeOSSI18n.t("explorer.side.home-folder", "Home folder") : item.dir.replace('/home/', '')) : currentPath === TRASH ? (item.from || '') : TYPE_LABEL[kind]);
+      const type = el('div', 'meta m-type', searchResults || currentPath === HOME_VIEW ? (item.dir === '/home' ? hyadeOSI18n.t("explorer.side.home-folder", "Home folder") : item.dir.replace('/home/', '')) : currentPath === TRASH ? (item.from || '') : TYPE_LABEL[kind]);
       const size = el('div', 'meta right', item.type === 'folder' ? '' : formatSize(item.bytes));
       node.append(name, date, type, size);
     }
@@ -918,7 +918,7 @@ function render() {
 }
 function homeHead(label, count) {
   const head = el('div', 'home-head');
-  head.append(el('b', null, label), el('span', 'bar'), el('span', null, plural(count, hyadeOSSI18n.t("explorer.status.items-one", "{count} item", { count }), hyadeOSSI18n.t("explorer.status.items-other", "{count} items", { count }))));
+  head.append(el('b', null, label), el('span', 'bar'), el('span', null, plural(count, hyadeOSI18n.t("explorer.status.items-one", "{count} item", { count }), hyadeOSI18n.t("explorer.status.items-other", "{count} items", { count }))));
   return head;
 }
 // Recents: files opened from the desktop, plus the newest files in the Home folders.
@@ -944,7 +944,7 @@ function renderPane() {
   const sel = selectedItems();
   if (sel.length !== 1) {
     const empty = el('div', 'pane-empty');
-    empty.append(icon(sel.length ? 'library_add_check' : 'touch_app'), el('div', null, sel.length ? hyadeOSSI18n.t("explorer.status.selected-other", "{count} selected", { count: sel.length }) : hyadeOSSI18n.t("explorer.pane.pick", "Select a file to see it here")));
+    empty.append(icon(sel.length ? 'library_add_check' : 'touch_app'), el('div', null, sel.length ? hyadeOSI18n.t("explorer.status.selected-other", "{count} selected", { count: sel.length }) : hyadeOSI18n.t("explorer.pane.pick", "Select a file to see it here")));
     inner.append(empty);
     pane.replaceChildren(inner);
     return;
@@ -954,10 +954,10 @@ function renderPane() {
   if (kind === 'image' && isHome(dir) && !item.trashId) { const img = el('img'); img.alt = ''; img.src = rawUrl(item); img.onerror = () => img.replaceWith(fileIconChip(kind)); thumb.append(img); }
   else thumb.append(fileIconChip(kind));
   const props = el('div', 'pane-props');
-  [[hyadeOSSI18n.t("explorer.column.type", "Type"), TYPE_LABEL[kind] + (item.ext ? ` (${item.ext})` : '')],
-   [hyadeOSSI18n.t("explorer.column.size", "Size"), item.bytes >= 0 && item.type !== 'folder' ? formatSize(item.bytes) : '—'],
-   [hyadeOSSI18n.t("explorer.column.modified", "Modified"), formatDate(item.mtime, item.date) || '—'],
-   [hyadeOSSI18n.t("explorer.props.location", "Location"), dir === TRASH ? (item.from || '') : dir]].forEach(([k, v]) => props.append(el('span', null, k), el('span', null, v)));
+  [[hyadeOSI18n.t("explorer.column.type", "Type"), TYPE_LABEL[kind] + (item.ext ? ` (${item.ext})` : '')],
+   [hyadeOSI18n.t("explorer.column.size", "Size"), item.bytes >= 0 && item.type !== 'folder' ? formatSize(item.bytes) : '—'],
+   [hyadeOSI18n.t("explorer.column.modified", "Modified"), formatDate(item.mtime, item.date) || '—'],
+   [hyadeOSI18n.t("explorer.props.location", "Location"), dir === TRASH ? (item.from || '') : dir]].forEach(([k, v]) => props.append(el('span', null, k), el('span', null, v)));
   inner.append(thumb, el('div', 'pane-name', item.name), props);
   pane.replaceChildren(inner);
 }
@@ -970,13 +970,13 @@ function refreshSelectionClasses() {
 function updateStatus() {
   const list = items.length || searchResults ? visibleItems() : [];
   const sel = selectedItems();
-  const folder = currentPath === '/home' ? hyadeOSSI18n.t("explorer.home", "Home") : currentPath;
+  const folder = currentPath === '/home' ? hyadeOSI18n.t("explorer.home", "Home") : currentPath;
   const folders = list.filter(i => i.type === 'folder').length, files = list.length - folders;
   $('statusLeft').textContent = searchResults
-    ? plural(list.length, hyadeOSSI18n.t("explorer.status.found-one", "{count} item found in {folder}", { count: list.length, folder }), hyadeOSSI18n.t("explorer.status.found-other", "{count} items found in {folder}", { count: list.length, folder }))
-    : hyadeOSSI18n.t("explorer.status.files-folders", "{files} files, {folders} folders", { files, folders });
+    ? plural(list.length, hyadeOSI18n.t("explorer.status.found-one", "{count} item found in {folder}", { count: list.length, folder }), hyadeOSI18n.t("explorer.status.found-other", "{count} items found in {folder}", { count: list.length, folder }))
+    : hyadeOSI18n.t("explorer.status.files-folders", "{files} files, {folders} folders", { files, folders });
   const bytes = sel.reduce((s, i) => s + (i.bytes > 0 ? i.bytes : 0), 0);
-  $('statusRight').textContent = sel.length ? `${plural(sel.length, hyadeOSSI18n.t("explorer.status.selected-one", "{count} selected", { count: sel.length }), hyadeOSSI18n.t("explorer.status.selected-other", "{count} selected", { count: sel.length }))}${bytes ? ' · ' + formatSize(bytes) : ''}` : '';
+  $('statusRight').textContent = sel.length ? `${plural(sel.length, hyadeOSI18n.t("explorer.status.selected-one", "{count} selected", { count: sel.length }), hyadeOSI18n.t("explorer.status.selected-other", "{count} selected", { count: sel.length }))}${bytes ? ' · ' + formatSize(bytes) : ''}` : '';
 }
 function updateActions() {
   const sel = selectedItems();
@@ -989,7 +989,7 @@ function updateActions() {
   $('pasteBtn').disabled = !writable || !clipboard || Boolean(searchResults);
   $('renameBtn').disabled = sel.length !== 1 || !homeSel || readOnly;
   $('deleteBtn').disabled = !(homeSel && !readOnly) && !(currentPath === TRASH && sel.length);
-  $('deleteBtn').title = currentPath === TRASH ? hyadeOSSI18n.t("explorer.delete-forever", "Delete forever") : hyadeOSSI18n.t("explorer.action.trash-hint", "Move to trash (Delete)");
+  $('deleteBtn').title = currentPath === TRASH ? hyadeOSI18n.t("explorer.delete-forever", "Delete forever") : hyadeOSI18n.t("explorer.action.trash-hint", "Move to trash (Delete)");
 }
 
 /* ───────────────────────── Selection ───────────────────────── */
@@ -1060,17 +1060,17 @@ function openItem(item) {
   }
   if (['image', 'audio', 'video', 'pdf'].includes(kind)) { openPreview(item); return; }
   if (TEXT_EXT.has(item.ext) || !item.ext) {
-    if (!isHome(dir)) { toast(hyadeOSSI18n.t("explorer.toast.outside-home", "Files outside Home can only be listed, not opened"), { error: true }); return; }
+    if (!isHome(dir)) { toast(hyadeOSI18n.t("explorer.toast.outside-home", "Files outside Home can only be listed, not opened"), { error: true }); return; }
     openInNotes(item);
     return;
   }
-  if (isHome(dir)) { toast(hyadeOSSI18n.t("explorer.toast.no-app", "No app can open {ext} files here. Downloading it instead.", { ext: item.ext })); download(item); }
-  else toast(hyadeOSSI18n.t("explorer.toast.outside-home", "Files outside Home can only be listed, not opened"), { error: true });
+  if (isHome(dir)) { toast(hyadeOSI18n.t("explorer.toast.no-app", "No app can open {ext} files here. Downloading it instead.", { ext: item.ext })); download(item); }
+  else toast(hyadeOSI18n.t("explorer.toast.outside-home", "Files outside Home can only be listed, not opened"), { error: true });
 }
 function openInNotes(item) {
   const dir = item.dir || currentPath;
   if (IS_EMBEDDED) window.parent.postMessage({ type: 'open-file-in-notes', path: dir, name: item.name }, location.origin);
-  else toast(hyadeOSSI18n.t("explorer.toast.notes-unavailable", "Notes is available inside hyadeOSS"));
+  else toast(hyadeOSI18n.t("explorer.toast.notes-unavailable", "Notes is available inside hyadeOS"));
 }
 function rawUrl(item, dl = false) {
   return `/api/system/files/raw?path=${encodeURIComponent(item.dir || currentPath)}&name=${encodeURIComponent(item.name)}${dl ? '&download=1' : ''}`;
@@ -1085,7 +1085,7 @@ function download(item) {
 }
 let previewList = [], previewIndex = 0;
 function openPreview(item) {
-  if (!isHome(item.dir || currentPath)) { toast(hyadeOSSI18n.t("explorer.toast.preview-home-only", "Previews work for files in Home"), { error: true }); return; }
+  if (!isHome(item.dir || currentPath)) { toast(hyadeOSI18n.t("explorer.toast.preview-home-only", "Previews work for files in Home"), { error: true }); return; }
   previewList = visibleItems().filter(i => i.type !== 'folder' && (['image', 'audio', 'video', 'pdf'].includes(kindOf(i)) || TEXT_EXT.has(i.ext)));
   previewIndex = Math.max(0, previewList.findIndex(i => itemKey(i) === itemKey(item)));
   if (!previewList.length) previewList = [item];
@@ -1106,11 +1106,11 @@ async function showPreview() {
   else if (kind === 'audio') { const wrap = el('div', 'audio'); const a = el('audio'); a.src = rawUrl(item); a.controls = true; a.autoplay = true; wrap.append(icon('music_note'), el('div', null, item.name), a); body.append(wrap); }
   else if (kind === 'pdf') { const f = el('iframe'); f.src = rawUrl(item); body.append(f); }
   else {
-    const pre = el('pre', null, hyadeOSSI18n.t("explorer.preview.loading", "Loading…"));
+    const pre = el('pre', null, hyadeOSI18n.t("explorer.preview.loading", "Loading…"));
     body.append(pre);
     try {
       const d = await api(`/api/system/files/content?path=${encodeURIComponent(item.dir || currentPath)}&name=${encodeURIComponent(item.name)}`);
-      pre.textContent = d.content.length > 400000 ? d.content.slice(0, 400000) + '\n\n' + hyadeOSSI18n.t("explorer.preview.truncated", "… (file truncated in preview)") : d.content;
+      pre.textContent = d.content.length > 400000 ? d.content.slice(0, 400000) + '\n\n' + hyadeOSI18n.t("explorer.preview.truncated", "… (file truncated in preview)") : d.content;
     } catch (e) { pre.textContent = e.message; }
   }
 }
@@ -1125,7 +1125,7 @@ $('previewOpen').onclick = () => { const item = previewList[previewIndex]; close
 /* ───────────────────────── File operations ───────────────────────── */
 async function createFolder() {
   if (readOnly || isVirtual(currentPath)) return;
-  const name = await mDialog.prompt(hyadeOSSI18n.t("explorer.prompt.folder-name", "Folder name"), { title: hyadeOSSI18n.t("explorer.new-folder", "New folder"), defaultValue: uniqueLocal(hyadeOSSI18n.t("explorer.new-folder", "New folder")), okText: hyadeOSSI18n.t("explorer.prompt.create", "Create") });
+  const name = await mDialog.prompt(hyadeOSI18n.t("explorer.prompt.folder-name", "Folder name"), { title: hyadeOSI18n.t("explorer.new-folder", "New folder"), defaultValue: uniqueLocal(hyadeOSI18n.t("explorer.new-folder", "New folder")), okText: hyadeOSI18n.t("explorer.prompt.create", "Create") });
   if (!name) return;
   try {
     await postJson('/api/system/files/create-folder', { path: currentPath, name: name.trim() });
@@ -1137,7 +1137,7 @@ async function createFolder() {
 }
 async function createFile() {
   if (readOnly || isVirtual(currentPath)) return;
-  const name = await mDialog.prompt(hyadeOSSI18n.t("explorer.prompt.file-name", "File name"), { title: hyadeOSSI18n.t("explorer.new-text-file", "New text file"), defaultValue: uniqueLocal(hyadeOSSI18n.t("explorer.prompt.default-file-name", "New file.txt")), okText: hyadeOSSI18n.t("explorer.prompt.create", "Create") });
+  const name = await mDialog.prompt(hyadeOSI18n.t("explorer.prompt.file-name", "File name"), { title: hyadeOSI18n.t("explorer.new-text-file", "New text file"), defaultValue: uniqueLocal(hyadeOSI18n.t("explorer.prompt.default-file-name", "New file.txt")), okText: hyadeOSI18n.t("explorer.prompt.create", "Create") });
   if (!name) return;
   try {
     await postJson('/api/system/files/content', { path: currentPath, name: name.trim(), content: '', createOnly: true });
@@ -1198,7 +1198,7 @@ async function trashItems(names, fromPath = currentPath) {
   if (!names.length) return;
   try {
     await postJson('/api/system/files/trash', { path: fromPath, names });
-    toast(plural(names.length, hyadeOSSI18n.t("explorer.toast.trashed-one", "{count} item moved to the trash", { count: names.length }), hyadeOSSI18n.t("explorer.toast.trashed-other", "{count} items moved to the trash", { count: names.length })), { action: { label: hyadeOSSI18n.t("explorer.toast.undo", "Undo"), run: undoTrash } });
+    toast(plural(names.length, hyadeOSI18n.t("explorer.toast.trashed-one", "{count} item moved to the trash", { count: names.length }), hyadeOSI18n.t("explorer.toast.trashed-other", "{count} items moved to the trash", { count: names.length })), { action: { label: hyadeOSI18n.t("explorer.toast.undo", "Undo"), run: undoTrash } });
     lastTrashed = { names, fromPath, at: Date.now() };
     await reload();
     notifyDesktop();
@@ -1221,18 +1221,18 @@ async function deleteSelection({ permanent = false } = {}) {
   if (!sel.length) return;
   if (currentPath === TRASH) {
     const question = sel.length === 1
-      ? hyadeOSSI18n.t("explorer.delete.trash-confirm-one", "Delete \"{name}\" forever? This cannot be undone.", { name: sel[0].name })
-      : hyadeOSSI18n.t("explorer.delete.trash-confirm-other", "Delete {count} items forever? This cannot be undone.", { count: sel.length });
-    if (!(await mDialog.confirm(question, { title: hyadeOSSI18n.t("explorer.delete-forever", "Delete forever"), okText: hyadeOSSI18n.t("common.delete", "Delete"), danger: true }))) return;
+      ? hyadeOSI18n.t("explorer.delete.trash-confirm-one", "Delete \"{name}\" forever? This cannot be undone.", { name: sel[0].name })
+      : hyadeOSI18n.t("explorer.delete.trash-confirm-other", "Delete {count} items forever? This cannot be undone.", { count: sel.length });
+    if (!(await mDialog.confirm(question, { title: hyadeOSI18n.t("explorer.delete-forever", "Delete forever"), okText: hyadeOSI18n.t("common.delete", "Delete"), danger: true }))) return;
     try { await postJson('/api/system/files/trash/empty', { ids: sel.map(i => i.trashId) }); await load(); } catch (e) { toast(e.message, { error: true }); }
     return;
   }
   if (readOnly) return;
   if (permanent) {
     const question = sel.length === 1
-      ? hyadeOSSI18n.t("explorer.delete.permanent-confirm-one", "Delete \"{name}\" forever? They will not go to the trash.", { name: sel[0].name })
-      : hyadeOSSI18n.t("explorer.delete.permanent-confirm-other", "Delete {count} items forever? They will not go to the trash.", { count: sel.length });
-    if (!(await mDialog.confirm(question, { title: hyadeOSSI18n.t("explorer.delete-forever", "Delete forever"), okText: hyadeOSSI18n.t("common.delete", "Delete"), danger: true }))) return;
+      ? hyadeOSI18n.t("explorer.delete.permanent-confirm-one", "Delete \"{name}\" forever? They will not go to the trash.", { name: sel[0].name })
+      : hyadeOSI18n.t("explorer.delete.permanent-confirm-other", "Delete {count} items forever? They will not go to the trash.", { count: sel.length });
+    if (!(await mDialog.confirm(question, { title: hyadeOSI18n.t("explorer.delete-forever", "Delete forever"), okText: hyadeOSI18n.t("common.delete", "Delete"), danger: true }))) return;
     for (const [dir, names] of groupByDir(sel)) {
       for (const name of names) {
         try { await postJson('/api/system/files/delete', { path: dir, name, recursive: true }); } catch (e) { toast(`${name}: ${e.message}`, { error: true }); }
@@ -1247,27 +1247,27 @@ async function deleteSelection({ permanent = false } = {}) {
 async function restoreItems(list) {
   try {
     const d = await postJson('/api/system/files/trash/restore', { ids: list.map(i => i.trashId) });
-    toast(plural(d.restored.length, hyadeOSSI18n.t("explorer.toast.restored-one", "Restored {count} item", { count: d.restored.length }), hyadeOSSI18n.t("explorer.toast.restored-other", "Restored {count} items", { count: d.restored.length })));
+    toast(plural(d.restored.length, hyadeOSI18n.t("explorer.toast.restored-one", "Restored {count} item", { count: d.restored.length }), hyadeOSI18n.t("explorer.toast.restored-other", "Restored {count} items", { count: d.restored.length })));
     await load();
     notifyDesktop();
   } catch (e) { toast(e.message, { error: true }); }
 }
 async function emptyTrash() {
-  if (!(await mDialog.confirm(hyadeOSSI18n.t("explorer.empty-trash.confirm", "Permanently delete everything in the trash?"), { title: hyadeOSSI18n.t("explorer.empty-trash", "Empty trash"), okText: hyadeOSSI18n.t("explorer.empty-trash.ok", "Empty"), danger: true }))) return;
+  if (!(await mDialog.confirm(hyadeOSI18n.t("explorer.empty-trash.confirm", "Permanently delete everything in the trash?"), { title: hyadeOSI18n.t("explorer.empty-trash", "Empty trash"), okText: hyadeOSI18n.t("explorer.empty-trash.ok", "Empty"), danger: true }))) return;
   try { await postJson('/api/system/files/trash/empty', {}); await load(); } catch (e) { toast(e.message, { error: true }); }
 }
 function setClipboard(mode) {
   const sel = selectedItems().filter(i => isHome(i.dir || currentPath) && !i.trashId);
   if (!sel.length) return;
   const groups = groupByDir(sel);
-  if (groups.size > 1) { toast(hyadeOSSI18n.t("explorer.toast.one-folder", "Select items from one folder to copy or cut"), { error: true }); return; }
+  if (groups.size > 1) { toast(hyadeOSI18n.t("explorer.toast.one-folder", "Select items from one folder to copy or cut"), { error: true }); return; }
   const [[fromPath, names]] = groups;
   clipboard = { mode, fromPath, names };
   store.set('files-clipboard', clipboard);
   const count = names.length;
   toast(mode === 'cut'
-    ? plural(count, hyadeOSSI18n.t("explorer.toast.cut-one", "{count} item cut", { count }), hyadeOSSI18n.t("explorer.toast.cut-other", "{count} items cut", { count }))
-    : plural(count, hyadeOSSI18n.t("explorer.toast.copied-one", "{count} item copied", { count }), hyadeOSSI18n.t("explorer.toast.copied-other", "{count} items copied", { count })));
+    ? plural(count, hyadeOSI18n.t("explorer.toast.cut-one", "{count} item cut", { count }), hyadeOSI18n.t("explorer.toast.cut-other", "{count} items cut", { count }))
+    : plural(count, hyadeOSI18n.t("explorer.toast.copied-one", "{count} item copied", { count }), hyadeOSI18n.t("explorer.toast.copied-other", "{count} items copied", { count })));
   render();
 }
 async function paste(toPath = currentPath) {
@@ -1278,16 +1278,16 @@ async function paste(toPath = currentPath) {
 async function transfer(fromPath, toPath, names, mode) {
   const count = names.length;
   const t = toast(mode === 'move'
-    ? plural(count, hyadeOSSI18n.t("explorer.toast.moving-one", "Moving {count} item…", { count }), hyadeOSSI18n.t("explorer.toast.moving-other", "Moving {count} items…", { count }))
-    : plural(count, hyadeOSSI18n.t("explorer.toast.copying-one", "Copying {count} item…", { count }), hyadeOSSI18n.t("explorer.toast.copying-other", "Copying {count} items…", { count })), { sticky: true });
+    ? plural(count, hyadeOSI18n.t("explorer.toast.moving-one", "Moving {count} item…", { count }), hyadeOSI18n.t("explorer.toast.moving-other", "Moving {count} items…", { count }))
+    : plural(count, hyadeOSI18n.t("explorer.toast.copying-one", "Copying {count} item…", { count }), hyadeOSI18n.t("explorer.toast.copying-other", "Copying {count} items…", { count })), { sticky: true });
   try {
     const d = await postJson('/api/system/files/transfer', { fromPath, toPath, names, mode });
     const errors = (d.results || []).filter(r => r.error);
     t.remove();
     if (errors.length) toast(errors.map(r => `${r.name}: ${r.error}`).join('\n'), { error: true });
     else toast(mode === 'move'
-      ? plural(count, hyadeOSSI18n.t("explorer.toast.moved-one", "Moved {count} item", { count }), hyadeOSSI18n.t("explorer.toast.moved-other", "Moved {count} items", { count }))
-      : plural(count, hyadeOSSI18n.t("explorer.toast.copied-done-one", "Copied {count} item", { count }), hyadeOSSI18n.t("explorer.toast.copied-done-other", "Copied {count} items", { count })));
+      ? plural(count, hyadeOSI18n.t("explorer.toast.moved-one", "Moved {count} item", { count }), hyadeOSI18n.t("explorer.toast.moved-other", "Moved {count} items", { count }))
+      : plural(count, hyadeOSI18n.t("explorer.toast.copied-done-one", "Copied {count} item", { count }), hyadeOSI18n.t("explorer.toast.copied-done-other", "Copied {count} items", { count })));
   } catch (e) { t.remove(); toast(e.message, { error: true }); }
   await reload();
   notifyDesktop();
@@ -1300,13 +1300,13 @@ async function reload() {
 function uploadFiles(files, toPath = currentPath) {
   if ((readOnly || isVirtual(currentPath)) && toPath === currentPath || !files.length) return;
   const list = [...files];
-  const t = toast(plural(list.length, hyadeOSSI18n.t("explorer.upload.uploading-one", "Uploading {count} file…", { count: list.length }), hyadeOSSI18n.t("explorer.upload.uploading-other", "Uploading {count} files…", { count: list.length })), { progress: true });
+  const t = toast(plural(list.length, hyadeOSI18n.t("explorer.upload.uploading-one", "Uploading {count} file…", { count: list.length }), hyadeOSI18n.t("explorer.upload.uploading-other", "Uploading {count} files…", { count: list.length })), { progress: true });
   const total = list.reduce((s, f) => s + f.size, 0) || 1;
   let sent = 0, failed = 0;
   const next = i => {
     if (i >= list.length) {
-      t.done(failed ? hyadeOSSI18n.t("explorer.upload.partial", "{uploaded} uploaded, {failed} failed", { uploaded: list.length - failed, failed })
-        : plural(list.length, hyadeOSSI18n.t("explorer.upload.done-one", "Uploaded {count} file", { count: list.length }), hyadeOSSI18n.t("explorer.upload.done-other", "Uploaded {count} files", { count: list.length })), failed > 0);
+      t.done(failed ? hyadeOSI18n.t("explorer.upload.partial", "{uploaded} uploaded, {failed} failed", { uploaded: list.length - failed, failed })
+        : plural(list.length, hyadeOSI18n.t("explorer.upload.done-one", "Uploaded {count} file", { count: list.length }), hyadeOSI18n.t("explorer.upload.done-other", "Uploaded {count} files", { count: list.length })), failed > 0);
       load();
       notifyDesktop();
       return;
@@ -1315,7 +1315,7 @@ function uploadFiles(files, toPath = currentPath) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `/api/system/files/upload-raw?path=${encodeURIComponent(toPath)}&name=${encodeURIComponent(file.name)}&conflict=rename`);
     xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-    xhr.upload.onprogress = e => t.set(Math.round((sent + e.loaded) / total * 100), hyadeOSSI18n.t("explorer.upload.progress", "Uploading {name} ({current}/{total})", { name: file.name, current: i + 1, total: list.length }));
+    xhr.upload.onprogress = e => t.set(Math.round((sent + e.loaded) / total * 100), hyadeOSI18n.t("explorer.upload.progress", "Uploading {name} ({current}/{total})", { name: file.name, current: i + 1, total: list.length }));
     xhr.onload = () => { if (xhr.status >= 300) failed++; sent += file.size; next(i + 1); };
     xhr.onerror = () => { failed++; sent += file.size; next(i + 1); };
     xhr.send(file);
@@ -1384,15 +1384,15 @@ document.addEventListener('drop', () => setTimeout(() => { dragData = null; clea
 /* ───────────────────────── Tabs ───────────────────────── */
 let tabHoverTimer = null;
 function tabLook(p) {
-  if (p === HOME_VIEW) return { name: hyadeOSSI18n.t("explorer.home", "Home"), icon: 'home', color: 'home' };
-  if (p === '/home') return { name: hyadeOSSI18n.t("explorer.side.home-folder", "Home folder"), icon: 'folder_shared', color: 'home' };
+  if (p === HOME_VIEW) return { name: hyadeOSI18n.t("explorer.home", "Home"), icon: 'home', color: 'home' };
+  if (p === '/home') return { name: hyadeOSI18n.t("explorer.side.home-folder", "Home folder"), icon: 'folder_shared', color: 'home' };
   return folderLook(p);
 }
 function saveTabs() {
   if (tabs[activeTab]) Object.assign(tabs[activeTab], { path: currentPath, back: history.back, fwd: history.fwd });
   store.set('files-tabs', { paths: tabs.map(t => t.path), active: activeTab });
 }
-// Inside hyadeOSS the tabs live in the window's own title bar, the way Terminal does it:
+// Inside hyadeOS the tabs live in the window's own title bar, the way Terminal does it:
 // the strip goes in before the window buttons, styled from the desktop page.
 let tabsHost = null, tabsHostActions = null, draggingTabId = null;
 function setupHeaderTabs() {
@@ -1433,7 +1433,7 @@ function setupHeaderTabs() {
   tabsHostActions.style.cssText = 'display: flex; align-items: center; gap: 5px; flex-shrink: 0; margin-right: 8px; margin-top: 4px;';
   const add = doc.createElement('button');
   add.className = 'browser-nav-btn';
-  add.title = hyadeOSSI18n.t("explorer.tabs.new-hint", "New tab (Ctrl+T)");
+  add.title = hyadeOSI18n.t("explorer.tabs.new-hint", "New tab (Ctrl+T)");
   add.style.cssText = 'background:transparent; border:none; color:rgba(255,255,255,0.7); cursor:pointer; padding:4px; display:flex; align-items:center; border-radius:4px;';
   add.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">add</span>';
   add.addEventListener('click', () => openTab(HOME_VIEW));
@@ -1459,7 +1459,7 @@ function renderTabs() {
       const glyph = doc.createElement('span'); glyph.className = 'files-tab-icon';
       const title = doc.createElement('span'); title.className = 'files-tab-title';
       const close = doc.createElement('button'); close.className = 'notes-tab-close'; close.textContent = '×';
-      close.title = hyadeOSSI18n.t("explorer.tabs.close", "Close tab");
+      close.title = hyadeOSI18n.t("explorer.tabs.close", "Close tab");
       close.addEventListener('click', e => { e.stopPropagation(); closeTab(tabs.findIndex(t => t.id === tab.id)); });
       node.append(glyph, title, close);
       node.addEventListener('click', () => switchTab(tabs.findIndex(t => t.id === tab.id)));
@@ -1618,43 +1618,43 @@ function openContextMenu(x, y, item) {
   const sel = selectedItems();
   const writable = !readOnly && !isVirtual(currentPath);
   if (currentPath === TRASH) {
-    if (sel.length) menu.append(menuItem('restore_from_trash', hyadeOSSI18n.t("explorer.menu.restore", "Restore"), () => restoreItems(sel)), menuItem('delete_forever', hyadeOSSI18n.t("explorer.delete-forever", "Delete forever"), () => deleteSelection(), { danger: true }));
-    else menu.append(menuItem('delete_sweep', hyadeOSSI18n.t("explorer.empty-trash", "Empty trash"), emptyTrash, { danger: true, disabled: !items.length }));
+    if (sel.length) menu.append(menuItem('restore_from_trash', hyadeOSI18n.t("explorer.menu.restore", "Restore"), () => restoreItems(sel)), menuItem('delete_forever', hyadeOSI18n.t("explorer.delete-forever", "Delete forever"), () => deleteSelection(), { danger: true }));
+    else menu.append(menuItem('delete_sweep', hyadeOSI18n.t("explorer.empty-trash", "Empty trash"), emptyTrash, { danger: true, disabled: !items.length }));
   } else if (item) {
     const kind = kindOf(item);
     const inHome = isHome(item.dir || currentPath);
-    menu.append(menuItem(item.type === 'folder' ? 'folder_open' : 'open_in_new', hyadeOSSI18n.t("common.open", "Open"), () => openItem(item), { kbd: 'Enter' }));
-    if (item.type === 'folder' && !item.trashId) menu.append(menuItem('tab', hyadeOSSI18n.t("explorer.tabs.open-in-new", "Open in new tab"), () => openTab(item.isVolume ? '/device/' + item.name : joinPath(item.dir || currentPath, item.name))));
+    menu.append(menuItem(item.type === 'folder' ? 'folder_open' : 'open_in_new', hyadeOSI18n.t("common.open", "Open"), () => openItem(item), { kbd: 'Enter' }));
+    if (item.type === 'folder' && !item.trashId) menu.append(menuItem('tab', hyadeOSI18n.t("explorer.tabs.open-in-new", "Open in new tab"), () => openTab(item.isVolume ? '/device/' + item.name : joinPath(item.dir || currentPath, item.name))));
     if (item.type === 'file' && inHome) {
-      if (['image', 'audio', 'video', 'pdf'].includes(kind) || TEXT_EXT.has(item.ext)) menu.append(menuItem('visibility', hyadeOSSI18n.t("explorer.menu.quick-look", "Quick look"), () => openPreview(item), { kbd: 'Space' }));
-      if (TEXT_EXT.has(item.ext) || !item.ext) menu.append(menuItem('edit_note', hyadeOSSI18n.t("explorer.menu.edit-in-notes", "Edit in Notes"), () => openInNotes(item)));
-      menu.append(menuItem('download', hyadeOSSI18n.t("explorer.download", "Download"), () => sel.forEach(download)));
+      if (['image', 'audio', 'video', 'pdf'].includes(kind) || TEXT_EXT.has(item.ext)) menu.append(menuItem('visibility', hyadeOSI18n.t("explorer.menu.quick-look", "Quick look"), () => openPreview(item), { kbd: 'Space' }));
+      if (TEXT_EXT.has(item.ext) || !item.ext) menu.append(menuItem('edit_note', hyadeOSI18n.t("explorer.menu.edit-in-notes", "Edit in Notes"), () => openInNotes(item)));
+      menu.append(menuItem('download', hyadeOSI18n.t("explorer.download", "Download"), () => sel.forEach(download)));
     }
-    if (searchResults) menu.append(menuItem('folder', hyadeOSSI18n.t("explorer.menu.show-in-folder", "Show in folder"), () => { const d = item.dir; navigate(d).then(() => { const f = items.find(i => i.name === item.name); if (f) selectOnly(f); }); }));
+    if (searchResults) menu.append(menuItem('folder', hyadeOSI18n.t("explorer.menu.show-in-folder", "Show in folder"), () => { const d = item.dir; navigate(d).then(() => { const f = items.find(i => i.name === item.name); if (f) selectOnly(f); }); }));
     if (item.type === 'folder') {
       const folderPath = joinPath(item.dir || currentPath, item.name);
-      menu.append(menuItem('terminal', hyadeOSSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(folderPath)));
-      if (isHome(folderPath)) menu.append(menuItem('keep', pinned.includes(folderPath) ? hyadeOSSI18n.t("explorer.unpin", "Unpin from Quick access") : hyadeOSSI18n.t("explorer.pin", "Pin to Quick access"), () => togglePin(folderPath)));
+      menu.append(menuItem('terminal', hyadeOSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(folderPath)));
+      if (isHome(folderPath)) menu.append(menuItem('keep', pinned.includes(folderPath) ? hyadeOSI18n.t("explorer.unpin", "Unpin from Quick access") : hyadeOSI18n.t("explorer.pin", "Pin to Quick access"), () => togglePin(folderPath)));
     }
     menu.append(hr(),
-      menuItem('content_cut', hyadeOSSI18n.t("explorer.menu.cut", "Cut"), () => setClipboard('cut'), { kbd: 'Ctrl+X', disabled: !inHome || readOnly }),
-      menuItem('content_copy', hyadeOSSI18n.t("explorer.menu.copy", "Copy"), () => setClipboard('copy'), { kbd: 'Ctrl+C', disabled: !inHome }),
-      menuItem('drive_file_rename_outline', hyadeOSSI18n.t("common.rename", "Rename"), () => startRename(item), { kbd: 'F2', disabled: sel.length !== 1 || !inHome || readOnly }),
-      menuItem('content_copy', hyadeOSSI18n.t("explorer.menu.copy-path", "Copy path"), () => navigator.clipboard?.writeText(joinPath(item.dir || currentPath, item.name))),
-      menuItem('info', hyadeOSSI18n.t("explorer.properties", "Properties"), () => showProperties(item)),
+      menuItem('content_cut', hyadeOSI18n.t("explorer.menu.cut", "Cut"), () => setClipboard('cut'), { kbd: 'Ctrl+X', disabled: !inHome || readOnly }),
+      menuItem('content_copy', hyadeOSI18n.t("explorer.menu.copy", "Copy"), () => setClipboard('copy'), { kbd: 'Ctrl+C', disabled: !inHome }),
+      menuItem('drive_file_rename_outline', hyadeOSI18n.t("common.rename", "Rename"), () => startRename(item), { kbd: 'F2', disabled: sel.length !== 1 || !inHome || readOnly }),
+      menuItem('content_copy', hyadeOSI18n.t("explorer.menu.copy-path", "Copy path"), () => navigator.clipboard?.writeText(joinPath(item.dir || currentPath, item.name))),
+      menuItem('info', hyadeOSI18n.t("explorer.properties", "Properties"), () => showProperties(item)),
       hr(),
-      menuItem('delete', hyadeOSSI18n.t("explorer.menu.move-to-trash", "Move to trash"), () => deleteSelection(), { kbd: 'Del', danger: true, disabled: !inHome || readOnly }));
+      menuItem('delete', hyadeOSI18n.t("explorer.menu.move-to-trash", "Move to trash"), () => deleteSelection(), { kbd: 'Del', danger: true, disabled: !inHome || readOnly }));
   } else {
     menu.append(
-      menuItem('create_new_folder', hyadeOSSI18n.t("explorer.new-folder", "New folder"), createFolder, { disabled: !writable }),
-      menuItem('note_add', hyadeOSSI18n.t("explorer.new-text-file", "New text file"), createFile, { disabled: !writable }),
-      menuItem('upload', hyadeOSSI18n.t("explorer.menu.upload-files", "Upload files…"), () => $('uploadInput').click(), { disabled: !writable }),
-      menuItem('content_paste', hyadeOSSI18n.t("explorer.menu.paste", "Paste"), () => paste(), { kbd: 'Ctrl+V', disabled: !writable || !clipboard }),
+      menuItem('create_new_folder', hyadeOSI18n.t("explorer.new-folder", "New folder"), createFolder, { disabled: !writable }),
+      menuItem('note_add', hyadeOSI18n.t("explorer.new-text-file", "New text file"), createFile, { disabled: !writable }),
+      menuItem('upload', hyadeOSI18n.t("explorer.menu.upload-files", "Upload files…"), () => $('uploadInput').click(), { disabled: !writable }),
+      menuItem('content_paste', hyadeOSI18n.t("explorer.menu.paste", "Paste"), () => paste(), { kbd: 'Ctrl+V', disabled: !writable || !clipboard }),
       hr(),
-      menuItem('select_all', hyadeOSSI18n.t("explorer.menu.select-all", "Select all"), selectAll, { kbd: 'Ctrl+A' }),
-      menuItem('refresh', hyadeOSSI18n.t("explorer.menu.refresh", "Refresh"), load, { kbd: 'F5' }),
-      menuItem('terminal', hyadeOSSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(currentPath)),
-      menuItem('visibility', hyadeOSSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden }));
+      menuItem('select_all', hyadeOSI18n.t("explorer.menu.select-all", "Select all"), selectAll, { kbd: 'Ctrl+A' }),
+      menuItem('refresh', hyadeOSI18n.t("explorer.menu.refresh", "Refresh"), load, { kbd: 'F5' }),
+      menuItem('terminal', hyadeOSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(currentPath)),
+      menuItem('visibility', hyadeOSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden }));
   }
   openMenu(menu, x, y);
 }
@@ -1667,13 +1667,13 @@ function selectAll() { selection = new Set(visibleItems().map(itemKey)); refresh
 $('sortBtn').onclick = () => {
   const menu = $('sortMenu');
   menu.replaceChildren();
-  [['name', hyadeOSSI18n.t("explorer.column.name", "Name")], ['date', hyadeOSSI18n.t("explorer.sort.date-modified", "Date modified")], ['size', hyadeOSSI18n.t("explorer.column.size", "Size")], ['type', hyadeOSSI18n.t("explorer.column.type", "Type")]].forEach(([key, label]) =>
+  [['name', hyadeOSI18n.t("explorer.column.name", "Name")], ['date', hyadeOSI18n.t("explorer.sort.date-modified", "Date modified")], ['size', hyadeOSI18n.t("explorer.column.size", "Size")], ['type', hyadeOSI18n.t("explorer.column.type", "Type")]].forEach(([key, label]) =>
     menu.append(menuItem(key === 'name' ? 'sort_by_alpha' : key === 'date' ? 'schedule' : key === 'size' ? 'straighten' : 'category', label, () => { sortKey = key; store.set('files-sort', key); render(); }, { checked: sortKey === key })));
   menu.append(hr(),
-    menuItem('arrow_upward', hyadeOSSI18n.t("explorer.sort.ascending", "Ascending"), () => { sortDir = 1; store.set('files-sort-dir', 1); render(); }, { checked: sortDir > 0 }),
-    menuItem('arrow_downward', hyadeOSSI18n.t("explorer.sort.descending", "Descending"), () => { sortDir = -1; store.set('files-sort-dir', -1); render(); }, { checked: sortDir < 0 }),
+    menuItem('arrow_upward', hyadeOSI18n.t("explorer.sort.ascending", "Ascending"), () => { sortDir = 1; store.set('files-sort-dir', 1); render(); }, { checked: sortDir > 0 }),
+    menuItem('arrow_downward', hyadeOSI18n.t("explorer.sort.descending", "Descending"), () => { sortDir = -1; store.set('files-sort-dir', -1); render(); }, { checked: sortDir < 0 }),
     hr(),
-    menuItem('visibility', hyadeOSSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden }));
+    menuItem('visibility', hyadeOSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden }));
   const r = $('sortBtn').getBoundingClientRect();
   openMenu(menu, r.left, r.bottom + 6);
 };
@@ -1685,23 +1685,23 @@ function openToolbarMenu(menuId, buttonId, entries) {
 }
 const setView = mode => { viewMode = mode; store.set('files-view', mode); render(); };
 $('newBtn').onclick = () => openToolbarMenu('newMenu', 'newBtn', [
-  menuItem('create_new_folder', hyadeOSSI18n.t("explorer.new-folder", "New folder"), createFolder, { kbd: 'Ctrl+Shift+N' }),
-  menuItem('note_add', hyadeOSSI18n.t("explorer.new-text-file", "New text file"), createFile),
+  menuItem('create_new_folder', hyadeOSI18n.t("explorer.new-folder", "New folder"), createFolder, { kbd: 'Ctrl+Shift+N' }),
+  menuItem('note_add', hyadeOSI18n.t("explorer.new-text-file", "New text file"), createFile),
   hr(),
-  menuItem('upload', hyadeOSSI18n.t("explorer.menu.upload-files", "Upload files…"), () => $('uploadInput').click())]);
+  menuItem('upload', hyadeOSI18n.t("explorer.menu.upload-files", "Upload files…"), () => $('uploadInput').click())]);
 $('viewBtn').onclick = () => openToolbarMenu('viewMenu', 'viewBtn', [
-  menuItem('view_list', hyadeOSSI18n.t("explorer.view.list", "List"), () => setView('list'), { checked: viewMode === 'list' }),
-  menuItem('grid_view', hyadeOSSI18n.t("explorer.view.grid", "Icons"), () => setView('grid'), { checked: viewMode === 'grid' }),
+  menuItem('view_list', hyadeOSI18n.t("explorer.view.list", "List"), () => setView('list'), { checked: viewMode === 'list' }),
+  menuItem('grid_view', hyadeOSI18n.t("explorer.view.grid", "Icons"), () => setView('grid'), { checked: viewMode === 'grid' }),
   hr(),
-  menuItem('vertical_split', hyadeOSSI18n.t("explorer.action.preview-pane", "Preview pane"), togglePane, { checked: paneOpen }),
-  menuItem('visibility', hyadeOSSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden })]);
+  menuItem('vertical_split', hyadeOSI18n.t("explorer.action.preview-pane", "Preview pane"), togglePane, { checked: paneOpen }),
+  menuItem('visibility', hyadeOSI18n.t("explorer.menu.show-hidden", "Show hidden files"), toggleHidden, { checked: showHidden })]);
 $('moreBtn').onclick = () => openToolbarMenu('moreMenu', 'moreBtn', [
-  menuItem('refresh', hyadeOSSI18n.t("explorer.menu.refresh", "Refresh"), load, { kbd: 'F5' }),
-  menuItem('terminal', hyadeOSSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(isVirtual(currentPath) ? '/home' : currentPath)),
-  ...(isHome(currentPath) ? [menuItem('keep', pinned.includes(currentPath) ? hyadeOSSI18n.t("explorer.unpin", "Unpin from Quick access") : hyadeOSSI18n.t("explorer.pin", "Pin to Quick access"), () => togglePin(currentPath))] : []),
-  menuItem('content_copy', hyadeOSSI18n.t("explorer.menu.copy-path", "Copy path"), () => navigator.clipboard?.writeText(currentPath), { disabled: isVirtual(currentPath) }),
+  menuItem('refresh', hyadeOSI18n.t("explorer.menu.refresh", "Refresh"), load, { kbd: 'F5' }),
+  menuItem('terminal', hyadeOSI18n.t("explorer.menu.open-in-terminal", "Open in Terminal"), () => openTerminal(isVirtual(currentPath) ? '/home' : currentPath)),
+  ...(isHome(currentPath) ? [menuItem('keep', pinned.includes(currentPath) ? hyadeOSI18n.t("explorer.unpin", "Unpin from Quick access") : hyadeOSI18n.t("explorer.pin", "Pin to Quick access"), () => togglePin(currentPath))] : []),
+  menuItem('content_copy', hyadeOSI18n.t("explorer.menu.copy-path", "Copy path"), () => navigator.clipboard?.writeText(currentPath), { disabled: isVirtual(currentPath) }),
   hr(),
-  menuItem('delete_sweep', hyadeOSSI18n.t("explorer.empty-trash", "Empty trash"), emptyTrash, { danger: true })]);
+  menuItem('delete_sweep', hyadeOSI18n.t("explorer.empty-trash", "Empty trash"), emptyTrash, { danger: true })]);
 function togglePane() { paneOpen = !paneOpen; store.set('files-pane', paneOpen); renderPane(); }
 $('paneBtn').onclick = togglePane;
 $('selectAllBtn').onclick = selectAll;
@@ -1714,10 +1714,10 @@ $('deleteBtn').onclick = () => deleteSelection();
 function showProperties(item) {
   const kind = kindOf(item);
   const box = el('div', 'props');
-  const rows = [[hyadeOSSI18n.t("explorer.column.name", "Name"), item.name], [hyadeOSSI18n.t("explorer.column.type", "Type"), TYPE_LABEL[kind] + (item.ext ? ` (${item.ext})` : '')], [hyadeOSSI18n.t("explorer.props.location", "Location"), item.dir || currentPath],
-    [hyadeOSSI18n.t("explorer.column.size", "Size"), item.bytes >= 0 ? hyadeOSSI18n.t("explorer.props.size-bytes", "{size} ({bytes} bytes)", { size: formatSize(item.bytes), bytes: item.bytes.toLocaleString(hyadeOSSI18n.locale) }) : '—'], [hyadeOSSI18n.t("explorer.column.modified", "Modified"), formatDate(item.mtime, item.date) || '—']];
+  const rows = [[hyadeOSI18n.t("explorer.column.name", "Name"), item.name], [hyadeOSI18n.t("explorer.column.type", "Type"), TYPE_LABEL[kind] + (item.ext ? ` (${item.ext})` : '')], [hyadeOSI18n.t("explorer.props.location", "Location"), item.dir || currentPath],
+    [hyadeOSI18n.t("explorer.column.size", "Size"), item.bytes >= 0 ? hyadeOSI18n.t("explorer.props.size-bytes", "{size} ({bytes} bytes)", { size: formatSize(item.bytes), bytes: item.bytes.toLocaleString(hyadeOSI18n.locale) }) : '—'], [hyadeOSI18n.t("explorer.column.modified", "Modified"), formatDate(item.mtime, item.date) || '—']];
   rows.forEach(([k, v]) => box.append(el('span', null, k), el('span', null, v)));
-  mDialog.alert(rows.map(([k, v]) => `${k}: ${v}`).join('\n'), { title: hyadeOSSI18n.t("explorer.properties", "Properties"), kind: 'info' });
+  mDialog.alert(rows.map(([k, v]) => `${k}: ${v}`).join('\n'), { title: hyadeOSI18n.t("explorer.properties", "Properties"), kind: 'info' });
 }
 
 /* ───────────────────────── Keyboard ───────────────────────── */
@@ -1788,7 +1788,7 @@ window.addEventListener('message', e => {
 })();
 
 /* ───────────────────────── Boot ───────────────────────── */
-$('content').dataset.dropText = hyadeOSSI18n.t("explorer.drop-hint", "Drop files to upload them here");
+$('content').dataset.dropText = hyadeOSI18n.t("explorer.drop-hint", "Drop files to upload them here");
 const askedPath = new URLSearchParams(location.search).get('path');
 const savedTabs = store.get('files-tabs', null);
 const restored = Array.isArray(savedTabs?.paths) ? savedTabs.paths.filter(p => typeof p === 'string').slice(0, 12) : [];
