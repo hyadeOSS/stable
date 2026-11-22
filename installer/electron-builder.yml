@@ -1,0 +1,29 @@
+# Settings of the Windows installer, read back from hyadeOSS.Setup.2.0.4.exe (the old build project was in no repo).
+# The same appId and GUID mean the new installer UPDATES an existing installation in place instead of adding a second one.
+appId: com.hyadeoss.app          # on purpose still "hyadeoss": it is the Windows AppUserModelID of the installed app
+productName: hyadeOS
+copyright: Copyright © 2026 hyadeOS team
+directories:
+  output: dist
+  buildResources: build
+files:                           # the app inside app.asar is only main.js (+ package.json); the system is a resource
+  - main.js
+  - package.json
+asar: true
+afterPack: scripts/after-pack.js   # copies installer/system (the repository without .git, .github, test, installer) into resources/system
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: hyadeOS.Setup.${version}.${ext}
+nsis:
+  oneClick: true                 # no wizard, per user (installs to %LOCALAPPDATA%\Programs), like the 2.0.4 installer
+  perMachine: false
+  guid: 7985a7af-c574-5fdd-a70a-7334d6916fa9   # the 2.0.4 uninstall key: same key = upgrade in place
+  deleteAppDataOnUninstall: false
+publish:                         # the GitHub organisation did not change: the software is hyadeOS, GitHub is hyadeOSS
+  provider: github
+  owner: hyadeOSS
+  repo: stable
