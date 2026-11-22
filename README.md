@@ -7,7 +7,7 @@ and safe automatic updates. Open source, no ads, no data collected.
 
 ## Download
 
-**[Download hyadeOS for Windows](https://github.com/HyadeOS/stable/releases)** —
+**[Download hyadeOS for Windows](https://github.com/HyadeOSS/stable/releases)** —
 the installer needs nothing else (no Git, no Node.js). Your data lives in your Windows user
 folder, so updates and reinstalls never touch it.
 
@@ -37,7 +37,7 @@ hyadeOS apps are web pages in a GitHub repository. The SDK gives them notificati
 
 ## Community
 
-- Website: [hyadeos.github.io](https://hyadeos.github.io)
+- Website: [hyadeoss.github.io](https://hyadeoss.github.io)
 - TikTok: [@mariowos](https://tiktok.com)
 - Report a bug or suggest a feature on our Discord, or open an issue here.
 

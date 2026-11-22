@@ -52,7 +52,7 @@
 <body>
   <main role="status" aria-live="polite">
     <div id="bootOrbit" aria-hidden="true"><i></i><i></i><i></i></div>
-    <img id="bootLogo" src="/desktop/assets/icons/stars.png">
+    <img id="bootLogo" src="desktop/assets/icons/stars.png" alt="">
     <p id="status"></p>
     <div id="bootLogs" aria-hidden="true"></div>
   </main>
@@ -60,6 +60,10 @@
     const statusLabel = document.getElementById('status');
     const bootLogo = document.getElementById('bootLogo');
     const bootLogs = document.getElementById('bootLogs');
+    // The launcher shows this page from disk (file://) while the kernel is still starting. No API can answer
+    // yet, so there it only plays the intro and the launcher replaces it as soon as the kernel is ready:
+    // a normal start must not look like an error.
+    const startedFromDisk = location.protocol === 'file:';
     let verboseBoot = new URLSearchParams(location.search).get('verbose') === '1';
     const bootAnimation = new URLSearchParams(location.search).get('anim');
     if (['zoom', 'pulse', 'orbit'].includes(bootAnimation)) document.body.dataset.anim = bootAnimation;
@@ -120,6 +124,15 @@
     }
 
     async function start() {
+      if (startedFromDisk) {
+        // Only a start that really drags on gets a message, and it is not an error.
+        setTimeout(() => {
+          statusLabel.textContent = 'Starting hyadeOS is taking longer than usual…';
+          statusLabel.style.display = 'block';
+        }, 30000);
+        return;
+      }
+      let failures = 0;
       while (true) {
         try {
           logBoot('Waiting for system services');
@@ -176,9 +189,13 @@
           location.replace('/');
           return;
         } catch (error) {
+          failures += 1;
           logBoot(`E: boot failed: ${error.message}`, true);
-          statusLabel.textContent = `E: could not finish booting: ${error.message}. retrying…`;
-          statusLabel.style.display = 'block';
+          // The first misses are normal (the kernel is still waking up): show the error only if it persists.
+          if (failures >= 3) {
+            statusLabel.textContent = `E: could not finish booting: ${error.message}. retrying…`;
+            statusLabel.style.display = 'block';
+          }
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }

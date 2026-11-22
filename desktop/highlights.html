@@ -100,9 +100,6 @@
                 <button class="highlight-tab" role="tab" type="button" aria-selected="true" data-i18n="setup.highlights.desktop">A new desktop</button>
                 <button class="highlight-tab" role="tab" type="button" aria-selected="false" data-i18n="setup.highlights.store">The Store</button>
                 <button class="highlight-tab" role="tab" type="button" aria-selected="false" data-i18n="setup.highlights.music">Music</button>
-                <!-- Placeholder sections: change the name here, the picture and text below, and the setup.highlights.extra-* keys in it.json. -->
-                <button class="highlight-tab" role="tab" type="button" aria-selected="false" data-i18n="setup.highlights.extra-1">Section four</button>
-                <button class="highlight-tab" role="tab" type="button" aria-selected="false" data-i18n="setup.highlights.extra-2">Section five</button>
             </div>
 
             <div class="highlight-view" role="tabpanel" aria-live="polite">
@@ -110,14 +107,10 @@
                     <img class="show" id="picture-desktop" src="/desktop/assets/newmwos.png" alt="">
                     <img id="picture-store" src="/desktop/assets/highlight-store.jpg" alt="">
                     <img id="picture-music" src="/desktop/assets/highlight-music.jpg" alt="">
-                    <img id="picture-extra-1" src="/desktop/assets/highlight-placeholder.svg" alt="">
-                    <img id="picture-extra-2" src="/desktop/assets/highlight-placeholder.svg" alt="">
                 </div>
                 <p class="highlight-text show" data-i18n="setup.highlights.desktop-text">hyadeOS has been completely reimagined.</p>
                 <p class="highlight-text" data-i18n="setup.highlights.store-text">Install and remove apps, and read each app's terms first.</p>
                 <p class="highlight-text" data-i18n="setup.highlights.music-text">Radio, your own files, Spotify, Last.fm and Audius in one app.</p>
-                <p class="highlight-text" data-i18n="setup.highlights.extra-1-text">Description of section four.</p>
-                <p class="highlight-text" data-i18n="setup.highlights.extra-2-text">Description of section five.</p>
             </div>
         </div>
     </main>
@@ -131,8 +124,6 @@
         document.getElementById('picture-desktop').alt = hyadeOSI18n.t("setup.highlights.desktop-alt", "The new hyadeOS desktop");
         document.getElementById('picture-store').alt = hyadeOSI18n.t("setup.highlights.store-alt", "The Store showing apps ready to install");
         document.getElementById('picture-music').alt = hyadeOSI18n.t("setup.highlights.music-alt", "The Music app showing a list of radio stations");
-        document.getElementById('picture-extra-1').alt = hyadeOSI18n.t("setup.highlights.extra-1-alt", "Picture of section four");
-        document.getElementById('picture-extra-2').alt = hyadeOSI18n.t("setup.highlights.extra-2-alt", "Picture of section five");
 
         const pictures = [...document.querySelectorAll('.highlight-media img')];
         const descriptions = [...document.querySelectorAll('.highlight-text')];

@@ -481,6 +481,11 @@ async function checkSystemUpdates() {
       setSystemStatus('auto_awesome', `hyadeOS v${data.latest}`,
         data.changelog || hyadeOSI18n.t("settings.updater.system-available", "System update available · v{current} → v{latest}", { current: data.current, latest: data.latest }));
       setAction(action, hyadeOSI18n.t("settings.updater.install-restart", "Install & restart"), startSystemUpdate);
+    } else if (data.older) {
+      // The chosen channel is behind the installed version (e.g. Stable while running a Beta): say so, and let the user choose.
+      setSystemStatus('history', hyadeOSI18n.t("settings.updater.older-title", "hyadeOS v{latest} ({channel})", { latest: data.latest, channel: channelLabel(data.channel) }),
+        hyadeOSI18n.t("settings.updater.older-text", "It is older than the version you have (v{current}). You will get updates from this channel once it has something newer.", { current: data.current }));
+      setAction(action, hyadeOSI18n.t("settings.updater.older-install", "Switch to v{latest}", { latest: data.latest }), () => confirmOlderInstall(data));
     } else {
       setSystemStatus('check', hyadeOSI18n.t("settings.updater.up-to-date", "hyadeOS is up to date"), hyadeOSI18n.t("settings.updater.version", "Version {version}", { version: data.current }), true);
     }
@@ -723,6 +728,18 @@ channelBtn.onclick = () => {
     closeMenus();
   }
 };
+
+function channelLabel(channel) {
+  const names = { stable: hyadeOSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
+  return names[channel] || channel || '';
+}
+
+// Going back to an older release replaces the system files: it takes a second, explicit click.
+function confirmOlderInstall(data) {
+  const action = document.getElementById('systemAction');
+  setAction(action, hyadeOSI18n.t("settings.updater.older-confirm", "Confirm: install v{latest} (older)", { latest: data.latest }), startSystemUpdate);
+  setNotice('systemNotice', hyadeOSI18n.t("settings.updater.older-warning", "This replaces the system files with an older version. Your apps and settings stay."));
+}
 
 function updateChannelUI(channel) {
   const names = { stable: hyadeOSI18n.t("settings.updater.channel.stable", "Stable"), beta: 'Beta', insiders: 'Insiders' };
