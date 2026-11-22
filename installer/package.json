@@ -1,0 +1,18 @@
+{
+  "name": "hyadeos",
+  "productName": "hyadeOS",
+  "version": "2.0.5",
+  "main": "main.js",
+  "description": "hyadeOS",
+  "author": "hyadeOS team",
+  "license": "Apache-2.0",
+  "scripts": {
+    "prepare-system": "node scripts/prepare.js",
+    "test": "node --test \"test/*.test.js\"",
+    "dist": "node scripts/prepare.js && electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.4.3",
+    "electron-builder": "26.18.0"
+  }
+}

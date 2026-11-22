@@ -1,0 +1,103 @@
+# Builds the Windows installer (hyadeOS.Setup.<version>.exe), proves on a real Windows machine that it updates an existing
+# 2.0.4 installation in place and starts, and can attach it to a DRAFT release.
+#
+# The installer's version always follows version.json (scripts/prepare.js), so raise version.json first.
+name: Build installer
+
+on:
+  pull_request:
+    paths:
+      - "installer/**"
+      - ".github/workflows/build-installer.yml"
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      draft_release:
+        description: "Create a DRAFT release v<version> with the installer attached (you publish it by hand after trying it)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: installer/package-lock.json
+      - name: Test the installer's main.js
+        working-directory: installer
+        run: npm test
+      - name: Install the builder
+        working-directory: installer
+        run: npm ci
+      - name: Build the installer
+        working-directory: installer
+        run: npm run dist
+      - name: Check the file
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content version.json -Raw | ConvertFrom-Json).version
+          $file = "installer/dist/hyadeOS.Setup.$version.exe"
+          if (-not (Test-Path $file)) { Write-Host "::error::$file was not built"; Get-ChildItem installer/dist; exit 1 }
+          $size = [math]::Round((Get-Item $file).Length / 1MB)
+          Write-Host "$file  $size MB"
+          if ($size -lt 100) { Write-Host "::error::the installer is only $size MB: the system is not inside"; exit 1 }
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer
+          path: installer/dist/hyadeOS.Setup.*.exe
+          if-no-files-found: error
+          retention-days: 30
+
+  smoke:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: installer
+          path: installer-artifact
+      - name: Update 2.0.4 in place, keep the data, start the kernel, uninstall
+        shell: pwsh
+        run: |
+          $installer = (Get-ChildItem installer-artifact -Filter "hyadeOS.Setup.*.exe" | Select-Object -First 1).FullName
+          ./installer/scripts/smoke-upgrade.ps1 -NewInstaller $installer
+
+  release:
+    needs: [build, smoke]
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.draft_release)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: installer
+          path: installer-artifact
+      - name: Draft release with the installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* && "${GITHUB_REF_NAME}" != "v${VERSION}" ]]; then
+            echo "::error::the tag ${GITHUB_REF_NAME} does not match version.json (${VERSION})"; exit 1
+          fi
+          file="installer-artifact/hyadeOS.Setup.${VERSION}.exe"
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            gh release upload "v${VERSION}" "$file" --clobber
+          else
+            gh release create "v${VERSION}" "$file" --draft --target "${GITHUB_SHA}" --title "hyadeOS ${VERSION}" --notes-file installer/RELEASE-NOTES.md
+          fi

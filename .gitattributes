@@ -1,0 +1,3 @@
+# The installer's build files are not part of the system. The OTA updater downloads this repository as a ZIP
+# (GitHub honours export-ignore there), so users' PCs do not receive them with every update.
+/installer export-ignore
