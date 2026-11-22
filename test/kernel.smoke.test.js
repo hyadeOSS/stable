@@ -33,7 +33,7 @@ test.before(async () => {
   fs.writeFileSync(path.join(root, "desktop", "apps", "evilapp", "index.html"), "<h1>third party</h1>");
   fs.writeFileSync(path.join(root, "config.json"), JSON.stringify({ installedApps: [
     { appId: "evilapp", title: "Evil", url: "apps/evilapp/index.html", repoUrl: "https://github.com/someone/evilapp.git" },
-    { appId: "sandbox", title: "Sandbox", url: "apps/sandbox/index.html", repoUrl: "https://github.com/hyadeOS/sandbox.git" }
+    { appId: "sandbox", title: "Sandbox", url: "apps/sandbox/index.html", repoUrl: "https://github.com/hyadeOSS/sandbox.git" }
   ] }));
   kernel = spawn(process.execPath, ["server.js"], {
     cwd: root,

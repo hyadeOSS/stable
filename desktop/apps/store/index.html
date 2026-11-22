@@ -1518,7 +1518,7 @@
       button.textContent = hyadeOSI18n.t("store.publish.propose", "Propose it for everyone's Store too");
       button.onclick = () => {
         const body = 'Please add this app to the hyadeOS Store catalog.\n\n```json\n' + JSON.stringify(entry, null, 2) + '\n```\n';
-        const url = 'https://github.com/hyadeOS/store-catalog/issues/new?title=' + encodeURIComponent('New app: ' + entry.title) + '&body=' + encodeURIComponent(body);
+        const url = 'https://github.com/hyadeOSS/store-catalog/issues/new?title=' + encodeURIComponent('New app: ' + entry.title) + '&body=' + encodeURIComponent(body);
         window.open(url, '_blank');
       };
       status.after(button);

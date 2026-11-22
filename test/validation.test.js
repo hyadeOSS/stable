@@ -41,19 +41,30 @@ test("raw URLs are built from the repo URL", () => {
 });
 
 test("updates are offered when newer, or when they replace the installed version", () => {
-  assert.deepEqual(v.updateOffer({ version: "1.6.0" }, "1.5.0", 50), { offered: true, reason: "newer" });
-  assert.deepEqual(v.updateOffer({ version: "1.5.0" }, "1.5.0", 50), { offered: false, reason: "current" });
-  assert.deepEqual(v.updateOffer({ version: "1.5.0" }, "2.0.0", 50), { offered: false, reason: "current" }, "no silent downgrade");
-  assert.deepEqual(v.updateOffer({ version: "1.5.0", replaces: ["2.0.0"] }, "2.0.0", 50), { offered: true, reason: "replaces" });
-  assert.deepEqual(v.updateOffer({ version: "1.5.0", replaces: ["2.0.0"] }, "1.9.0", 50), { offered: false, reason: "current" });
+  assert.deepEqual(v.updateOffer({ version: "1.6.0" }, "1.5.0", 50), { offered: true, reason: "newer", older: false });
+  assert.deepEqual(v.updateOffer({ version: "1.5.0" }, "1.5.0", 50), { offered: false, reason: "current", older: false });
+  assert.deepEqual(v.updateOffer({ version: "1.5.0" }, "2.0.0", 50), { offered: false, reason: "current", older: true }, "no silent downgrade, but it is flagged as older");
+  assert.deepEqual(v.updateOffer({ version: "1.5.0", replaces: ["2.0.0"] }, "2.0.0", 50), { offered: true, reason: "replaces", older: false });
+  assert.deepEqual(v.updateOffer({ version: "1.5.0", replaces: ["2.0.0"] }, "1.9.0", 50), { offered: false, reason: "current", older: true });
 });
 
 test("a staged rollout reaches only the installs inside its percentage", () => {
   assert.equal(v.updateOffer({ version: "1.6.0", rollout: 10 }, "1.5.0", 9).offered, true);
-  assert.deepEqual(v.updateOffer({ version: "1.6.0", rollout: 10 }, "1.5.0", 10), { offered: false, reason: "rollout" });
+  assert.deepEqual(v.updateOffer({ version: "1.6.0", rollout: 10 }, "1.5.0", 10), { offered: false, reason: "rollout", older: false });
   assert.equal(v.updateOffer({ version: "1.6.0", rollout: 0 }, "1.5.0", 0).offered, false);
   assert.equal(v.updateOffer({ version: "1.6.0" }, "1.5.0", 99).offered, true, "no rollout field means everyone");
   const bucket = v.rolloutBucket("0123456789abcdef0123456789abcdef");
   assert.ok(bucket >= 0 && bucket < 100);
   assert.equal(v.rolloutBucket("0123456789abcdef0123456789abcdef"), bucket, "an install keeps its bucket");
+});
+
+test("a channel behind the installed version is flagged as older, so the Updater can say so", () => {
+  // Stable 2.0.4 while running Beta 2.1.0-beta.2: not an update, but not "up to date" either.
+  assert.equal(v.updateOffer({ version: "2.0.4" }, "2.1.0-beta.2", 0).older, true);
+  assert.equal(v.updateOffer({ version: "2.0.4" }, "2.1.0-beta.2", 0).offered, false);
+  assert.equal(v.updateOffer({ version: "2.1.0-beta.2" }, "2.1.0-beta.2", 0).older, false, "the same version is not older");
+  assert.equal(v.updateOffer({ version: "2.1.0" }, "2.1.0-beta.2", 0).older, false, "a release is newer than its beta");
+  assert.equal(v.updateOffer({ version: "2.1.0-beta.1" }, "2.1.0-beta.2", 0).older, true);
+  // A version the updater cannot order (an Insiders build name) is never called older.
+  assert.equal(v.updateOffer({ version: "2.5.1_DEVPREVIEW3" }, "2.1.0-beta.2", 0).older, false);
 });

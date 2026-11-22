@@ -12,7 +12,7 @@ npx wrangler kv namespace create STATS   # paste the id into wrangler.toml
 npx wrangler deploy
 ```
 
-Wrangler prints the address, e.g. `https://hyadeos-stats.<account>.workers.dev`.
+Wrangler prints the address, e.g. `https://hyadeoss-stats.<account>.workers.dev`.
 Put `https://…/ping` in `STATS_URL` in `server.js` (or set `HYADEOS_STATS_URL`) and
 ship it in the next release. Until then the kernel sends nothing.
 

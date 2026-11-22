@@ -102,7 +102,7 @@ const BACKEND_INSTANCE_ID = envVar("BACKEND_INSTANCE_ID") || null;
 let httpServer = null;
 let serverExitStarted = false;
 const SOTA_VERSION_URL = envVar("SOTA_VERSION_URL") ||
-  "https://api.github.com/repos/hyadeOS/SOTA/contents/version.json?ref=main";
+  "https://api.github.com/repos/hyadeOSS/SOTA/contents/version.json?ref=main";
 const SOTA_COMPONENTS = new Set([
   "calculator", "explorer", "feedback", "help", "music", "notes", "settings",
   "store", "terminal", "desktop"
@@ -485,7 +485,8 @@ require("./online-services").registerOnlineServiceRoutes(app, { getConfig: () =>
 
 app.get('/api/system/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
-  res.json({ status: 'ok', instanceId: BACKEND_INSTANCE_ID });
+  // `updating`: the launcher must not restart the shell while an update is being applied.
+  res.json({ status: 'ok', instanceId: BACKEND_INSTANCE_ID, updating: systemUpdateInProgress });
 });
 
 // --- SYSTEM HEALTH (Settings › General › System health) ---
@@ -2085,7 +2086,7 @@ app.post("/api/system/reset-desktop", (req, res) => {
   res.json({ success: true, message: "Desktop ripristinato" });
 });
 
-const REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/hyadeOS/store-catalog/main/store-catalog.json";
+const REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/hyadeOSS/store-catalog/main/store-catalog.json";
 const localCatalogFile = path.join(__dirname, "store-catalog.json");
 
 // The app store is the public software layer of hyadeOS.
@@ -3009,7 +3010,7 @@ function readStagedIndex(stagePath) {
   return runGit(["-C", stagePath, "ls-files", "-s", "-z"], stagePath);
 }
 
-// Download a release of github.com/hyadeOS/<repo> into stagePath: the ZIP first, Git if
+// Download a release of github.com/hyadeOSS/<repo> into stagePath: the ZIP first, Git if
 // the ZIP cannot be fetched (an older GitHub mirror, a proxy that blocks codeload).
 // A GitHub repository's main (or master) branch as files in stagePath, without Git.
 // Returns the staged file index (`git ls-files -s -z` format, see lib/release-zip.js).
@@ -3030,14 +3031,14 @@ async function fetchGithubZip(owner, repo, stagePath, onProgress, branches = ["m
 
 async function fetchRelease(repo, stagePath, onProgress) {
   try {
-    stagedZipIndexes.set(stagePath, await fetchGithubZip("hyadeOS", repo, stagePath, onProgress));
+    stagedZipIndexes.set(stagePath, await fetchGithubZip("hyadeOSS", repo, stagePath, onProgress));
     return "zip";
   } catch (zipError) {
     fs.rmSync(stagePath, { recursive: true, force: true });
     stagedZipIndexes.delete(stagePath);
     console.warn(`[update] ZIP download of ${repo} failed (${zipError.message}); trying Git.`);
     try {
-      await runGit(["clone", "--quiet", "--depth", "1", "--branch", "main", `https://github.com/hyadeOS/${repo}.git`, stagePath], os.tmpdir());
+      await runGit(["clone", "--quiet", "--depth", "1", "--branch", "main", `https://github.com/hyadeOSS/${repo}.git`, stagePath], os.tmpdir());
       return "git";
     } catch (gitError) {
       throw new Error(gitError.code === "ENOENT" ? zipError.message : `${zipError.message}; Git: ${gitError.message}`);
@@ -3446,7 +3447,7 @@ app.get('/api/system/check-update', async (req, res) => {
       : "1.0.0";
       
     const channel = getUpdateChannel();
-    const remoteUrl = `https://raw.githubusercontent.com/hyadeOS/${channel}/main/version.json?t=${Date.now()}`; 
+    const remoteUrl = `https://raw.githubusercontent.com/hyadeOSS/${channel}/main/version.json?t=${Date.now()}`; 
     const response = await fetch(remoteUrl);
     
     if (!response.ok) {
@@ -3463,10 +3464,14 @@ app.get('/api/system/check-update', async (req, res) => {
     }
     // Newer, or a deliberate way back ("replaces"), and inside the staged rollout (lib/validation.js).
     const offer = updateOffer(remote, local, rolloutBucket(getInstallId()));
+    // `older`: the channel the user picked has a release that is older than the one installed (e.g. Stable
+    // while running a Beta). It is never offered as an update, but the Updater says so and lets the user choose.
+    const older = offer.older === true;
     res.json(
       offer.offered
-        ? { updateAvailable: true, current: local, latest: remote.version, changelog: remote.changelog, reason: offer.reason }
-        : { updateAvailable: false, current: local, latest: remote.version, rolloutWaiting: offer.reason === "rollout" }
+        ? { updateAvailable: true, current: local, latest: remote.version, changelog: remote.changelog, reason: offer.reason, channel }
+        : { updateAvailable: false, current: local, latest: remote.version, rolloutWaiting: offer.reason === "rollout", older, channel,
+            ...(older ? { changelog: remote.changelog } : {}) }
     );
   } catch (error) {
     const versionPath = path.join(__dirname, 'version.json');

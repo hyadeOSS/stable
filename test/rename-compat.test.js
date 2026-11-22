@@ -95,6 +95,14 @@ test("the old SDK file adds a script element once the page is already loaded", (
   assert.equal(added[0].src, "https://app.example/hyadeos-app.js");
 });
 
+// Stops the kernel and removes its folder. On Windows the folder stays locked until the process has really exited,
+// so wait for that; and a temp folder that cannot be removed is not a test failure.
+async function cleanup(kernel) {
+  kernel.child.kill();
+  await Promise.race([kernel.exited, new Promise(resolve => setTimeout(resolve, 5000))]);
+  try { fs.rmSync(kernel.root, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch (error) { /* left behind in the temp folder */ }
+}
+
 // Starts a real kernel with exactly the environment given (an OLD launcher only knows HYADEOSS_*).
 const SKIP = [/^node_modules/, /^\.rollback/, /^test[\\/]/, /^desktop[\\/]home/, /\.log$/,
   /^(config\.json|keys\.json|session\.key|\.env|spotify-token\.json|desktop[\\/]notes-db\.json)$/];
@@ -141,8 +149,7 @@ test("a new server started by an OLD launcher (only HYADEOSS_* set) still works 
     assert.equal(right.status, 202, "the legacy managed-backend flag and token are honoured");
     assert.equal(await kernel.exited, 20, "and the server stops with the SHUTDOWN exit code the launcher expects");
   } finally {
-    kernel.child.kill();
-    fs.rmSync(kernel.root, { recursive: true, force: true });
+    await cleanup(kernel);
   }
 });
 
@@ -153,7 +160,6 @@ test("a server started with the new HYADEOS_* names works too", async () => {
     const response = await fetch(`http://127.0.0.1:${port}/api/system/health`);
     assert.equal(response.status, 200);
   } finally {
-    kernel.child.kill();
-    fs.rmSync(kernel.root, { recursive: true, force: true });
+    await cleanup(kernel);
   }
 });

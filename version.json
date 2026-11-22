@@ -1,6 +1,6 @@
 {
-  "version": "2.0.4",
+  "version": "2.0.5",
   "codename": "hottestChocolate",
-  "changelog": "NEW UPDATE VERY IMPORTANT",
+  "changelog": "Fixes: the restart offer no longer appears while an update is still being applied (restarting then could leave the system half updated); the start-up screen no longer shows an error or a broken image on a normal start, and can no longer last forever (a kernel that cannot start, an npm repair that hangs or a very slow start now end in the recovery screen); the setup highlights no longer show two empty sections; the Updater says when the chosen channel is older than your version and lets you switch back with a confirmation. The project is spelled hyadeOS everywhere; the GitHub address stays hyadeOSS.",
   "_comment": "obb."
 }
