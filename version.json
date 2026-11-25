@@ -1,6 +1,6 @@
 {
-  "version": "2.0.5",
+  "version": "2.1.0",
   "codename": "hottestChocolate",
-  "changelog": "Fixes: the restart offer no longer appears while an update is still being applied (restarting then could leave the system half updated); the start-up screen no longer shows an error or a broken image on a normal start, and can no longer last forever (a kernel that cannot start, an npm repair that hangs or a very slow start now end in the recovery screen); the setup highlights no longer show two empty sections; the Updater says when the chosen channel is older than your version and lets you switch back with a confirmation. The project is spelled hyadeOS everywhere; the GitHub address stays hyadeOSS.",
+  "changelog": "New: tablet mode and tiling mode; privacy mode (hides notification text and, in the app, screenshots and screen sharing); the Alt+Tab window switcher; a new Browser with a sidebar (spaces, favourites, a photo on the new tab page); updates in two steps (the update is downloaded in the background, then installed on restart with a progress screen); a much more capable Terminal (pipes, scripts, network commands); Sandbox snapshots, logs and export; Store sources, app versions, screenshots and sideload; Activation in Settings > About. The project is spelled hyadeOS everywhere; the GitHub address stays hyadeOSS.",
   "_comment": "obb."
 }
