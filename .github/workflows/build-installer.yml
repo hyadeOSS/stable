@@ -2,6 +2,11 @@
 # 2.0.4 installation in place and starts, and can attach it to a DRAFT release.
 #
 # The installer's version always follows version.json (scripts/prepare.js), so raise version.json first.
+#
+# Nothing to start by hand: when a change to version.json reaches main (a merged release), this builds the installer,
+# proves it on Windows and creates (or refreshes) the DRAFT release v<version> with the installer and that version's
+# notes from installer/RELEASE-NOTES.md. You only try it and press "Publish". A release that is already published
+# is never touched by this automatic run.
 name: Build installer
 
 on:
@@ -11,6 +16,8 @@ on:
       - ".github/workflows/build-installer.yml"
   push:
     tags: ["v*"]
+    branches: [main]
+    paths: ["version.json"]
   workflow_dispatch:
     inputs:
       draft_release:
@@ -77,7 +84,7 @@ jobs:
 
   release:
     needs: [build, smoke]
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.draft_release)
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.draft_release)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -96,8 +103,25 @@ jobs:
             echo "::error::the tag ${GITHUB_REF_NAME} does not match version.json (${VERSION})"; exit 1
           fi
           file="installer-artifact/hyadeOS.Setup.${VERSION}.exe"
+          # The notes of this version only (English and Italian), not the whole history of the file.
+          awk -v v="${VERSION}" '
+            /^## hyadeOS / {
+              heading = $0; sub(/^## hyadeOS /, "", heading); split(heading, parts, " ")
+              keep = (parts[1] == v)
+            }
+            keep { print }
+          ' installer/RELEASE-NOTES.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::warning::installer/RELEASE-NOTES.md has no section for ${VERSION}: the release gets the default text"
+            echo "hyadeOS ${VERSION}" > release-notes.md
+          fi
           if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            # An automatic run (a merge to main) never replaces the installer of a release people can already download.
+            if [[ "${GITHUB_EVENT_NAME}" == push && "${GITHUB_REF}" == refs/heads/main && "$(gh release view "v${VERSION}" --json isDraft --jq .isDraft)" != "true" ]]; then
+              echo "release v${VERSION} is already published: leaving it as it is"; exit 0
+            fi
             gh release upload "v${VERSION}" "$file" --clobber
+            gh release edit "v${VERSION}" --notes-file release-notes.md
           else
-            gh release create "v${VERSION}" "$file" --draft --target "${GITHUB_SHA}" --title "hyadeOS ${VERSION}" --notes-file installer/RELEASE-NOTES.md
+            gh release create "v${VERSION}" "$file" --draft --target "${GITHUB_SHA}" --title "hyadeOS ${VERSION}" --notes-file release-notes.md
           fi
