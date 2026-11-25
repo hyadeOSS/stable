@@ -688,6 +688,8 @@ function systemKeysEnabled() {
 }
 
 function sendSystemKey(name) {
+    // Alt+Tab taken by the keyboard hook: it drives the window switcher, not a desktop shortcut.
+    if (name === 'alt+tab' || name === 'alt+shift+tab') { sendSwitcher(name === 'alt+tab' ? 'next' : 'prev'); return; }
     if (SYSTEM_KEYS.has(name) && mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('system:key', name);
 }
 

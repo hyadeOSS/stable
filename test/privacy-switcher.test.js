@@ -31,3 +31,11 @@ test("Alt+Tab switcher is wired to the launcher and to the page keyboard", () =>
   assert.match(html, /noteWindowUse\(popup\);/);
   assert.match(html, /!id\.startsWith\('dialog_'\)/);
 });
+
+test("on Windows Alt+Tab is taken by the keyboard hook and drives the hyadeOS switcher", () => {
+  const hook = fs.readFileSync(path.join(__dirname, "..", "lib", "system-keys.ps1"), "utf8");
+  const launcher = fs.readFileSync(path.join(__dirname, "..", "launcher.js"), "utf8");
+  assert.match(hook, /VK_TAB/);
+  assert.match(hook, /Emit\(shiftDown \? "alt\+shift\+tab" : "alt\+tab"\)/);
+  assert.match(launcher, /name === 'alt\+tab' \|\| name === 'alt\+shift\+tab'/);
+});
