@@ -496,12 +496,35 @@
     .myapp-note { margin: 12px 0 0; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
     .lp-perm.risk-medium .material-symbols-outlined { background: rgba(255,159,10,.16); color: #ff9f0a; }
 
-    #store-perm-overlay { display: none; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.6); }
-    #store-perm-overlay .store-eula-modal { width: 460px; }
+    #store-perm-overlay, #store-channel-overlay { display: none; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.6); }
+    #store-perm-overlay .store-eula-modal, #store-channel-overlay .store-eula-modal { width: 460px; }
     .perm-intro { margin: 0 0 14px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.5; }
     .perm-choices { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
     .perm-choice { cursor: pointer; }
     .perm-choice > div { flex: 1; }
+
+    /* ─────────────── Sources, builds, screenshots, sideload ─────────────── */
+    .lp-badge { padding: 2px 9px; border-radius: var(--mw-radius-full); background: color-mix(in srgb, var(--mw-orange) 22%, transparent); color: var(--mw-orange); font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .lp-builds { color: var(--text-dim); font-size: 11.5px; }
+    .shots { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 2px; }
+    .shot { flex: 0 0 auto; height: 220px; max-width: 420px; padding: 0; border: 1px solid var(--glass-border); border-radius: var(--radius-md); overflow: hidden; background: var(--field-bg); cursor: zoom-in; scroll-snap-align: start; }
+    .shot img { display: block; height: 100%; width: auto; max-width: 420px; object-fit: cover; }
+    .shot.loading { width: 340px; animation: lpPop 1.2s ease-in-out infinite alternate; }
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 10000; align-items: center; justify-content: center; gap: 12px; background: rgba(0, 0, 0, 0.85); }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: calc(100% - 140px); max-height: calc(100% - 60px); border-radius: var(--radius-md); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5); user-select: none; }
+    .lightbox .lb-btn { width: 36px; height: 36px; display: grid; place-items: center; border: none; border-radius: 50%; background: var(--mw-fill); color: var(--text); cursor: pointer; }
+    .lightbox .lb-btn:hover { background: var(--mw-fill-hover); }
+    .lightbox .lb-close { position: absolute; top: 14px; right: 14px; }
+    .lightbox .lb-count { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: var(--text-secondary); font-size: 12px; }
+    .seg { display: inline-flex; padding: 2px; border: 1px solid var(--glass-border); border-radius: var(--radius-sm); background: var(--field-bg); }
+    .seg button { padding: 5px 14px; border: none; border-radius: 6px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 12px; cursor: pointer; }
+    .seg button[aria-pressed="true"] { background: var(--mw-fill-strong); color: var(--text); }
+    .pub-label { display: block; margin: 0 0 6px; color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+    .pub-hint { margin: -8px 0 14px; color: var(--text-dim); font-size: 11.5px; line-height: 1.5; }
+    .channel-choice { cursor: pointer; }
+    .channel-choice > div { flex: 1; }
+    .channel-choice input { accent-color: var(--sys-accent); }
 
     * { scrollbar-width: none; }
     *::-webkit-scrollbar { display: none; }
@@ -596,9 +619,12 @@
             <div class="lp-meta">
               <button class="lp-dev-link" id="lpDev" type="button"></button>
               <button class="chip" id="lpCategory" type="button"></button>
+              <span class="lp-badge" id="lpBadge" hidden></span>
+              <span class="lp-builds" id="lpBuilds"></span>
             </div>
             <div class="lp-actions">
               <button id="btnInstall" class="btn-action primary"></button>
+              <button id="btnSwitch" class="btn-soft" type="button" style="display: none;"></button>
               <button id="btnUninstall" class="btn-uninstall" style="display: none;"></button>
             </div>
             <div id="installError" class="lp-error"></div>
@@ -608,6 +634,10 @@
         <div class="lp-desc-container">
           <h3 class="lp-desc-title" data-i18n="store.detail.description">Description</h3>
           <p id="lpDesc" class="lp-desc"></p>
+        </div>
+        <div class="lp-desc-container" id="lpShotsBox" hidden style="margin-top: 16px;">
+          <h3 class="lp-desc-title" data-i18n="store.publish.screenshots">Screenshots</h3>
+          <div class="shots" id="lpShots"></div>
         </div>
         <div class="lp-desc-container" id="lpNewBox" hidden>
           <h3 class="lp-desc-title"><span data-i18n="store.detail.whats-new">What's new</span> <span class="lp-version" id="lpVersion"></span></h3>
@@ -642,6 +672,17 @@
         <h2 class="section-title" data-i18n="store.myapps.title">My apps</h2>
         <p class="lp-desc" style="margin: -6px 0 18px;" data-i18n="store.myapps.text">Apps from the Store and what you allow them to do. Changes apply the next time the app asks.</p>
         <div id="myAppsList"><div class="loading-text" data-i18n="store.loading">Loading catalog...</div></div>
+        <div class="pub-card" id="sideloadCard" style="margin-top: 24px;" hidden>
+          <h3 class="lp-desc-title" data-i18n="store.sideload.title">Install from your computer</h3>
+          <p class="lp-desc" style="margin-bottom: 14px;" data-i18n="store.sideload.text">Install an app from a folder with an index.html, or from an .html file, inside your home folder. It runs apart from the system, like any app from other developers.</p>
+          <input type="text" id="sideloadPath" class="pub-input" placeholder="/home/Projects/myapp" spellcheck="false" autocomplete="off">
+          <div style="display: flex; gap: 12px;">
+            <input type="text" id="sideloadId" class="pub-input" maxlength="64" placeholder="App ID" data-i18n-placeholder="store.publish.bundle-id" spellcheck="false" autocomplete="off" style="flex: 1;">
+            <input type="text" id="sideloadTitle" class="pub-input" maxlength="80" placeholder="App Name" data-i18n-placeholder="store.publish.app-name" autocomplete="off" style="flex: 1;">
+          </div>
+          <button class="btn-action primary" id="sideloadBtn" type="button" data-i18n="store.install">Install</button>
+          <div id="sideloadStatus" class="publish-status"></div>
+        </div>
       </div>
 
       <!-- Publish View -->
@@ -661,6 +702,19 @@
           <textarea id="pubDesc" class="pub-input" placeholder="Description" data-i18n-placeholder="store.detail.description" rows="4"></textarea>
           <textarea id="pubEula" class="pub-input" placeholder="Custom EULA / License Agreement (Optional - Leave empty to auto-fetch from GitHub repo)" data-i18n-placeholder="store.publish.eula" rows="3"></textarea>
           <input type="text" id="pubRepo" class="pub-input" placeholder="GitHub Repository URL (.git)" data-i18n-placeholder="store.publish.repo">
+
+          <div id="pubChannelRow" hidden>
+            <span class="pub-label" data-i18n="store.publish.channel">Channel</span>
+            <div class="seg" id="pubChannel" role="group" style="margin-bottom: 14px;">
+              <button type="button" data-channel="stable" aria-pressed="true" data-i18n="store.channel.stable">Stable</button>
+              <button type="button" data-channel="insiders" aria-pressed="false" data-i18n="store.channel.insider">Insider</button>
+            </div>
+            <div class="pub-hint" id="pubChannelHint"></div>
+          </div>
+
+          <span class="pub-label"><span data-i18n="store.publish.screenshots">Screenshots</span> <span style="color: var(--text-dim);" data-i18n="store.publish.optional">(optional)</span></span>
+          <input type="file" id="pubShotFiles" class="pub-input" accept="image/png, image/jpeg, image/webp" multiple style="padding: 6px 10px;">
+          <div class="pub-hint" id="pubShotsHint" data-i18n="store.publish.shots-hint">Add images, or put them in a screenshots/ folder in your repository and they are picked up automatically.</div>
           
           <button class="btn-action primary" onclick="submitApp()" style="width: 100%; margin-top: 8px;" data-i18n="store.publish.submit">Submit for Review</button>
           <div id="publishStatus" class="publish-status"></div>
@@ -680,6 +734,26 @@
             <option value="insiders" data-i18n="store.settings.channel.insiders">Insiders (Experimental)</option>
           </select>
           <div id="channelStatus" class="lp-error" style="margin-top: 8px;"></div>
+        </div>
+
+        <div class="pub-card" style="margin-bottom: 24px;">
+          <h3 class="lp-desc-title" data-i18n="store.nav.sources">Sources</h3>
+          <p class="lp-desc" style="margin-bottom: 14px;" data-i18n="store.sources.sub">Catalogs the Store shows apps from. They add up: turning on Insider keeps every stable app.</p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+            <div style="flex: 1;">
+              <div style="font-size: 13px; font-weight: 500;" data-i18n="store.channel.stable">Stable</div>
+              <p class="lp-desc" style="margin: 2px 0 0;" data-i18n="store.sources.stable">Tested releases. Always on.</p>
+            </div>
+            <label class="store-switch"><input type="checkbox" checked disabled><span></span></label>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="flex: 1;">
+              <div style="font-size: 13px; font-weight: 500;"><span data-i18n="store.channel.insider">Insider</span> <span class="lp-badge" data-i18n="store.badge.insider">Insider</span></div>
+              <p class="lp-desc" style="margin: 2px 0 0;" data-i18n="store.sources.insiders">Early and experimental builds. They may be unfinished or break. Apps that have both builds ask which one to install.</p>
+            </div>
+            <label class="store-switch"><input type="checkbox" id="srcInsiders"><span></span></label>
+          </div>
+          <div id="sourcesStatus" class="lp-error" style="margin-top: 8px;"></div>
         </div>
 
         <div class="pub-card" style="margin-bottom: 24px;">
@@ -740,11 +814,47 @@
     </div>
   </div>
 
+  <!-- Which build to install, when an app has a stable and an insider one -->
+  <div id="store-channel-overlay">
+    <form class="store-eula-modal" id="channelForm" role="dialog" aria-modal="true" aria-labelledby="channelTitle">
+      <h2 id="channelTitle" data-i18n="store.choose.title">Which build?</h2>
+      <p class="perm-intro" id="channelIntro"></p>
+      <div class="perm-choices">
+        <label class="lp-perm channel-choice">
+          <input type="radio" name="channel" value="stable" checked>
+          <div><span data-i18n="store.channel.stable">Stable</span> <span class="lp-version" id="verStable"></span><small data-i18n="store.choose.stable">Recommended for everyday use.</small></div>
+        </label>
+        <label class="lp-perm channel-choice">
+          <input type="radio" name="channel" value="insiders">
+          <div><span data-i18n="store.channel.insider">Insider</span> <span class="lp-badge" data-i18n="store.badge.insider">Insider</span> <span class="lp-version" id="verInsiders"></span><small data-i18n="store.choose.insider">Newest features first. May be unstable.</small></div>
+        </label>
+      </div>
+      <div class="store-eula-actions">
+        <button class="btn-action" type="button" style="background: rgba(255, 255, 255, 0.1); color: var(--text);" id="channelCancel" data-i18n="common.cancel">Cancel</button>
+        <button class="btn-action primary" type="submit" data-i18n="store.install">Install</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Screenshot viewer -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-btn lb-close" type="button" data-lb="close" title="Close" data-i18n-title="common.close"><span class="material-symbols-outlined">close</span></button>
+    <button class="lb-btn" type="button" data-lb="prev"><span class="material-symbols-outlined">chevron_left</span></button>
+    <img id="lightboxImg" alt="">
+    <button class="lb-btn" type="button" data-lb="next"><span class="material-symbols-outlined">chevron_right</span></button>
+    <div class="lb-count" id="lightboxCount"></div>
+  </div>
+
   <script>
     let storeCatalog = [];
     let installedAppsList = [];
     let currentAppOpen = null;
     let searchTimeout = null;
+    // Catalog sources (Store › Settings › Sources): "stable" is always on, "insiders" is opt-in.
+    let storeSources = { stable: true, insiders: false };
+    let installedRecords = new Map(); // appId -> record from /get-settings (carries .channel, .repoUrl)
+    let installChannel = 'stable';    // the build the user is installing right now
+    let appVersions = null;           // { stable, insiders } for the open app, once known
     // Installing and removing apps is for administrators (Settings > Users).
     let storeCanInstall = true;
     fetch('/api/users/me', { cache: 'no-store' }).then(r => r.json()).then(({ user }) => { storeCanInstall = !user || !!user.admin; if (typeof currentAppOpen !== 'undefined' && currentAppOpen) updateInstallBtn(); }).catch(() => {});
@@ -836,13 +946,50 @@
       if (currentList && currentList.kind === 'category') openCategory(currentList.value);
     }
 
+    // ---- Builds: an app can be stable-only, insider-only or both (variants from /api/store/catalog) ----
+    const channelName = ch => ch === 'insiders' ? hyadeOSI18n.t("store.channel.insider", "Insider") : hyadeOSI18n.t("store.channel.stable", "Stable");
+    const variantOf = (app, ch) => ((app && app.variants) || []).find(v => v && v.channel === ch);
+    const hasBoth = app => ((app && app.channels) || []).length > 1;
+    const installedChannel = id => (installedRecords.get(id) || {}).channel === 'insiders' ? 'insiders' : 'stable';
+    const variantFor = (app, ch) => variantOf(app, ch) || { channel: ch, repoUrl: app.repoUrl, eula: ch === 'stable' ? app.eula : null };
+    const defaultChannel = app => installedAppsList.includes(app.id) ? installedChannel(app.id) : (app.insidersOnly ? 'insiders' : 'stable');
+    const fetchVersions = app => fetch('/api/store/app-versions?id=' + encodeURIComponent(app.id)).then(r => r.json()).then(r => (r && r.success ? r.versions : null)).catch(() => null);
+
+    function applySources() {
+      document.getElementById('srcInsiders').checked = !!storeSources.insiders;
+      document.getElementById('pubChannelRow').hidden = !storeSources.insiders;
+      if (!storeSources.insiders) setPubChannel('stable');
+    }
+    async function loadSources() {
+      try { storeSources = await (await fetch('/api/store/sources', { cache: 'no-store' })).json(); } catch (e) {}
+      applySources();
+    }
+    document.getElementById('srcInsiders').addEventListener('change', async event => {
+      const box = event.target, status = document.getElementById('sourcesStatus');
+      box.disabled = true; status.textContent = '';
+      try {
+        const res = await fetch('/api/store/sources', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ insiders: box.checked }) });
+        const data = await res.json();
+        if (!res.ok || data.success === false) throw new Error(data.error || res.status);
+        storeSources = data; applySources();
+        initStore(); // the catalog now has (or no longer has) the insider builds
+      } catch (e) {
+        box.checked = !box.checked;
+        status.textContent = hyadeOSI18n.t("store.admin-only-hint", "Only administrators can install apps on this computer.");
+      } finally {
+        box.disabled = !storeCanInstall;
+      }
+    });
+
     let currentView = 'home';
     let currentList = null; // { kind: 'category'|'developer', value }
 
     async function initStore() {
+      loadSources();
       try {
         const conf = await (await fetch('/get-settings')).json();
         installedAppsList = conf.installedApps ? conf.installedApps.map(a => a.appId || a) : [];
+        installedRecords = new Map((conf.installedApps || []).filter(a => a && a.appId).map(a => [a.appId, a]));
       } catch (e) {
         console.warn('Could not load installed apps:', e);
       }
@@ -958,6 +1105,7 @@
         document.getElementById('view-myapps').classList.add('active');
         document.getElementById('nav-myapps').classList.add('active');
         renderMyApps();
+        document.getElementById('sideloadCard').hidden = !storeCanInstall;
       } else if (viewName === 'home') {
         document.getElementById('view-home').classList.add('active');
         document.getElementById('nav-discover').classList.add('active');
@@ -971,6 +1119,7 @@
         document.getElementById('view-settings').classList.add('active');
         document.getElementById('nav-settings').classList.add('active');
         fetchUpdateChannel(); // Fetch the current channel when opening settings
+        document.getElementById('srcInsiders').disabled = !storeCanInstall;
       } else if (viewName === 'landpage') {
         document.getElementById('view-landpage').classList.add('active');
       }
@@ -1132,6 +1281,10 @@
       document.getElementById('lpDesc').textContent = text(app.desc);
       document.getElementById('installError').textContent = '';
       renderPermissions(app);
+      appVersions = null;
+      renderBuilds(app);
+      loadShots(app, defaultChannel(app));
+      fetchVersions(app).then(versions => { if (currentAppOpen === app) { appVersions = versions; renderBuilds(app); } });
       getManifest(app).then(manifest => {
         if (app.repoUrl) resolvedManifests.set(app.repoUrl, manifest);
         if (currentAppOpen !== app) return;
@@ -1142,6 +1295,108 @@
 
       updateInstallBtn();
       switchView('landpage');
+    }
+
+    // Which builds exist (and their versions), plus an Insider badge when this is one.
+    function renderBuilds(app) {
+      const ch = defaultChannel(app);
+      const badge = document.getElementById('lpBadge');
+      badge.hidden = ch !== 'insiders';
+      badge.textContent = hyadeOSI18n.t("store.badge.insider", "Insider");
+      const variants = app.variants || [];
+      const labels = variants.map(v => {
+        const version = (appVersions && appVersions[v.channel]) || v.version;
+        return channelName(v.channel) + (version ? ' v' + text(version).slice(0, 40) : '');
+      });
+      document.getElementById('lpBuilds').textContent = storeSources.insiders || variants.length > 1 ? labels.join(' · ') : '';
+    }
+
+    // ---- Screenshots: the catalog's own list, else the repository's screenshots/ folder ----
+    let shotsKey = null;
+    let shotsList = [];
+    async function loadShots(app, channel) {
+      const key = app.id + ':' + channel;
+      shotsKey = key; shotsList = [];
+      const box = document.getElementById('lpShotsBox'), strip = document.getElementById('lpShots');
+      box.hidden = true; strip.replaceChildren();
+      let list = [];
+      try { list = (await (await fetch('/api/store/screenshots?id=' + encodeURIComponent(app.id) + '&channel=' + channel)).json()).screenshots || []; } catch (e) {}
+      if (shotsKey !== key) return;
+      shotsList = list.filter(src => typeof src === 'string');
+      strip.replaceChildren(...shotsList.map((src, i) => {
+        const img = Object.assign(document.createElement('img'), { alt: hyadeOSI18n.t("store.screenshot-n", "Screenshot {n}", { n: i + 1 }), loading: 'lazy' });
+        const button = Object.assign(document.createElement('button'), { className: 'shot', type: 'button' });
+        button.onclick = () => openLightbox(i);
+        img.onerror = () => { button.remove(); box.hidden = !strip.childElementCount; };
+        img.src = src;
+        button.append(img);
+        return button;
+      }));
+      box.hidden = shotsList.length === 0;
+    }
+    let lightboxIndex = 0;
+    function openLightbox(i) {
+      if (!shotsList.length) return;
+      const box = document.getElementById('lightbox');
+      lightboxIndex = (i + shotsList.length) % shotsList.length;
+      document.getElementById('lightboxImg').src = shotsList[lightboxIndex];
+      document.getElementById('lightboxCount').textContent = shotsList.length > 1 ? (lightboxIndex + 1) + ' / ' + shotsList.length : '';
+      box.querySelectorAll('[data-lb=prev],[data-lb=next]').forEach(b => { b.hidden = shotsList.length < 2; });
+      box.classList.add('open');
+    }
+    const closeLightbox = () => document.getElementById('lightbox').classList.remove('open');
+    document.getElementById('lightbox').addEventListener('click', event => {
+      const action = event.target.closest('[data-lb]') && event.target.closest('[data-lb]').dataset.lb;
+      if (action === 'prev') openLightbox(lightboxIndex - 1);
+      else if (action === 'next') openLightbox(lightboxIndex + 1);
+      else if (action === 'close' || event.target === document.getElementById('lightbox')) closeLightbox();
+    });
+    document.addEventListener('keydown', event => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (event.key === 'Escape') closeLightbox();
+      else if (event.key === 'ArrowLeft') openLightbox(lightboxIndex - 1);
+      else if (event.key === 'ArrowRight') openLightbox(lightboxIndex + 1);
+    });
+
+    // ---- Install flow: build (when the app has two) -> license -> permissions -> install ----
+    function chooseChannel(app) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('store-channel-overlay');
+        const form = document.getElementById('channelForm');
+        document.getElementById('channelIntro').textContent = hyadeOSI18n.t("store.choose.intro", "{app} has a stable and an insider build. You can switch later.", { app: text(app.title) });
+        form.channel.value = 'stable';
+        const fill = v => {
+          document.getElementById('verStable').textContent = v && v.stable ? 'v' + text(v.stable).slice(0, 40) : '';
+          document.getElementById('verInsiders').textContent = v && v.insiders ? 'v' + text(v.insiders).slice(0, 40) : '';
+        };
+        fill(currentAppOpen === app ? appVersions : null);
+        if (!(currentAppOpen === app && appVersions)) fetchVersions(app).then(fill);
+        const done = value => {
+          overlay.style.display = 'none';
+          form.onsubmit = null; overlay.onclick = null;
+          document.getElementById('channelCancel').onclick = null;
+          document.removeEventListener('keydown', onKey);
+          resolve(value);
+        };
+        const onKey = event => { if (event.key === 'Escape') done(null); };
+        form.onsubmit = event => { event.preventDefault(); done(form.channel.value); };
+        overlay.onclick = event => { if (event.target === overlay) done(null); };
+        document.getElementById('channelCancel').onclick = () => done(null);
+        document.addEventListener('keydown', onKey);
+        overlay.style.display = 'flex';
+      });
+    }
+
+    async function startInstall() {
+      const app = currentAppOpen;
+      if (!app) return;
+      let channel = app.insidersOnly ? 'insiders' : 'stable';
+      if (storeSources.insiders && hasBoth(app)) {
+        channel = await chooseChannel(app);
+        if (!channel) return;
+      }
+      installChannel = channel;
+      promptEula();
     }
 
     function updateInstallBtn() {
@@ -1164,7 +1419,13 @@
 
       btnI.onclick = isInst
         ? () => window.parent.postMessage({ type: 'open-app-from-store', appId: currentAppOpen.id }, '*')
-        : () => promptEula();
+        : () => startInstall();
+
+      const btnS = document.getElementById('btnSwitch');
+      const other = installedChannel(currentAppOpen.id) === 'insiders' ? 'stable' : 'insiders';
+      btnS.style.display = isInst && storeCanInstall && variantOf(currentAppOpen, other) ? 'inline-flex' : 'none';
+      btnS.textContent = hyadeOSI18n.t("store.switch-to", "Switch to {channel}", { channel: channelName(other) });
+      btnS.onclick = () => { installChannel = other; promptEula(); };
 
       btnU.style.display = isInst && storeCanInstall ? 'inline-block' : 'none';
       btnU.textContent = hyadeOSI18n.t("store.uninstall", "Uninstall");
@@ -1192,8 +1453,9 @@
     async function promptEula() {
       if (!currentAppOpen) return;
 
-      if (currentAppOpen.eula) {
-        showEulaModal(currentAppOpen.eula);
+      const variant = variantFor(currentAppOpen, installChannel);
+      if (variant.eula) {
+        showEulaModal(variant.eula);
         return;
       }
 
@@ -1207,7 +1469,7 @@
         const res = await fetch('/api/store/eula', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ repoUrl: currentAppOpen.repoUrl })
+          body: JSON.stringify({ repoUrl: variant.repoUrl })
         });
         eula = (await res.json()).eula;
       } catch (err) {}
@@ -1255,12 +1517,13 @@
       if (!app) return;
       const btn = document.getElementById('btnInstall');
       btn.disabled = true;
-      const manifest = await getManifest(app);
+      const variant = variantFor(app, installChannel);
+      const manifest = await getManifest(variant);
       btn.disabled = false;
       const ids = sdkPermissionIds(manifest && manifest.permissions);
       let granted = ids;
       // Apps of the hyadeOS team run with the system: there is nothing to choose.
-      if (ids.length && !isTrustedRepo(app.repoUrl)) {
+      if (ids.length && !isTrustedRepo(variant.repoUrl)) {
         granted = await askPermissions(app, ids);
         if (granted === null) return; // cancelled
       }
@@ -1277,8 +1540,9 @@
       document.getElementById('installError').textContent = '';
 
       try {
+        const variant = variantFor(currentAppOpen, installChannel);
         const body = action === 'install'
-          ? { appId: currentAppOpen.id, title: currentAppOpen.title, icon: currentAppOpen.icon, repoUrl: currentAppOpen.repoUrl, grantedPermissions: Array.isArray(grantedPermissions) ? grantedPermissions : [] }
+          ? { appId: currentAppOpen.id, title: currentAppOpen.title, icon: currentAppOpen.icon, repoUrl: variant.repoUrl, channel: installChannel, grantedPermissions: Array.isArray(grantedPermissions) ? grantedPermissions : [] }
           : { appId: currentAppOpen.id };
 
         const res = await fetch(`/api/store/${action}`, {
@@ -1291,21 +1555,26 @@
         if (!result.success) throw new Error(result.error);
 
         if (action === 'install') {
-          installedAppsList.push(currentAppOpen.id);
-          window.parent.postMessage({
+          const wasInstalled = installedAppsList.includes(currentAppOpen.id);
+          if (!wasInstalled) installedAppsList.push(currentAppOpen.id);
+          installedRecords.set(currentAppOpen.id, { ...(installedRecords.get(currentAppOpen.id) || {}), appId: currentAppOpen.id, title: currentAppOpen.title, icon: currentAppOpen.icon, repoUrl: variant.repoUrl, channel: installChannel, version: result.version || null });
+          if (!wasInstalled) window.parent.postMessage({
             type: 'app-installed-live',
             app: {
               appId: currentAppOpen.id, title: currentAppOpen.title,
               icon: currentAppOpen.icon, url: `apps/${currentAppOpen.id}/index.html`
             }
           }, '*');
+          renderBuilds(currentAppOpen);
+          if (shotsKey !== currentAppOpen.id + ':' + installChannel) loadShots(currentAppOpen, installChannel);
         } else {
           installedAppsList = installedAppsList.filter(id => id !== currentAppOpen.id);
+          installedRecords.delete(currentAppOpen.id);
           window.parent.postMessage({ type: 'app-uninstalled-live', appId: currentAppOpen.id }, '*');
         }
 
         updateInstallBtn();
-        renderPermissions(currentAppOpen, await getManifest(currentAppOpen));
+        renderPermissions(currentAppOpen, await getManifest(action === 'install' ? variant : currentAppOpen));
         handleSearch(document.getElementById('searchInput').value);
       } catch (err) {
         document.getElementById('installError').textContent = hyadeOSI18n.t("store.error", "Error: {error}", { error: err.message });
@@ -1397,6 +1666,75 @@
       }
     }
 
+    // Publishing: which source the app goes to, and the screenshots to show.
+    const MAX_SHOTS = 8;
+    let pubChannel = 'stable';
+    function updatePubChannelHint() {
+      document.getElementById('pubChannelHint').textContent = pubChannel === 'insiders'
+        ? hyadeOSI18n.t("store.publish.channel-insider", "Only people with the Insider source on will see it.")
+        : hyadeOSI18n.t("store.publish.channel-stable", "Everyone sees it.");
+    }
+    function setPubChannel(channel) {
+      pubChannel = channel === 'insiders' ? 'insiders' : 'stable';
+      document.querySelectorAll('#pubChannel button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.channel === pubChannel)));
+      updatePubChannelHint();
+    }
+    document.getElementById('pubChannel').addEventListener('click', event => {
+      const button = event.target.closest('button[data-channel]');
+      if (button) setPubChannel(button.dataset.channel);
+    });
+    function updateShotsHint() {
+      const count = Math.min(document.getElementById('pubShotFiles').files.length, MAX_SHOTS);
+      document.getElementById('pubShotsHint').textContent = count
+        ? hyadeOSI18n.t("store.publish.shots-uploaded", "{count} of {max}. These replace the repository’s screenshots.", { count, max: MAX_SHOTS })
+        : hyadeOSI18n.t("store.publish.shots-hint", "Add images, or put them in a screenshots/ folder in your repository and they are picked up automatically.");
+    }
+    document.getElementById('pubShotFiles').addEventListener('change', updateShotsHint);
+    updatePubChannelHint();
+
+    // Sideload (administrators): an app from a folder or .html file in your home. The kernel
+    // checks the path and the ID again; it runs apart from the system like any third-party app.
+    document.getElementById('sideloadPath').addEventListener('input', event => {
+      const idField = document.getElementById('sideloadId');
+      if (idField.dataset.touched) return;
+      const last = event.target.value.trim().replace(/[\\/]+$/, '').split(/[\\/]/).pop() || '';
+      idField.value = last.replace(/\.html?$/i, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64);
+    });
+    document.getElementById('sideloadId').addEventListener('input', event => { event.target.dataset.touched = event.target.value ? '1' : ''; });
+    document.getElementById('sideloadBtn').addEventListener('click', async () => {
+      const status = document.getElementById('sideloadStatus');
+      const button = document.getElementById('sideloadBtn');
+      const path = document.getElementById('sideloadPath').value.trim();
+      const appId = document.getElementById('sideloadId').value.trim();
+      const title = document.getElementById('sideloadTitle').value.trim();
+      status.style.color = 'var(--text-secondary)';
+      if (!path || !appId) {
+        status.style.color = '#FF453A';
+        status.textContent = hyadeOSI18n.t("store.sideload.required", "Enter the path and an ID.");
+        return;
+      }
+      button.disabled = true;
+      status.textContent = hyadeOSI18n.t("store.working", "Working…");
+      try {
+        const res = await fetch('/api/store/sideload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path, appId, title }) });
+        const r = await res.json();
+        if (!r.success) throw new Error(r.error);
+        status.style.color = '#32d74b';
+        status.textContent = hyadeOSI18n.t("store.sideload.done", "{app} is installed.", { app: text(r.app.title) });
+        if (!installedAppsList.includes(appId)) installedAppsList.push(appId);
+        installedRecords.set(appId, { appId, title: r.app.title, icon: r.app.icon, repoUrl: 'local:' + path });
+        window.parent.postMessage({ type: 'app-installed-live', app: { appId, title: r.app.title, icon: r.app.icon, url: r.app.url } }, '*');
+        document.getElementById('sideloadPath').value = '';
+        document.getElementById('sideloadTitle').value = '';
+        renderMyApps();
+      } catch (err) {
+        status.style.color = '#FF453A';
+        status.textContent = hyadeOSI18n.t("store.error", "Error: {error}", { error: err.message });
+      } finally {
+        button.disabled = false;
+      }
+    });
+
     async function submitApp() {
       const status = document.getElementById('publishStatus');
       status.style.color = 'var(--text-secondary)';
@@ -1410,6 +1748,7 @@
       const iconTextVal = document.getElementById('pubIconText').value.trim();
       const eulaVal = document.getElementById('pubEula').value.trim();
       const fileInput = document.getElementById('pubIconFile');
+      const shotInput = document.getElementById('pubShotFiles');
 
       if (!idVal || !titleVal || !devVal || !descVal || !repoVal) {
         status.style.color = '#FF453A';
@@ -1433,6 +1772,9 @@
       } else if (iconTextVal) {
         formData.append('icon', iconTextVal);
       }
+      if (storeSources.insiders) formData.append('channel', pubChannel);
+      // Uploaded screenshots replace the ones in the repository; they must come after the text fields.
+      [...shotInput.files].slice(0, MAX_SHOTS).forEach(file => formData.append('screenshotFiles', file));
 
       try {
         const res = await fetch('/api/store/publish', {
@@ -1456,6 +1798,8 @@
         document.getElementById('pubRepo').value = '';
         document.getElementById('pubIconText').value = '';
         document.getElementById('pubIconFile').value = '';
+        shotInput.value = '';
+        updateShotsHint();
 
         initStore(); // the new app is on Discover; this page stays for the "propose" button
       } catch (err) {
