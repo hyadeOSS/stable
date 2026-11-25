@@ -994,6 +994,8 @@ function browserShortcutFor(input) {
     if (input.alt && key === 'arrowleft') return 'back';
     if (input.alt && key === 'arrowright') return 'forward';
     if (!ctrl) return null;
+    if (input.shift && key === 'b') return 'toggle-sidebar';
+    if (/^[1-9]$/.test(key)) return 'favorite-' + key;
     if (key === 'tab') return input.shift ? 'prev-tab' : 'next-tab';
     return { t: 'new-tab', w: 'close-tab', l: 'focus-url', f: 'find',
         '=': 'zoom-in', '+': 'zoom-in', '-': 'zoom-out', '0': 'zoom-reset' }[key] || null;

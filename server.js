@@ -495,6 +495,8 @@ require("./lib/terminal-net").registerTerminalNetRoutes(app, { requireAuth: requ
 require("./media-session").registerMediaSessionRoutes(app, { requireAuth: requireAuthJson });
 require("./bluetooth-watch").registerBluetoothWatchRoutes(app, { requireAuth: requireAuthJson });
 require("./online-services").registerOnlineServiceRoutes(app, { getConfig: () => config, saveConfig, requireAuth: requireAuthJson });
+// Random photo behind the Browser's new tab page (no login: that page runs in the browser's own session).
+require("./lib/browser-wallpaper").registerBrowserWallpaperRoute(app);
 
 app.get('/api/system/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
@@ -1483,11 +1485,27 @@ app.post("/api/email/verify-code", async (req, res) => {
   if (!isValidEmail(email)) return res.status(400).json({ success: false, error: "Invalid email address." });
   const result = await checkCode("verify", email, req.body.code);
   if (!result.ok) return res.status(400).json({ success: false, error: result.error });
+  // Activation: the device is bound once an email is verified; the date is kept until that email changes.
+  if (!config.verified || !config.activatedAt || (config.email || "").toLowerCase() !== email.toLowerCase()) config.activatedAt = new Date().toISOString();
   config.email = email;
   config.verified = true;
   config.mailToken = result.token || null;
   saveConfig();
-  res.json({ success: true, message: "Email verified!" });
+  res.json({ success: true, message: "Email verified!", activatedAt: config.activatedAt });
+});
+
+// --- ACTIVATION (Settings > About > Activation) ---
+// Activated = an email verified through the mail relay is bound to this system's account.
+// activatedAt is null for systems verified before the date was recorded.
+app.get("/api/activation", requireAuthJson, (req, res) => {
+  res.json({
+    success: true,
+    activated: Boolean(config.verified && config.email),
+    email: config.email || "",
+    username: config.username || "",
+    activatedAt: config.verified && config.activatedAt ? config.activatedAt : null,
+    mailAvailable: mail.configured
+  });
 });
 
 // --- PASSWORD RECOVERY (uses the verified email) ---
@@ -1711,6 +1729,7 @@ app.post("/save-settings", (req, res) => {
     if (!isValidEmail(cleanEmail)) return res.status(400).json({ success: false, error: "Invalid email address." });
     if ((config.email || "").toLowerCase() !== cleanEmail.toLowerCase()) {
       config.verified = false;
+      delete config.activatedAt;
       config.sendReports = false;
       scheduleDailyEmail();
     }
@@ -2086,6 +2105,7 @@ app.post("/api/system/reset-settings", (req, res) => {
   config.sendReports = false;
   config.email = "";
   config.verified = false;
+  delete config.activatedAt;
   ["darkMode", "performance", "animations", "developer", "allowFlashing"].forEach(key => delete config[key]);
   saveConfig();
   scheduleDailyEmail();

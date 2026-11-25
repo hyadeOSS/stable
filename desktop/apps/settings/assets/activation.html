@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/desktop/assets/i18n-data.js"></script>
+  <script src="/desktop/assets/i18n.js"></script>
+  <script src="/desktop/assets/accent.js"></script>
+<script src="/desktop/assets/mw-theme.js"></script>
+<link rel="stylesheet" href="/desktop/assets/mw-design.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="settings.activation.title">Activation</title>
+  <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
+  <!-- Activation = an email verified through the hyadeOS mail relay is bound to this system's account
+       (server: /api/email/send-code, /api/email/verify-code, /api/activation). -->
+  <style>
+    html, body { margin: 0; height: 100%; background: transparent; -webkit-font-smoothing: antialiased; }
+    body { box-sizing: border-box; padding: 10px 20px; overflow-y: auto; font-family: 'Poppins', sans-serif; color: var(--mw-text); }
+    ::-webkit-scrollbar { display: none; }
+    [hidden] { display: none !important; }
+    .hero { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px 0 22px; text-align: center; }
+    .hero .badge { display: flex; width: 64px; height: 64px; align-items: center; justify-content: center; border-radius: 50%; }
+    .hero .badge .material-symbols-outlined { font-size: 36px; }
+    .badge.pending { color: #ff9f0a; background: rgba(255,159,10,.14); }
+    .badge.done { color: #30d158; background: rgba(48,209,88,.14); }
+    .hero h1 { margin: 0; font-size: 20px; font-weight: 600; }
+    .hero p { max-width: 440px; margin: 0; font-size: 13px; line-height: 1.55; color: rgba(var(--mw-ink), .65); }
+    .box { box-sizing: border-box; width: 100%; margin-bottom: 16px; padding: 20px 24px; border-radius: 12px; background: color-mix(in srgb, var(--mw-surface-3) 55%, transparent); }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 0; font-size: 14px; }
+    .row .label { font-weight: 500; color: rgba(var(--mw-ink), .9); }
+    .row .value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #aaa; }
+    .step-title { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+    .step-text { margin: 0 0 14px; font-size: 12.5px; line-height: 1.5; color: rgba(var(--mw-ink), .6); }
+    .field { display: flex; gap: 8px; }
+    input { flex: 1; min-width: 0; height: 38px; padding: 0 14px; border: 0; border-radius: 10px; outline: none; color: var(--mw-text);
+      background: rgba(var(--mw-ink), .07); box-shadow: inset 0 0 0 1px rgba(var(--mw-ink), .1); font: 13.5px 'Poppins', sans-serif; }
+    input:focus { box-shadow: inset 0 0 0 1.5px var(--m3-accent-text, #0a84ff); }
+    input.code { letter-spacing: 6px; font-size: 18px; text-align: center; max-width: 220px; }
+    button { height: 38px; padding: 0 18px; border: 0; border-radius: 10px; color: var(--m3-accent-on-active, #fff); background: var(--m3-accent-active, #0a84ff);
+      font: 500 13px 'Poppins', sans-serif; cursor: pointer; white-space: nowrap; }
+    button:disabled { opacity: .5; cursor: default; }
+    button.link { height: auto; padding: 0; color: var(--m3-accent-text, #64d2ff); background: none; font-weight: 400; font-size: 12.5px; }
+    .links { display: flex; gap: 18px; margin-top: 12px; }
+    .msg { min-height: 18px; margin-top: 10px; font-size: 12.5px; color: rgba(var(--mw-ink), .6); }
+    .msg.err { color: #ff8a80; }
+    .msg.ok { color: #30d158; }
+    .note { font-size: 11.5px; line-height: 1.5; color: rgba(var(--mw-ink), .45); }
+    /* Same back header as the other Settings sub-pages (settings-submenu.css). */
+    .settings-page-header { display: flex; align-items: center; gap: 8px; color: var(--sys-accent-text, #64d2ff); }
+    .settings-page-header h1 { margin: 0 0 0 4px; color: var(--mw-text); font-size: 20px; font-weight: 500; }
+    .settings-page-back { display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; }
+    .settings-page-back:hover { opacity: .8; }
+  </style>
+</head>
+<body>
+  <div class="settings-page-header">
+    <button class="settings-page-back" type="button" onclick="location.href = 'about.html'" aria-label="Back to About" data-i18n-aria-label="settings.about.back">
+      <span class="material-symbols-outlined">arrow_back_ios_new</span>
+    </button>
+    <h1 data-i18n="settings.activation.title">Activation</h1>
+  </div>
+  <div class="hero">
+    <div class="badge pending" id="badge"><span class="material-symbols-outlined" id="badgeIcon">info</span></div>
+    <h1 id="heroTitle" data-i18n="settings.activation.not-activated">hyadeOS is not activated</h1>
+    <p id="heroText" data-i18n="settings.activation.not-activated-text">Bind an email to your local account to finish binding this device. We'll send a 6-digit code to check it's yours.</p>
+  </div>
+
+  <!-- Not activated: step 1, the email -->
+  <div class="box" id="stepEmail" hidden>
+    <p class="step-title" data-i18n="settings.activation.step-email">1. Your email</p>
+    <p class="step-text" data-i18n="settings.activation.step-email-text">It's used to recover your password and to confirm it's really you.</p>
+    <form class="field" id="emailForm">
+      <input type="email" id="email" autocomplete="email" placeholder="you@example.com" required aria-label="Email" data-i18n-aria-label="settings.activation.email">
+      <button type="submit" id="sendBtn" data-i18n="settings.activation.send-code">Send code</button>
+    </form>
+    <div class="msg" id="emailMsg" role="status"></div>
+  </div>
+
+  <!-- Not activated: step 2, the code -->
+  <div class="box" id="stepCode" hidden>
+    <p class="step-title" data-i18n="settings.activation.step-code">2. Enter the code</p>
+    <p class="step-text" id="codeText"></p>
+    <form class="field" id="codeForm">
+      <input class="code" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="Code" data-i18n-aria-label="settings.activation.code">
+      <button type="submit" id="activateBtn" data-i18n="settings.activation.activate">Activate</button>
+    </form>
+    <div class="links">
+      <button type="button" class="link" id="resendBtn" data-i18n="settings.activation.resend">Resend code</button>
+      <button type="button" class="link" id="changeBtn" data-i18n="settings.activation.change-email">Use a different email</button>
+    </div>
+    <div class="msg" id="codeMsg" role="status"></div>
+  </div>
+
+  <!-- Activated -->
+  <div class="box" id="details" hidden>
+    <div class="row"><span class="label" data-i18n="settings.activation.status">Status</span><span class="value" data-i18n="settings.activation.status-active">Activated</span></div>
+    <div class="row"><span class="label" data-i18n="settings.activation.account">Account</span><span class="value" id="account"></span></div>
+    <div class="row"><span class="label" data-i18n="settings.activation.email">Email</span><span class="value" id="boundEmail"></span></div>
+    <div class="row"><span class="label" data-i18n="settings.activation.since">Activated on</span><span class="value" id="since"></span></div>
+  </div>
+  <p class="note" id="doneNote" hidden data-i18n="settings.activation.change-note">To bind a different email, change it in your profile (Settings > you) and verify it again.</p>
+
+  <div class="box" id="unavailable" hidden>
+    <p class="step-text" style="margin:0" data-i18n="settings.activation.unavailable">The hyadeOS mail service isn't set up on this system, so activation isn't available right now.</p>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let email = '', resendTimer = null;
+
+  async function readJson(res) { try { return await res.json(); } catch (e) { return { success: false, error: res.statusText }; } }
+  function msg(id, text, kind) { $(id).textContent = text || ''; $(id).className = 'msg' + (kind ? ' ' + kind : ''); }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return null;
+    return d.toLocaleString(hyadeOSI18n.locale || undefined, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function show(state) {
+    const done = state.activated;
+    $('badge').className = 'badge ' + (done ? 'done' : 'pending');
+    $('badgeIcon').textContent = done ? 'check_circle' : 'info';
+    $('heroTitle').textContent = done ? hyadeOSI18n.t("settings.activation.activated", "hyadeOS is activated") : hyadeOSI18n.t("settings.activation.not-activated", "hyadeOS is not activated");
+    $('heroText').textContent = done
+      ? hyadeOSI18n.t("settings.activation.activated-text", "This device is bound to your account and your email.")
+      : hyadeOSI18n.t("settings.activation.not-activated-text", "Bind an email to your local account to finish binding this device. We'll send a 6-digit code to check it's yours.");
+    $('details').hidden = $('doneNote').hidden = !done;
+    $('unavailable').hidden = done || state.mailAvailable !== false;
+    $('stepEmail').hidden = done || state.mailAvailable === false;
+    $('stepCode').hidden = true;
+    if (done) {
+      $('account').textContent = state.username || '—';
+      $('boundEmail').textContent = state.email;
+      $('since').textContent = formatDate(state.activatedAt) || hyadeOSI18n.t("settings.activation.since-unknown", "Not recorded (activated before this was saved)");
+    } else if (state.email && !$('email').value) {
+      $('email').value = state.email;
+    }
+  }
+
+  async function load() {
+    try {
+      const data = await readJson(await fetch('/api/activation', { cache: 'no-store' }));
+      if (data.success) show(data);
+    } catch (e) { msg('emailMsg', hyadeOSI18n.t("settings.activation.network-error", "Network error: {message}", { message: e.message }), 'err'); }
+  }
+
+  function cooldown(seconds) {
+    const btn = $('resendBtn');
+    clearInterval(resendTimer);
+    let left = seconds;
+    const label = () => hyadeOSI18n.t("settings.activation.resend-wait", "Resend code ({seconds}s)", { seconds: left });
+    btn.disabled = true;
+    btn.textContent = label();
+    resendTimer = setInterval(() => {
+      if (--left <= 0) { clearInterval(resendTimer); btn.disabled = false; btn.textContent = hyadeOSI18n.t("settings.activation.resend", "Resend code"); }
+      else btn.textContent = label();
+    }, 1000);
+  }
+
+  async function sendCode(msgId) {
+    msg(msgId, hyadeOSI18n.t("settings.activation.sending", "Sending code..."));
+    try {
+      const data = await readJson(await fetch('/api/email/send-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }));
+      if (!data.success) {
+        msg(msgId, data.error || hyadeOSI18n.t("settings.activation.send-failed", "Could not send the code."), 'err');
+        if (data.retryAfter) cooldown(data.retryAfter);
+        return false;
+      }
+      cooldown(60);
+      return true;
+    } catch (e) {
+      msg(msgId, hyadeOSI18n.t("settings.activation.network-error", "Network error: {message}", { message: e.message }), 'err');
+      return false;
+    }
+  }
+
+  $('emailForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    email = $('email').value.trim();
+    if (!$('email').checkValidity() || !email) { msg('emailMsg', hyadeOSI18n.t("settings.activation.bad-email", "Enter a valid email address."), 'err'); return; }
+    $('sendBtn').disabled = true;
+    const sent = await sendCode('emailMsg');
+    $('sendBtn').disabled = false;
+    if (!sent) return;
+    msg('emailMsg', '');
+    $('codeText').textContent = hyadeOSI18n.t("settings.activation.code-text", "We sent a 6-digit code to {email}. It expires in 10 minutes.", { email });
+    $('stepEmail').hidden = true;
+    $('stepCode').hidden = false;
+    msg('codeMsg', '');
+    $('code').value = '';
+    $('code').focus();
+  });
+
+  $('codeForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    const code = $('code').value.trim();
+    if (!/^\d{6}$/.test(code)) { msg('codeMsg', hyadeOSI18n.t("settings.activation.enter-code", "Enter the 6-digit code."), 'err'); return; }
+    $('activateBtn').disabled = true;
+    try {
+      const data = await readJson(await fetch('/api/email/verify-code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code }) }));
+      if (!data.success) { msg('codeMsg', data.error || hyadeOSI18n.t("settings.activation.wrong-code", "Wrong code."), 'err'); return; }
+      clearInterval(resendTimer);
+      await load();
+    } catch (e) {
+      msg('codeMsg', hyadeOSI18n.t("settings.activation.network-error", "Network error: {message}", { message: e.message }), 'err');
+    } finally {
+      $('activateBtn').disabled = false;
+    }
+  });
+
+  $('code').addEventListener('input', () => { $('code').value = $('code').value.replace(/\D/g, '').slice(0, 6); });
+  $('resendBtn').addEventListener('click', () => sendCode('codeMsg').then(ok => ok && msg('codeMsg', hyadeOSI18n.t("settings.activation.code-sent", "Code sent."), 'ok')));
+  $('changeBtn').addEventListener('click', () => { $('stepCode').hidden = true; $('stepEmail').hidden = false; $('email').focus(); });
+
+  load();
+</script>
+</body>
+</html>

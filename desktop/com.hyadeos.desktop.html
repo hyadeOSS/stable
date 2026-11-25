@@ -597,52 +597,133 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
       display: block;
     }
 
-    #popup2 { background: var(--bt-bg, #15171b) !important; }
-    #popup2 .popup-header { height: 36px; padding: 0 12px 0 8px; background: var(--bt-frame, #1b1d21) !important; cursor: move; }
-    .browser-tabs { display: flex; min-width: 0; height: 100%; flex: 1; align-items: flex-end; gap: 2px; overflow-x: auto; margin: 0 4px 0 0; scrollbar-width: none; }
-    .browser-tabs::-webkit-scrollbar { display: none; }
-    .browser-tab-btn {
-      position: relative; display: flex; min-width: 60px; max-width: 220px; flex: 0 1 200px; height: 30px;
-      align-items: center; gap: 8px; overflow: hidden; padding: 0 6px 0 10px;
-      border-radius: 9px 9px 0 0; color: rgba(255,255,255,.6); background: transparent;
-      font: 12px 'Poppins', sans-serif; cursor: pointer; text-align: left; user-select: none;
+    /* --- Browser: glass sidebar + page card (spec: docs/superpowers/specs/2026-11-23-sidebar-browser-design.md) --- */
+    #popup2 { --bs-tint: #4263eb; --bs-w: 250px; color: var(--bs-fg); font-family: 'Poppins', sans-serif; }
+    /* Dark like every other hyadeOS window. */
+    #popup2 {
+      --bs-fg: #f2f2f4; --bs-muted: rgba(255,255,255,.5); --bs-hover: rgba(255,255,255,.07); --bs-active: rgba(255,255,255,.16);
+      --bs-tile: rgba(255,255,255,.08); --bs-line: rgba(255,255,255,.1); --bs-bar: #1d1f24; --bs-bar-fg: rgba(255,255,255,.75); --bs-empty: #17191d;
+      --bs-glass: color-mix(in srgb, var(--bs-tint) 24%, rgba(20,22,28,.6)); --bs-solid: color-mix(in srgb, var(--bs-tint) 18%, #17191e);
     }
-    .browser-tab-btn:not(.active) + .browser-tab-btn:not(.active)::after { position: absolute; left: -1px; top: 8px; bottom: 8px; width: 1px; background: rgba(255,255,255,.12); content: ""; }
-    .browser-tab-btn:hover { color: #fff; background: rgba(255,255,255,.06); }
-    .browser-tab-btn.active { color: #fff; background: var(--bt-toolbar, #26292e); }
-    .browser-tab-icon { width: 16px; height: 16px; flex: 0 0 16px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(255,255,255,.55); }
-    .browser-tab-icon img { width: 16px; height: 16px; object-fit: contain; }
-    .browser-tab-icon.loading::before { width: 12px; height: 12px; border: 2px solid color-mix(in srgb, var(--m3-accent-text) 25%, transparent); border-top-color: var(--m3-accent-text); border-radius: 50%; content: ""; animation: browserSpin .7s linear infinite; }
-    .browser-tab-icon.loading > * { display: none; }
-    @keyframes browserSpin { to { transform: rotate(360deg); } }
-    .browser-tab-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .browser-tab-close { position: relative; z-index: 1; display: inline-flex; width: 20px; height: 20px; flex: 0 0 20px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 50%; color: inherit; background: transparent; cursor: pointer; font-size: 14px; opacity: .7; }
-    .browser-tab-close:hover { opacity: 1; background: rgba(255,255,255,.14); }
-    #browserNewTab { flex: 0 0 28px; margin: 0 8px 1px 0; }
-    #popup2 .browser-tab-btn, #popup2 .browser-tab-close { transition: none; }
-    .browser-toolbar { position: relative; display: flex; min-width: 0; height: 42px; align-items: center; gap: 2px; padding: 0 8px; background: var(--bt-toolbar, #26292e); border-bottom: 1px solid rgba(255,255,255,.06); }
-    .browser-url-wrap { display: flex; min-width: 0; height: 30px; flex: 1; align-items: center; gap: 6px; margin: 0 6px; padding: 0 4px 0 10px; border: 1px solid transparent; border-radius: 15px; background: var(--bt-bg, #15171b); }
-    .browser-url-wrap:focus-within { border-color: var(--bt-accent, var(--m3-accent-text)); }
-    .browser-url-icon { font-size: 15px !important; color: rgba(255,255,255,.5); }
-    .browser-url-icon.secure { color: #30d158; }
-    #browserUrl { min-width: 0; height: 100%; flex: 1; padding: 0; border: 0; outline: none; color: #f4f4f5; background: transparent !important; font: 12.5px 'Poppins', sans-serif; }
-    #browserUrl::placeholder { color: rgba(255,255,255,.42); }
-    #browserZoom { flex: 0 0 auto; height: 22px; padding: 0 8px; border: 0; border-radius: 11px; color: #fff; background: rgba(255,255,255,.1); font: 11px 'Poppins', sans-serif; cursor: pointer; }
-    #browserZoom[hidden] { display: none; }
-    .browser-nav-btn {
-      display: inline-flex; width: 30px; height: 30px; flex: 0 0 30px; align-items: center; justify-content: center;
-      padding: 0; border: 0; border-radius: 50%; color: rgba(255,255,255,.78); background: transparent !important; cursor: pointer;
-    }
+    #popup2 { background: var(--bs-glass) !important; }
+    /* Blur turned off (power saver, Lab performance): a solid tint keeps the sidebar readable. */
+    body.power-saver #popup2, body.lab-performance #popup2 { background: var(--bs-solid) !important; }
+
+    .bsb-sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 20; width: var(--bs-w); box-sizing: border-box; display: flex; flex-direction: column; padding: 0 6px 8px 10px; font-size: 13px; }
+    .bsb-top { display: flex; height: 46px; flex: 0 0 46px; align-items: center; gap: 8px; padding: 0 2px; }
+    /* The page's top bar doubles as the title bar (drag handle + window buttons on the right). */
+    #popup2 .browser-toolbar.popup-header { height: 38px; flex: 0 0 38px; padding: 0 12px 0 6px; gap: 2px; justify-content: flex-start; background: var(--bs-bar) !important; color: var(--bs-bar-fg); font-weight: 400; }
+    #popup2 .window-actions { gap: 14px; margin-left: 10px; }
+    #browserExpand { display: none; }
+    #popup2.bsb-collapsed #browserExpand { display: inline-flex; }
+    #popup2 .action-btn { color: var(--bs-muted); transition: color .15s; }
+    #popup2 .action-btn:hover, #popup2 .action-btn:active { color: var(--bs-fg); transform: none; }
+    #popup2 .action-btn.close-btn:hover { color: #ff453a; }
+    .bsb-space-btn { display: inline-flex; align-items: center; gap: 2px; height: 26px; max-width: 120px; padding: 0 6px 0 11px; border: 0; border-radius: 8px; color: #fff; background: var(--bs-tint); font: 600 12px 'Poppins', sans-serif; cursor: pointer; }
+    .bsb-space-btn > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bsb-space-btn .material-symbols-outlined { font-size: 16px; }
+    #browserCollapse { margin-left: auto; }
+
+    /* The OS removes every border and outline globally (* { border: 0 !important }), so lines and focus rings here are shadows. */
+    .browser-nav-btn { display: inline-flex; width: 30px; height: 30px; flex: 0 0 30px; align-items: center; justify-content: center; padding: 0; border-radius: 8px; color: rgba(255,255,255,.78); background: transparent !important; cursor: pointer; }
     .browser-nav-btn:hover:not(:disabled) { color: #fff; background: rgba(255,255,255,.1) !important; }
     .browser-nav-btn:disabled { color: rgba(255,255,255,.25); cursor: default; }
-    #popup2 .browser-nav-btn { transition: none; }
-    #popup2 .action-btn { transition: color .15s; }
-    #popup2 .action-btn:hover, #popup2 .action-btn:active { transform: none; }
-    .browser-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--bt-accent, var(--m3-accent-text)); opacity: 0; transition: width .4s ease, opacity .3s ease; pointer-events: none; }
+    #popup2 .browser-nav-btn { color: var(--bs-bar-fg); transition: none; }
+    #popup2 .browser-nav-btn:hover:not(:disabled) { color: var(--bs-fg); background: var(--bs-hover) !important; }
+    #popup2 .browser-nav-btn:disabled { color: var(--bs-line); }
+    #popup2 :is(.browser-findbar, .browser-ext-panel) .browser-nav-btn { color: rgba(255,255,255,.78); }
+    #popup2 .browser-nav-btn .material-symbols-outlined { font-size: 19px; }
+
+    .browser-url-wrap { position: relative; display: flex; min-width: 0; height: 34px; flex: 0 0 34px; align-items: center; gap: 7px; margin: 2px 0 10px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: var(--bs-tile); }
+    .browser-url-wrap:focus-within { background: var(--bs-active); box-shadow: 0 0 0 1.5px var(--bs-tint); }
+    .browser-url-icon { font-size: 15px !important; color: var(--bs-muted); }
+    .browser-url-icon.secure { color: var(--bs-muted); }
+    #browserUrl { min-width: 0; height: 100%; flex: 1; padding: 0; border: 0; outline: none; color: var(--bs-fg); background: transparent !important; font: 12.5px 'Poppins', sans-serif; }
+    #browserUrl::placeholder { color: var(--bs-muted); }
+    .bsb-url .browser-suggest { top: calc(100% + 6px); right: auto; width: max(100%, 420px); border-radius: 14px; }
+
+    .bsb-favs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px; }
+    .bsb-favs:empty { display: none; }
+    #popup2.bsb-dragging .bsb-favs:empty { display: block; height: 44px; border-radius: 10px; background: var(--bs-hover); box-shadow: inset 0 0 0 1.5px var(--bs-line); }
+    .bsb-fav { display: flex; height: 44px; align-items: center; justify-content: center; border: 0; border-radius: 10px; color: var(--bs-fg); background: var(--bs-tile); cursor: pointer; transition: background .15s, transform .25s var(--spring-bounce); }
+    .bsb-fav:hover { background: var(--bs-active); }
+    .bsb-fav.active { background: var(--bs-active); box-shadow: 0 1px 4px rgba(0,0,0,.12), inset 0 0 0 1.5px color-mix(in srgb, var(--bs-tint) 55%, transparent); }
+    .bsb-fav img { width: 20px; height: 20px; object-fit: contain; }
+    .bsb-fav .material-symbols-outlined { font-size: 20px; color: var(--bs-muted); }
+
+    .bsb-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: 2px; }
+    .bsb-scroll::-webkit-scrollbar { display: none; }
+    .bsb-list { display: flex; flex-direction: column; gap: 2px; min-height: 4px; }
+    .bsb-row { display: flex; width: 100%; height: 36px; flex: 0 0 36px; align-items: center; gap: 10px; padding: 0 6px 0 10px; box-sizing: border-box; border: 0; border-radius: 8px; color: var(--bs-fg); background: transparent; font: 13px 'Poppins', sans-serif; text-align: left; cursor: default; user-select: none; }
+    .bsb-row:hover { background: var(--bs-hover); }
+    .bsb-row.active { background: var(--bs-active); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .bsb-row:focus-visible, .bsb-fav:focus-visible { box-shadow: inset 0 0 0 2px var(--bs-tint); }
+    .bsb-row-icon { display: flex; width: 16px; height: 16px; flex: 0 0 16px; align-items: center; justify-content: center; font-size: 16px; color: var(--bs-muted); }
+    .bsb-row-icon img { width: 16px; height: 16px; object-fit: contain; }
+    .bsb-row-icon.loading::before, .bsb-fav.loading::before { width: 12px; height: 12px; border: 2px solid color-mix(in srgb, var(--bs-tint) 25%, transparent); border-top-color: var(--bs-tint); border-radius: 50%; content: ""; animation: browserSpin .7s linear infinite; }
+    .bsb-row-icon.loading > *, .bsb-fav.loading > * { display: none; }
+    @keyframes browserSpin { to { transform: rotate(360deg); } }
+    .bsb-row-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bsb-row-close { display: none; width: 22px; height: 22px; flex: 0 0 22px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; color: var(--bs-muted); background: transparent; font-size: 15px; cursor: pointer; }
+    .bsb-row:hover .bsb-row-close, .bsb-row.active .bsb-row-close { display: inline-flex; }
+    .bsb-row-close:hover { color: var(--bs-fg); background: var(--bs-hover); }
+    .bsb-new { color: var(--bs-muted); cursor: pointer; }
+    .bsb-row.drop-before { box-shadow: inset 0 2px 0 var(--bs-tint); }
+    .bsb-row.drop-after { box-shadow: inset 0 -2px 0 var(--bs-tint); }
+    .bsb-fav.drop-before { box-shadow: inset 2px 0 0 var(--bs-tint); }
+    .bsb-row.dragging, .bsb-fav.dragging { opacity: .4; }
+
+    .bsb-divider { display: flex; align-items: center; gap: 6px; height: 22px; flex: 0 0 22px; margin: 4px 4px 4px 8px; }
+    .bsb-divider > span { flex: 1; height: 1px; background: var(--bs-line); }
+    .bsb-divider button { display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px; border: 0; border-radius: 6px; color: var(--bs-muted); background: transparent; font: 11px 'Poppins', sans-serif; cursor: pointer; opacity: 0; transition: opacity .15s; }
+    .bsb-divider:hover button, .bsb-divider button:focus-visible { opacity: 1; }
+    .bsb-divider button:hover { color: var(--bs-fg); background: var(--bs-hover); }
+    .bsb-divider .material-symbols-outlined { font-size: 13px; }
+    .bsb-divider.empty button { display: none; }
+
+    .bsb-resize { position: absolute; top: 0; right: -4px; bottom: 0; width: 8px; cursor: col-resize; }
+    .bsb-peek-zone { position: absolute; top: 0; bottom: 0; left: 0; z-index: 19; width: 10px; display: none; }
+
+    .bsb-card { position: absolute; top: 8px; right: 8px; bottom: 8px; left: var(--bs-w); z-index: 1; display: flex; flex-direction: column; overflow: hidden; border-radius: 10px; background: var(--bs-bar); box-shadow: 0 0 0 1px rgba(0,0,0,.07), 0 4px 18px rgba(0,0,0,.16); }
+    .browser-toolbar { position: relative; display: flex; min-width: 0; height: 38px; flex: 0 0 38px; align-items: center; gap: 2px; padding: 0 6px; color: var(--bs-bar-fg); background: var(--bs-bar); border-bottom: 1px solid var(--bs-line); }
+    .bsb-toolbar-space { flex: 1; }
+    #browserZoom { flex: 0 0 auto; height: 22px; padding: 0 8px; border: 0; border-radius: 11px; color: var(--bs-fg); background: var(--bs-hover); font: 11px 'Poppins', sans-serif; cursor: pointer; }
+    #browserZoom[hidden] { display: none; }
+    .browser-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--bs-tint); opacity: 0; pointer-events: none; transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; }
     .browser-progress.active { opacity: 1; }
-    .browser-tab-content { position: relative; width: 100%; height: calc(100% - 78px); background: #fff; }
+    .browser-tab-content { position: relative; width: 100%; min-height: 0; flex: 1; background: #fff; }
     .browser-view { display: flex; width: 100%; height: 100%; border: 0; background: #fff; }
     .browser-view[hidden] { display: none; }
+    .bsb-empty { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--bs-muted); background: var(--bs-empty); font-size: 13px; }
+    .bsb-empty[hidden] { display: none; }
+    .bsb-empty .material-symbols-outlined { font-size: 44px; }
+    .bsb-empty button { padding: 7px 18px; border: 0; border-radius: 16px; color: #fff; background: var(--bs-tint); font: 500 12.5px 'Poppins', sans-serif; cursor: pointer; }
+
+    /* The window is focused by clicking the page; the cover sits only over the card. */
+    /* Below the title bar, like every window: clicking there focuses, the bar still drags. */
+    #popup2 > .popup-glass { top: 46px; left: var(--bs-w); right: 8px; bottom: 8px; width: auto; height: auto; }
+
+    /* Collapsed: the card fills the window, a "show sidebar" button appears in its toolbar,
+       and the sidebar slides in over the page from the left edge. */
+    #popup2.bsb-collapsed .bsb-card, #popup2.bsb-collapsed > .popup-glass { left: 8px; }
+    #popup2.bsb-collapsed .bsb-peek-zone { display: block; }
+    #popup2.bsb-collapsed .bsb-sidebar { z-index: 30; top: 8px; bottom: 8px; padding-top: 10px; border-radius: 0 12px 12px 0; background: var(--bs-solid); box-shadow: 0 10px 40px rgba(0,0,0,.3); transform: translateX(calc(-100% - 12px)); transition: transform .28s var(--spring); }
+    #popup2.bsb-collapsed.bsb-peek .bsb-sidebar { transform: none; }
+    #popup2.bsb-collapsed .bsb-resize { display: none; }
+    #popup2:not(.bsb-ready) :is(.bsb-card, .bsb-sidebar) { transition: none !important; }
+    #popup2.bsb-ready .bsb-card { transition: left .28s var(--spring); }
+
+    /* #popup2 makes these win over the shared .browser-menu rule further down (z-index 4, right: 8px),
+       which put the spaces menu under the sidebar and stretched it. */
+    #popup2 .bsb-popover { right: auto; z-index: 40; min-width: 220px; max-width: 280px; }
+    /* Menus, suggestions, find bar and extensions panel: frosted glass like the rest of the window. */
+    #popup2 :is(.browser-menu, .browser-suggest, .browser-findbar, .browser-ext-panel) {
+      background: rgba(30,31,37,.68); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 16px 40px rgba(0,0,0,.45);
+    }
+    body:is(.power-saver, .lab-performance) #popup2 :is(.browser-menu, .browser-suggest, .browser-findbar, .browser-ext-panel) { background: #1f2026; }
+    .bsb-popover .bsb-space-swatch { width: 12px; height: 12px; flex: 0 0 12px; border-radius: 50%; background: var(--sw); }
+    .bsb-popover input.bsb-rename { width: 100%; height: 30px; margin: 2px 0; padding: 0 10px; box-sizing: border-box; border-radius: 8px; color: #fff; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); font: 12.5px 'Poppins', sans-serif; }
     .browser-error { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; text-align: center; color: #e8e8ea; background: var(--bt-bg, #15171b); font-family: 'Poppins', sans-serif; }
     .browser-error[hidden] { display: none; }
     .browser-error .material-symbols-outlined { font-size: 48px; color: rgba(255,255,255,.4); }
@@ -664,8 +745,6 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
     @keyframes browserPop { from { opacity: 0; transform: translateY(-6px) scale(0.94); } to { opacity: 1; transform: none; } }
     .browser-menu:not([hidden]) { transform-origin: top right; animation: browserPop 0.24s var(--spring) both; }
     .browser-findbar:not([hidden]) { transform-origin: top right; animation: browserPop 0.24s var(--spring) both; }
-    #popup2 .browser-tab-btn { transition: background 0.18s ease, color 0.18s ease; }
-    .browser-progress { transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; }
     /* Address bar suggestions */
     .browser-suggest { position: absolute; top: calc(100% - 2px); left: 0; right: 0; z-index: 6; padding: 6px; border-radius: 0 0 14px 14px; background: var(--bt-toolbar, #26292e); box-shadow: 0 16px 34px rgba(0,0,0,0.45); font: 12.5px 'Poppins', sans-serif; color: #e8e8ea; transform-origin: top center; animation: browserPop 0.2s var(--spring) both; }
     .browser-suggest[hidden] { display: none; }
@@ -1057,11 +1136,90 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
     /* No window chrome: apps leave through the home bar and recents. A header that only holds the
        title goes; one that holds the app's tabs (Browser, Files, Terminal) stays, without buttons. */
     body.tablet-apps .popup:not([id^="dialog_"]) .popup-header .window-actions { display: none !important; }
-    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.browser-tabs)) > .popup-header { display: none !important; }
-    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.browser-tabs)) > .popup-frame { height: 100%; }
-    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.browser-tabs)) > .popup-glass { top: 0; height: 100%; }
+    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.bsb-sidebar)) > .popup-header { display: none !important; }
+    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.bsb-sidebar)) > .popup-frame { height: 100%; }
+    body.tablet-apps .popup:not([id^="dialog_"]):not(:has(.bsb-sidebar)) > .popup-glass { top: 0; height: 100%; }
     body.tablet-apps .popup .resize-handle, body.tablet-apps .popup-header .min-btn, body.tablet-apps .popup-header .max-btn { display: none !important; }
     body.tablet-apps .popup-header { cursor: default; }
+
+    /* ═══ Alt+Tab window switcher ═══ */
+    #winSwitcher { position: fixed; inset: 0; z-index: 2147480600; display: flex; align-items: center; justify-content: center; pointer-events: none; visibility: hidden; }
+    #winSwitcher.open { visibility: visible; pointer-events: auto; }
+    .wsw-panel { position: relative; display: flex; gap: 10px; max-width: calc(100vw - 48px); padding: 14px; overflow-x: auto; scrollbar-width: none; box-sizing: border-box; border-radius: 28px;
+      background: rgba(24, 28, 38, 0.58); -webkit-backdrop-filter: blur(40px) saturate(200%); backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 30px 80px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.1);
+      opacity: 0; transform: scale(0.9); transition: opacity 0.14s ease, transform 0.18s cubic-bezier(0.4, 0, 1, 1); }
+    #winSwitcher.open .wsw-panel { opacity: 1; transform: none; transition: opacity 0.2s ease, transform 0.45s var(--spring); }
+    .wsw-card { position: relative; z-index: 1; flex: 0 0 156px; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 10px 10px 12px; border: 0; border-radius: 20px; background: transparent; color: #fff; font: 500 13px 'Poppins', sans-serif; cursor: pointer; }
+    #winSwitcher.open .wsw-card { animation: wswCardIn 0.5s var(--spring) backwards; animation-delay: calc(var(--i) * 28ms); }
+    @keyframes wswCardIn { from { opacity: 0; transform: translateY(14px) scale(0.92); } to { opacity: 1; transform: none; } }
+    .wsw-preview { position: relative; width: 136px; height: 92px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); transition: transform 0.35s var(--spring-bounce); }
+    .wsw-preview img, .wsw-preview .menu-icon, .wsw-preview .menu-icon-symbol { width: 52px; height: 52px; object-fit: contain; font-size: 52px; }
+    .wsw-card.on .wsw-preview { transform: scale(1.04); }
+    .wsw-min { position: absolute; right: 8px; bottom: 6px; font-size: 16px; color: rgba(255,255,255,0.6); }
+    .wsw-label { max-width: 136px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(255,255,255,0.8); }
+    .wsw-card.on .wsw-label { color: #fff; }
+    /* The selection: one ring that glides from card to card. */
+    .wsw-ring { position: absolute; left: 0; top: 0; z-index: 0; border-radius: 20px; pointer-events: none; background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 2px var(--m3-accent-active);
+      transition: transform 0.38s var(--spring), width 0.38s var(--spring), height 0.38s var(--spring); }
+    @media (prefers-reduced-motion: reduce) { .wsw-ring, .wsw-panel, #winSwitcher.open .wsw-panel { transition: none; } #winSwitcher.open .wsw-card { animation: none; } }
+    /* --- Privacy mode --- */
+    #tilePrivacy.active { --qs-tint: #3f7dff; }
+    .qsi-shield, .qsi-tick { stroke-dasharray: 1; transition: fill 0.3s var(--spring), opacity 0.3s ease; }
+    .qsi-shield { transform-box: view-box; transform-origin: 12px 12px; }
+    .active > .hmos-icon-bg .qsi-shield { fill: currentColor; }
+    .qsi-tick { stroke: var(--qs-tint, #3f7dff); stroke-width: 2.4; opacity: 0; }
+    .active > .hmos-icon-bg .qsi-tick { opacity: 1; }
+    .inactive .qsi-shield { opacity: 0.55; }
+    @keyframes qsiShield { 0% { stroke-dashoffset: 1; fill: transparent; transform: scale(0.7); } 55% { stroke-dashoffset: 0; fill: transparent; transform: scale(1.08); } 100% { stroke-dashoffset: 0; fill: currentColor; transform: scale(1); } }
+    .qs-anim .qsi-shield { animation: qsiShield 0.62s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+    .qs-anim .qsi-tick { animation: qsiDraw 0.3s ease-out 0.48s both; }
+
+    /* The taskbar's shield: there while privacy mode is on. */
+    .tray-privacy { display: inline-flex; align-items: center; width: 0; margin-right: -9px; opacity: 0; overflow: visible; transition: width 0.42s var(--spring), margin 0.42s var(--spring), opacity 0.25s ease; }
+    .tray-privacy svg { width: 17px; height: 17px; flex: 0 0 17px; fill: #6cb6ff; transition: opacity 0.2s ease; }
+    .tray-privacy .tp-tick { fill: none; stroke: #0d1a33; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    body.privacy-mode .tray-privacy { width: 17px; margin-right: 0; opacity: 1; }
+    body.privacy-arriving .tray-privacy svg { opacity: 0; transition: none; }
+
+    /* Notification text: what it says gives way to "Content hidden". */
+    .pm-mask { display: none; align-items: center; gap: 5px; color: rgba(255,255,255,0.6); }
+    .pm-mask .material-symbols-outlined { font-size: 14px; }
+    body.privacy-mode .pm-real { display: none; }
+    body.privacy-mode .pm-mask { display: inline-flex; animation: pmIn 0.4s var(--spring) both; }
+    @keyframes pmIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: none; } }
+
+    /* Every window but the one in use is frosted over (title bar aside), on the desktop and in
+       Task View alike, so only what you're working on can be read. */
+    .popup::after { content: ''; position: absolute; inset: 36px 0 0; z-index: 60; border-bottom-left-radius: inherit; border-bottom-right-radius: inherit; pointer-events: none; opacity: 0; visibility: hidden;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(255,255,255,0.92)' d='M12 2.8l7.3 2.8c.5.2.8.6.8 1.1v5c0 4.7-3.2 8.4-8.1 10-4.9-1.6-8.1-5.3-8.1-10v-5c0-.5.3-.9.8-1.1z'/%3E%3Cpath d='M8.5 12.3l2.5 2.5 4.6-4.8' fill='none' stroke='%232a55e8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / auto min(26%, 84px) no-repeat, rgba(16, 22, 38, 0.6);
+      -webkit-backdrop-filter: blur(48px) saturate(140%); backdrop-filter: blur(48px) saturate(140%); transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+    body.tablet-apps .popup::after { inset: 0; border-radius: inherit; }
+    body.privacy-mode .popup:not(.focused)::after { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
+
+    /* The shield itself: a pane of glass that bends what's behind it, in a fall of glitter.
+       Nothing above the glass may fade or filter (that would cut it off from the backdrop it
+       bends), so the shield's parts fade one by one and only their holder moves. */
+    #privacyShield { position: fixed; inset: 0; z-index: 2147482000; pointer-events: none; visibility: hidden; }
+    #privacyShield.show { visibility: visible; }
+    .ps-defs { position: absolute; width: 0; height: 0; }
+    .ps-veil { position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at 50% 46%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.36) 78%); }
+    .ps-glitter { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+    .ps-center { position: absolute; left: 50%; top: 46%; width: 0; height: 0; }
+    .ps-fly { position: absolute; left: calc(var(--psw, 300px) / -2); top: calc(var(--psh, 394px) / -2); width: var(--psw, 300px); height: var(--psh, 394px); }
+    .ps-glass { position: absolute; inset: 0; opacity: 0; clip-path: url(#psGlassClip);
+      background: linear-gradient(165deg, rgba(255,255,255,0.26), rgba(255,255,255,0.06) 36%, rgba(255,255,255,0.02) 68%, rgba(255,255,255,0.14));
+      -webkit-backdrop-filter: url(#psLens) brightness(1.1) saturate(1.3); backdrop-filter: url(#psLens) brightness(1.1) saturate(1.3); }
+    .ps-rim, .ps-solid { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0; }
+    .ps-rim path { fill: none; stroke-linejoin: round; }
+    .ps-rim-edge { stroke: rgba(255, 255, 255, 0.7); stroke-width: 0.5; }
+    .ps-rim-light { stroke: url(#psRimLight); stroke-width: 2.4; }
+    .ps-rim-red { stroke: rgba(255, 96, 150, 0.5); stroke-width: 1.4; transform: translate(-0.8px, 0.4px); }
+    .ps-rim-blue { stroke: rgba(96, 196, 255, 0.6); stroke-width: 1.4; transform: translate(0.8px, -0.3px); }
+    .ps-glint { fill: url(#psGlintFill); opacity: 0.85; }
+    .ps-body { fill: url(#psFill); }
+    .ps-check { fill: none; stroke: #fff; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+    .ps-ring { position: absolute; left: calc(var(--psh, 394px) * -0.32); top: calc(var(--psh, 394px) * -0.32); width: calc(var(--psh, 394px) * 0.64); height: calc(var(--psh, 394px) * 0.64); border-radius: 50%; opacity: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 34px rgba(255, 255, 255, 0.2), 0 0 24px rgba(255, 255, 255, 0.12); }
 
     /* ═══ Tiling ═══ */
     #tileTiling.active { --qs-tint: #30b0c7; }
@@ -1108,6 +1266,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
 
   </style>
   <link rel="stylesheet" href="/desktop/assets/mw-shell.css">
+<script src="/desktop/assets/browser-sidebar-state.js"></script>
 <script src="/desktop/assets/hyadeos-dialogs.js"></script>
 <script src="/desktop/assets/external-consent.js"></script>
 <script src="/desktop/assets/calendar-core.js"></script>
@@ -1191,6 +1350,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
 
       <div class="btn-wrapper">
         <button class="system-tray-btn tray-group" id="notificationsBtn" type="button">
+          <span class="tray-privacy" id="trayPrivacy" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.800l7.300 2.800c.5.2.8.6.8 1.100v5c0 4.700-3.200 8.400-8.100 10-4.900-1.600-8.100-5.300-8.100-10v-5c0-.5.3-.9.8-1.100z"/><path class="tp-tick" d="M8.500 12.300l2.500 2.500 4.600-4.800"/></svg></span>
           <span class="material-symbols-outlined" id="trayWifiIcon">wifi</span>
           <span class="material-symbols-outlined" id="volumeIcon">volume_up</span>
           <span class="tray-battery" id="batteryBtn" hidden>
@@ -1316,6 +1476,10 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
               <div class="hmos-icon-bg"><span class="material-symbols-outlined">tablet_android</span></div>
               <span class="hmos-label" data-i18n="desktop.tablet.mode">Tablet mode</span>
             </div>
+            <div class="hmos-circle-toggle inactive" id="tilePrivacy" onclick="togglePrivacyMode()">
+              <div class="hmos-icon-bg"><svg class="qsi" viewBox="0 0 24 24" aria-hidden="true"><path class="qsi-shield" pathLength="1" d="M12 2.8l7.300 2.800c.5.2.8.6.8 1.100v5c0 4.700-3.200 8.400-8.100 10-4.900-1.600-8.100-5.300-8.100-10v-5c0-.5.3-.9.8-1.100z"/><path class="qsi-tick" pathLength="1" d="M8.500 12.300l2.500 2.500 4.600-4.800"/><path class="qsi-slash" pathLength="1" d="M4 3.5 20 20"/></svg></div>
+              <span class="hmos-label" data-i18n="desktop.privacy.title">Privacy mode</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1387,6 +1551,45 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
   </div>
 
   <div id="toast-container"></div>
+  <!-- Privacy mode's shield (see "Privacy mode" in the script) -->
+  <div id="privacyShield" aria-hidden="true">
+    <div class="ps-veil"></div>
+    <canvas class="ps-glitter"></canvas>
+    <div class="ps-center">
+      <div class="ps-ring"></div>
+      <div class="ps-fly">
+        <div class="ps-glass"></div>
+        <svg class="ps-rim" viewBox="12 6 96 126" preserveAspectRatio="none">
+          <path class="ps-rim-red" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/>
+          <path class="ps-rim-blue" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/>
+          <path class="ps-rim-light" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/>
+          <path class="ps-rim-edge" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/>
+          <g clip-path="url(#psClip)"><g transform="rotate(22 60 70)"><rect class="ps-sheen" x="38" y="-40" width="30" height="220" fill="url(#psSheenFill)"/></g></g>
+          <ellipse class="ps-glint" cx="38" cy="24" rx="15" ry="4.500" transform="rotate(-22 38 24)"/>
+        </svg>
+        <svg class="ps-solid" viewBox="12 6 96 126" preserveAspectRatio="none">
+          <path class="ps-body" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/>
+          <path class="ps-check" d="M40 70l14 14 27-28"/>
+        </svg>
+      </div>
+    </div>
+    <svg class="ps-defs" width="0" height="0" aria-hidden="true">
+      <defs>
+        <linearGradient id="psFill" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#7fe0ff"/><stop offset="0.55" stop-color="#3f8dff"/><stop offset="1" stop-color="#2a55e8"/></linearGradient>
+        <linearGradient id="psSheenFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <linearGradient id="psRimLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.95"/><stop offset="0.35" stop-color="#fff" stop-opacity="0.1"/><stop offset="0.75" stop-color="#fff" stop-opacity="0.05"/><stop offset="1" stop-color="#fff" stop-opacity="0.55"/></linearGradient>
+        <radialGradient id="psGlintFill"><stop offset="0" stop-color="#fff" stop-opacity="0.95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+        <clipPath id="psClip"><path d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/></clipPath>
+        <clipPath id="psGlassClip" clipPathUnits="objectBoundingBox"><path transform="scale(0.0104167 0.0079365) translate(-12 -6)" d="M60 6l44 16.500c2.400.9 4 3.200 4 5.800V60c0 34-19.500 59.500-48 72C31.500 119.500 12 94 12 60V28.300c0-2.600 1.600-4.900 4-5.800z"/></clipPath>
+        <!-- The glass: everything behind the shield bends outward toward its rim, like a thick lens. -->
+        <filter id="psLens" x="0" y="0" width="100%" height="100%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feImage id="psLensMap" x="0" y="0" width="300" height="394" preserveAspectRatio="none" result="map"/>
+          <feDisplacementMap id="psLensDisp" in="SourceGraphic" in2="map" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+  <div id="winSwitcher" aria-hidden="true"><div class="wsw-panel" role="listbox" aria-label="Windows" data-i18n-aria-label="desktop.switcher.title"></div></div>
   <div id="nightLightOverlay"></div>
   <div id="devicePopup" role="status" aria-live="polite">
     <span class="material-symbols-outlined" id="devicePopupClose" onclick="closeDevicePopup()">close</span>
@@ -1428,40 +1631,62 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
   </div>
 
   <div id="popup2" class="popup">
-    <div class="popup-header">
-      <div class="browser-tabs" id="browserTabs" role="tablist" aria-label="Browser tabs" data-i18n-aria-label="desktop.browser.tabs"></div>
-      <button class="browser-nav-btn" id="browserNewTab" onclick="createBrowserTab()" aria-label="New tab" title="New tab (Ctrl+T)" data-i18n-aria-label="desktop.browser.new-tab" data-i18n-title="desktop.browser.new-tab-shortcut"><span class="material-symbols-outlined" style="font-size:18px;">add</span></button>
-      <div class="window-actions"><span class="material-symbols-outlined action-btn min-btn" onclick="minimizePopup('popup2')">remove</span><span class="material-symbols-outlined action-btn max-btn" onclick="toggleMaximize('popup2')">crop_square</span><span class="material-symbols-outlined action-btn close-btn" onclick="closePopup('popup2')">close</span></div>
-    </div>
-    <div class="browser-toolbar">
-      <button class="browser-nav-btn" id="browserBack" onclick="browserNav('back')" aria-label="Back" title="Back (Alt+Left)" data-i18n-aria-label="common.back" data-i18n-title="desktop.browser.back-shortcut"><span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span></button>
-      <button class="browser-nav-btn" id="browserForward" onclick="browserNav('fwd')" aria-label="Forward" title="Forward (Alt+Right)" data-i18n-aria-label="desktop.browser.forward" data-i18n-title="desktop.browser.forward-shortcut"><span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span></button>
-      <button class="browser-nav-btn" id="browserReload" onclick="browserNav('reload')" aria-label="Reload" title="Reload (F5)" data-i18n-aria-label="desktop.browser.reload" data-i18n-title="desktop.browser.reload-shortcut"><span class="material-symbols-outlined" style="font-size:20px;">refresh</span></button>
-      <button class="browser-nav-btn" onclick="browserNav('home')" aria-label="Home" title="Home" data-i18n-aria-label="desktop.browser.home" data-i18n-title="desktop.browser.home"><span class="material-symbols-outlined" style="font-size:20px;">home</span></button>
-      <div class="browser-url-wrap">
+    <aside class="bsb-sidebar" id="browserSidebar">
+      <div class="bsb-top">
+        <button class="bsb-space-btn bsb-icon-btn" id="browserSpaceBtn" type="button" aria-haspopup="menu" title="Spaces" data-i18n-title="desktop.browser.spaces"><span id="browserSpaceName">Personal</span><span class="material-symbols-outlined">expand_more</span></button>
+        <button class="browser-nav-btn bsb-icon-btn" id="browserCollapse" type="button" onclick="toggleBrowserSidebar()" aria-label="Hide sidebar" title="Hide sidebar (Ctrl+Shift+B)" data-i18n-aria-label="desktop.browser.hide-sidebar" data-i18n-title="desktop.browser.hide-sidebar-shortcut"><span class="material-symbols-outlined">left_panel_close</span></button>
+      </div>
+      <div class="bsb-url browser-url-wrap">
         <span class="material-symbols-outlined browser-url-icon" id="browserUrlIcon">search</span>
         <input id="browserUrl" type="text" placeholder="Search or enter a website" data-i18n-placeholder="desktop.browser.url-placeholder" autocomplete="off" spellcheck="false" />
+        <div class="browser-suggest" id="browserSuggest" hidden></div>
+      </div>
+      <div class="bsb-favs" id="browserFavs" role="list" aria-label="Favorites" data-i18n-aria-label="desktop.browser.favorites"></div>
+      <div class="bsb-scroll">
+        <div class="bsb-list" id="browserPinned" role="list" aria-label="Pinned tabs" data-i18n-aria-label="desktop.browser.pinned"></div>
+        <div class="bsb-divider"><span></span><button type="button" id="browserClearToday" title="Close today's tabs" data-i18n-title="desktop.browser.clear-today-title"><span class="material-symbols-outlined">arrow_downward</span><span data-i18n="desktop.browser.clear-today">Clear</span></button></div>
+        <div class="bsb-list" id="browserToday" role="list" aria-label="Tabs" data-i18n-aria-label="desktop.browser.tabs"></div>
+        <button class="bsb-row bsb-new" id="browserNewTab" type="button" onclick="createBrowserTab()" title="New tab (Ctrl+T)" data-i18n-title="desktop.browser.new-tab-shortcut"><span class="bsb-row-icon material-symbols-outlined">add</span><span class="bsb-row-title" data-i18n="desktop.browser.new-tab">New tab</span></button>
+      </div>
+      <div class="bsb-resize" id="browserResize" aria-hidden="true"></div>
+    </aside>
+    <div class="bsb-peek-zone" id="browserPeek" aria-hidden="true"></div>
+    <section class="bsb-card">
+      <!-- The page's top bar is the window's title bar: it drags the window and holds the window buttons. -->
+      <div class="browser-toolbar popup-header">
+        <button class="browser-nav-btn bsb-icon-btn" id="browserExpand" type="button" onclick="toggleBrowserSidebar(false)" aria-label="Show sidebar" title="Show sidebar (Ctrl+Shift+B)" data-i18n-aria-label="desktop.browser.show-sidebar" data-i18n-title="desktop.browser.show-sidebar-shortcut"><span class="material-symbols-outlined">left_panel_open</span></button>
+        <button class="browser-nav-btn" id="browserBack" onclick="browserNav('back')" aria-label="Back" title="Back (Alt+Left)" data-i18n-aria-label="common.back" data-i18n-title="desktop.browser.back-shortcut"><span class="material-symbols-outlined">arrow_back</span></button>
+        <button class="browser-nav-btn" id="browserForward" onclick="browserNav('fwd')" aria-label="Forward" title="Forward (Alt+Right)" data-i18n-aria-label="desktop.browser.forward" data-i18n-title="desktop.browser.forward-shortcut"><span class="material-symbols-outlined">arrow_forward</span></button>
+        <button class="browser-nav-btn" id="browserReload" onclick="browserNav('reload')" aria-label="Reload" title="Reload (F5)" data-i18n-aria-label="desktop.browser.reload" data-i18n-title="desktop.browser.reload-shortcut"><span class="material-symbols-outlined">refresh</span></button>
+        <span class="bsb-toolbar-space"></span>
         <button class="browser-ext-add" id="browserExtAdd" type="button" hidden><span class="material-symbols-outlined">extension</span><span id="browserExtAddLabel" data-i18n="desktop.browser.ext-add">Add to hyadeOS</span></button>
+        <div class="browser-ext-actions" id="browserExtActions"></div>
         <button id="browserZoom" onclick="browserZoom(0)" title="Reset zoom" data-i18n-title="desktop.browser.reset-zoom" hidden>100%</button>
+        <button class="browser-nav-btn" onclick="toggleBrowserMenu()" aria-label="Menu" title="Menu" data-i18n-aria-label="desktop.browser.menu" data-i18n-title="desktop.browser.menu"><span class="material-symbols-outlined">more_horiz</span></button>
+        <div class="window-actions"><span class="material-symbols-outlined action-btn min-btn" onclick="minimizePopup('popup2')">remove</span><span class="material-symbols-outlined action-btn max-btn" onclick="toggleMaximize('popup2')">crop_square</span><span class="material-symbols-outlined action-btn close-btn" onclick="closePopup('popup2')">close</span></div>
+        <div class="browser-progress" id="browserProgress"></div>
       </div>
-      <div class="browser-suggest" id="browserSuggest" hidden></div>
-      <div class="browser-ext-actions" id="browserExtActions"></div>
-      <button class="browser-nav-btn" onclick="toggleBrowserMenu()" aria-label="Menu" title="Menu" data-i18n-aria-label="desktop.browser.menu" data-i18n-title="desktop.browser.menu"><span class="material-symbols-outlined" style="font-size:20px;">more_vert</span></button>
-      <div class="browser-progress" id="browserProgress"></div>
-    </div>
+      <div class="browser-tab-content" id="browserTabContent">
+        <div class="bsb-empty" id="browserEmpty" hidden>
+          <span class="material-symbols-outlined">tab</span>
+          <p data-i18n="desktop.browser.empty">No tab is open in this space.</p>
+          <button type="button" onclick="createBrowserTab()" data-i18n="desktop.browser.new-tab">New tab</button>
+        </div>
+        <div class="browser-findbar" id="browserFindbar" hidden>
+          <input id="browserFindInput" placeholder="Find in page" data-i18n-placeholder="desktop.browser.find" spellcheck="false" />
+          <span class="count" id="browserFindCount"></span>
+          <button class="browser-nav-btn" onclick="browserFind(false)" aria-label="Previous match" data-i18n-aria-label="desktop.browser.find-prev"><span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_up</span></button>
+          <button class="browser-nav-btn" onclick="browserFind(true)" aria-label="Next match" data-i18n-aria-label="desktop.browser.find-next"><span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_down</span></button>
+          <button class="browser-nav-btn" onclick="closeBrowserFind()" aria-label="Close find" data-i18n-aria-label="desktop.browser.find-close"><span class="material-symbols-outlined" style="font-size:18px;">close</span></button>
+        </div>
+        <div class="browser-menu" id="browserMenu" hidden></div>
+        <div class="browser-ext-popup" id="browserExtPopup" hidden></div>
+        <div class="browser-ext-panel" id="browserExtPanel" hidden></div>
+      </div>
+    </section>
     <div class="popup-glass" onclick="focusPopup(this.parentElement)"></div>
-    <div class="browser-tab-content" id="browserTabContent">
-      <div class="browser-findbar" id="browserFindbar" hidden>
-        <input id="browserFindInput" placeholder="Find in page" data-i18n-placeholder="desktop.browser.find" spellcheck="false" />
-        <span class="count" id="browserFindCount"></span>
-        <button class="browser-nav-btn" onclick="browserFind(false)" aria-label="Previous match" data-i18n-aria-label="desktop.browser.find-prev"><span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_up</span></button>
-        <button class="browser-nav-btn" onclick="browserFind(true)" aria-label="Next match" data-i18n-aria-label="desktop.browser.find-next"><span class="material-symbols-outlined" style="font-size:18px;">keyboard_arrow_down</span></button>
-        <button class="browser-nav-btn" onclick="closeBrowserFind()" aria-label="Close find" data-i18n-aria-label="desktop.browser.find-close"><span class="material-symbols-outlined" style="font-size:18px;">close</span></button>
-      </div>
-      <div class="browser-menu" id="browserMenu" hidden></div>
-      <div class="browser-ext-popup" id="browserExtPopup" hidden></div>
-      <div class="browser-ext-panel" id="browserExtPanel" hidden></div>
-    </div>
+    <div class="browser-menu bsb-popover" id="browserSpaceMenu" role="menu" hidden></div>
+    <div class="browser-menu bsb-popover" id="browserRowMenu" role="menu" hidden></div>
   </div>
 
   <div id="popup3" class="popup">
@@ -2132,6 +2357,352 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
       slider.value = current ? 0 : (volumeBeforeMute || 50);
       slider.dispatchEvent(new Event('input')); slider.dispatchEvent(new Event('change'));
     }
+
+    // ═══ Alt+Tab: the window switcher ═══
+    // Hold Alt and press Tab (Shift+Tab or the arrows to go back): a glass strip of the open
+    // windows, most recently used first and minimized ones included, with a ring that glides
+    // to the selection. Letting go of Alt switches; Esc cancels. A quick Alt+Tab swaps to the
+    // previous window without showing anything. On Windows the launcher claims Alt+Tab while
+    // hyadeOS is in front, and forwards the keys from inside apps and the Browser.
+    const windowMRU = [];
+    function noteWindowUse(popup) {
+      if (!popup || !popup.id || popup.id.startsWith('dialog_')) return;
+      const i = windowMRU.indexOf(popup.id);
+      if (i >= 0) windowMRU.splice(i, 1);
+      windowMRU.unshift(popup.id);
+    }
+    function forgetWindowUse(id) { const i = windowMRU.indexOf(id); if (i >= 0) windowMRU.splice(i, 1); }
+    const switcher = { active: false, shown: false, items: [], index: 0, timer: 0 };
+
+    function switcherWindows() {
+      const open = [...runningApps].filter(id => !id.startsWith('dialog_') && document.getElementById(id) && isAppAllowed(id));
+      return [...windowMRU.filter(id => open.includes(id)), ...open.filter(id => !windowMRU.includes(id))];
+    }
+
+    function renderSwitcher() {
+      const panel = document.querySelector('#winSwitcher .wsw-panel');
+      const cards = switcher.items.map((id, i) => {
+        const app = getAllApps().find(a => a.id === id);
+        const popup = document.getElementById(id);
+        const minimized = popup.style.display === 'none';
+        const card = document.createElement('button');
+        card.type = 'button'; card.className = 'wsw-card'; card.dataset.index = i; card.setAttribute('role', 'option');
+        card.style.setProperty('--i', i);
+        const preview = document.createElement('span'); preview.className = 'wsw-preview';
+        const tpl = document.createElement('template'); tpl.innerHTML = renderOsIcon(app ? app.icon : '', 'dock'); preview.append(tpl.content);
+        if (minimized) { const badge = document.createElement('span'); badge.className = 'wsw-min material-symbols-outlined'; badge.textContent = 'minimize'; preview.append(badge); }
+        const label = document.createElement('span'); label.className = 'wsw-label';
+        label.textContent = app ? String(app.title) : (popup.querySelector('.popup-header span')?.textContent || id);
+        card.append(preview, label);
+        card.addEventListener('pointerenter', () => { if (switcher.active) selectSwitcher(i); });
+        card.addEventListener('click', () => { selectSwitcher(i); commitSwitcher(); });
+        return card;
+      });
+      const ring = document.createElement('span'); ring.className = 'wsw-ring';
+      panel.replaceChildren(ring, ...cards);
+    }
+
+    // The ring glides to the selected card (a transform, on the compositor).
+    function placeSwitcherRing(instant) {
+      const panel = document.querySelector('#winSwitcher .wsw-panel');
+      const card = panel.querySelector(`.wsw-card[data-index="${switcher.index}"]`), ring = panel.querySelector('.wsw-ring');
+      if (!card || !ring) return;
+      panel.querySelectorAll('.wsw-card').forEach(c => c.classList.toggle('on', c === card));
+      card.setAttribute('aria-selected', 'true');
+      if (instant) ring.style.transition = 'none';
+      ring.style.width = card.offsetWidth + 'px'; ring.style.height = card.offsetHeight + 'px';
+      ring.style.transform = `translate(${card.offsetLeft}px, ${card.offsetTop}px)`;
+      if (instant) { void ring.offsetWidth; ring.style.transition = ''; }
+      card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    function selectSwitcher(index) {
+      const n = switcher.items.length;
+      if (!n) return;
+      switcher.index = ((index % n) + n) % n;
+      if (switcher.shown) placeSwitcherRing(false);
+    }
+
+    function showSwitcher() {
+      if (!switcher.active || switcher.shown) return;
+      switcher.shown = true;
+      renderSwitcher();
+      const box = document.getElementById('winSwitcher');
+      box.classList.add('open'); box.setAttribute('aria-hidden', 'false');
+      placeSwitcherRing(true);
+    }
+
+    function hideSwitcher() {
+      clearTimeout(switcher.timer);
+      switcher.active = false; switcher.shown = false;
+      const box = document.getElementById('winSwitcher');
+      box.classList.remove('open'); box.setAttribute('aria-hidden', 'true');
+    }
+
+    function commitSwitcher() {
+      if (!switcher.active) return;
+      const id = switcher.items[switcher.index];
+      hideSwitcher();
+      if (!id) return;
+      const popup = document.getElementById(id);
+      if (!popup) return;
+      // A window already on screen just comes to the front; a minimized one is restored.
+      if (popup.classList.contains('active') && popup.style.display !== 'none' && !tabletAppsOn()) { focusPopup(popup); updateContextBar(); }
+      else openPopup(id);
+    }
+
+    function handleSwitcher(action) {
+      const locked = document.getElementById('lockscreenContainer')?.classList.contains('active');
+      if (action === 'commit') return commitSwitcher();
+      if (action === 'cancel') return hideSwitcher();
+      const step = action === 'prev' ? -1 : 1;
+      if (!switcher.active) {
+        if (locked || taskViewOpen) return;
+        switcher.items = switcherWindows();
+        if (!switcher.items.length) return;
+        switcher.active = true;
+        closeAllPanels();
+        // Like the next window in line: the one before the current, or the last going back.
+        switcher.index = step > 0 ? Math.min(1, switcher.items.length - 1) : switcher.items.length - 1;
+        // Only shown if Alt is still held a moment later; a quick tap just swaps.
+        switcher.timer = setTimeout(showSwitcher, 130);
+        return;
+      }
+      selectSwitcher(switcher.index + step);
+    }
+
+    window.hyadeOSElectron?.onShellSwitcher?.(handleSwitcher);
+    // Where the host lets Alt+Tab through to the page (and in a plain browser).
+    document.addEventListener('keydown', e => {
+      if (e.altKey && e.key === 'Tab') { e.preventDefault(); handleSwitcher(e.shiftKey ? 'prev' : 'next'); return; }
+      if (!switcher.active) return;
+      if (e.key === 'Escape') { e.preventDefault(); handleSwitcher('cancel'); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); handleSwitcher(e.key === 'ArrowLeft' ? 'prev' : 'next'); }
+    }, true);
+    document.addEventListener('keyup', e => { if (e.key === 'Alt' && switcher.active) { e.preventDefault(); commitSwitcher(); } }, true);
+    window.addEventListener('blur', () => { if (switcher.active && !document.hasFocus()) setTimeout(() => { if (switcher.active && !document.hasFocus()) hideSwitcher(); }, 400); });
+
+    // --- Privacy mode ---
+    // While it's on: notifications keep their title but not what they say, Task View frosts
+    // every window over, and (in the hyadeOS container) screenshots, recordings and screen
+    // sharing see a blank window. A shield draws itself in the middle of the screen when it
+    // turns on and flies down into the taskbar, where it stays; turning it off brings the
+    // shield back up and breaks it open. Every step can be interrupted by toggling again.
+    const PRIVACY_KEY = (window.hyadeOSUserKey || (k => k))('hyadeos_privacy_mode');
+    let privacyMode = false, privacyGen = 0, privacyAnims = [], privacyTimers = [];
+
+    // A message that privacy mode can hide: the real text and its "Content hidden" stand-in.
+    // showInPrivacy: system messages about privacy mode itself, which have nothing to hide.
+    function privateText(el, text, showInPrivacy = false) {
+      if (showInPrivacy) { el.textContent = text == null ? '' : String(text); return el; }
+      const real = document.createElement('span'); real.className = 'pm-real'; real.textContent = text == null ? '' : String(text);
+      const mask = document.createElement('span'); mask.className = 'pm-mask';
+      const icon = document.createElement('span'); icon.className = 'material-symbols-outlined'; icon.textContent = 'visibility_off';
+      const label = document.createElement('span'); label.textContent = hyadeOSI18n.t("desktop.privacy.hidden", "Content hidden");
+      mask.append(icon, label); el.append(real, mask);
+      return el;
+    }
+
+    function applyPrivacyMode(on) {
+      privacyMode = !!on;
+      document.body.classList.toggle('privacy-mode', privacyMode);
+      const tile = document.getElementById('tilePrivacy');
+      if (tile) tile.className = `hmos-circle-toggle ${privacyMode ? 'active' : 'inactive'}`;
+      const tray = document.getElementById('trayPrivacy');
+      if (tray) tray.title = privacyMode ? hyadeOSI18n.t("desktop.privacy.on", "Privacy mode on") : '';
+      try { localStorage.setItem(PRIVACY_KEY, privacyMode ? '1' : '0'); } catch (e) {}
+      window.hyadeOSElectron?.setPrivacy?.(privacyMode)?.catch?.(() => {});
+    }
+
+    function togglePrivacyMode() {
+      const on = !privacyMode;
+      // Where the taskbar's shield is now: turning off, the glass rises from there.
+      const from = privacyTrayRect();
+      applyPrivacyMode(on);
+      if (on) playQsIcon('tilePrivacy');
+      if (on) privacyIntro();
+      playPrivacyShield(on, from);
+    }
+
+    function privacyTrayRect() {
+      const tray = document.getElementById('trayPrivacy'), bar = document.querySelector('.status-bar');
+      if (!tray || !document.body.classList.contains('privacy-mode')) return null;
+      const r = tray.getBoundingClientRect();
+      const shown = r.width > 4 && r.top >= 0 && r.bottom <= innerHeight + 1 && bar && getComputedStyle(bar).visibility !== 'hidden' && getComputedStyle(bar).opacity !== '0' && !tabletMode;
+      return shown ? r : null;
+    }
+
+    // The first time privacy mode is turned on, a notification says what it does.
+    function privacyIntro() {
+      try { if (localStorage.getItem('hyadeos_privacy_intro')) return; localStorage.setItem('hyadeos_privacy_intro', '1'); } catch (e) { return; }
+      const detail = window.hyadeOSElectron?.setPrivacy
+        ? hyadeOSI18n.t("desktop.privacy.on-detail", "Notification content, windows you're not using and screenshots are hidden")
+        : hyadeOSI18n.t("desktop.privacy.on-detail-web", "Notification content and windows you're not using are hidden");
+      // After the shield has landed in the taskbar.
+      setTimeout(() => showNotification(hyadeOSI18n.t("desktop.privacy.on", "Privacy mode on"), detail, 'shield', { showInPrivacy: true }), 1900);
+    }
+
+    let privacyGlitterRaf = 0, privacyLensKey = '';
+    function stopPrivacyShield() {
+      privacyGen++;
+      privacyAnims.forEach(a => a.cancel()); privacyAnims = [];
+      privacyTimers.forEach(clearTimeout); privacyTimers = [];
+      cancelAnimationFrame(privacyGlitterRaf);
+      document.body.classList.remove('privacy-arriving');
+    }
+
+    // The lens: a displacement map that pulls what's behind the glass inward, harder toward
+    // the rim, so the wallpaper's lines bend at the shield's edge like in thick glass.
+    function privacyLens(w, h) {
+      const key = w + 'x' + h;
+      if (key === privacyLensKey) return;
+      privacyLensKey = key;
+      const cw = 96, ch = 126, canvas = document.createElement('canvas');
+      canvas.width = cw; canvas.height = ch;
+      const ctx = canvas.getContext('2d'), img = ctx.createImageData(cw, ch);
+      for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+        const nx = (x + 0.5) / cw * 2 - 1, ny = (y + 0.5) / ch * 2 - 1;
+        const k = Math.pow(Math.min(1, Math.hypot(nx, ny * 1.08)), 2.2), i = (y * cw + x) * 4;
+        img.data[i] = 128 - nx * k * 127; img.data[i + 1] = 128 - ny * k * 127; img.data[i + 2] = 128; img.data[i + 3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      const map = document.getElementById('psLensMap');
+      map.setAttribute('href', canvas.toDataURL());
+      map.setAttribute('width', w); map.setAttribute('height', h);
+      document.getElementById('psLensDisp').setAttribute('scale', Math.round(w * 0.38));
+    }
+
+    // Glitter: specks that twinkle and drift up across the whole screen while the shield shows.
+    function privacyGlitter(gen) {
+      const canvas = document.querySelector('#privacyShield .ps-glitter');
+      const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const cx = W / 2, cy = H * 0.46, reach = Math.hypot(W, H) * 0.55;
+      const specks = Array.from({ length: 190 }, () => {
+        const a = Math.random() * Math.PI * 2, d = Math.pow(Math.random(), 0.65) * reach;
+        return { x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d * 0.75, r: 0.5 + Math.random() * Math.random() * 1.6, phase: Math.random() * 6.28, speed: 3 + Math.random() * 8,
+          vx: (Math.random() - 0.5) * 14, vy: -6 - Math.random() * 16, born: d / reach * 260 + Math.random() * 120 };
+      });
+      const start = performance.now();
+      const frame = now => {
+        if (gen !== privacyGen) return;
+        const t = now - start, s = t / 1000;
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#fff';
+        for (const p of specks) {
+          const age = t - p.born;
+          if (age < 0) continue;
+          ctx.globalAlpha = Math.min(1, age / 200) * (0.25 + 0.75 * Math.sin(p.phase + s * p.speed) ** 2);
+          const x = p.x + p.vx * s, y = p.y + p.vy * s;
+          ctx.beginPath(); ctx.arc(x, y, p.r, 0, 6.2832); ctx.fill();
+          // The bigger specks catch the light: a small four-point star.
+          if (p.r > 1.35) { ctx.globalAlpha *= 0.6; ctx.fillRect(x - p.r * 3, y - 0.35, p.r * 6, 0.7); ctx.fillRect(x - 0.35, y - p.r * 3, 0.7, p.r * 6); }
+        }
+        privacyGlitterRaf = requestAnimationFrame(frame);
+      };
+      privacyGlitterRaf = requestAnimationFrame(frame);
+    }
+
+    function playPrivacyShield(on, fromTray) {
+      const root = document.getElementById('privacyShield'), q = s => root.querySelector(s);
+      const fly = q('.ps-fly');
+      const parts = { glass: q('.ps-glass'), rim: q('.ps-rim'), solid: q('.ps-solid'), veil: q('.ps-veil'), glitter: q('.ps-glitter') };
+      const opacityOf = el => +getComputedStyle(el).opacity;
+      // Toggled again mid-animation: carry on from where everything is now.
+      const midway = root.classList.contains('show')
+        ? { fly: currentTransform(fly), ...Object.fromEntries(Object.entries(parts).map(([k, el]) => [k, opacityOf(el)])) }
+        : null;
+      stopPrivacyShield();
+      const gen = privacyGen;
+      const ring = q('.ps-ring'), sheen = q('.ps-sheen'), glint = q('.ps-glint'), check = q('.ps-check');
+      // The glass is about two fifths of the screen tall.
+      const h = Math.round(Math.min(innerHeight * 0.42, innerWidth * 0.4 * 126 / 96)), w = Math.round(h * 96 / 126);
+      root.style.setProperty('--psw', w + 'px'); root.style.setProperty('--psh', h + 'px');
+      privacyLens(w, h);
+      root.classList.add('show');
+
+      const play = (el, frames, opts) => { const a = el.animate(frames, { fill: 'both', ...opts }); privacyAnims.push(a); return a; };
+      const fade = (el, from, to, duration, delay = 0, easing = 'ease-out') => play(el, [{ opacity: from }, { opacity: to }], { duration, delay, easing });
+      const later = (ms, fn) => privacyTimers.push(setTimeout(() => { if (gen === privacyGen) fn(); }, ms));
+      const finish = ms => later(ms, () => { stopPrivacyShield(); root.classList.remove('show'); });
+      const was = k => midway ? midway[k] : 0;
+      const cx = innerWidth / 2, cy = innerHeight * 0.46;
+      // The transform that lays the glass over the taskbar's little shield.
+      const toTray = r => `translate(${r.left + r.width / 2 - cx}px, ${r.top + r.height / 2 - cy}px) scale(${r.width / w})`;
+
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const hold = [{ opacity: 0 }, { opacity: 1, offset: 0.2 }, { opacity: 1, offset: 0.8 }, { opacity: 0 }];
+        [parts.veil, parts.solid].forEach(el => play(el, hold, { duration: 1400 }));
+        [parts.glass, parts.rim, parts.glitter, ring].forEach(el => fade(el, 0, 0, 1));
+        play(fly, [{ transform: 'scale(0.4)' }, { transform: 'scale(0.4)' }], { duration: 1 });
+        return finish(1400);
+      }
+
+      privacyGlitter(gen);
+      play(sheen, [{ transform: 'translateX(-90px)' }, { transform: 'translateX(-90px)' }], { duration: 1 });
+
+      if (on) {
+        document.body.classList.add('privacy-arriving');
+        play(parts.veil, [{ opacity: was('veil') }, { opacity: 1, offset: 0.14 }, { opacity: 1, offset: 0.6 }, { opacity: 0 }], { duration: 1900, easing: 'linear' });
+        play(parts.glitter, [{ opacity: was('glitter') }, { opacity: 1, offset: 0.15 }, { opacity: 1, offset: 0.55 }, { opacity: 0 }], { duration: 1900, easing: 'linear' });
+        fade(parts.solid, was('solid'), 0, 260);
+        // A round lens forms in the middle of the screen and swells into the shield.
+        if (!midway) play(ring, [{ transform: 'scale(0.25)', opacity: 0 }, { transform: 'scale(0.75)', opacity: 0.85, offset: 0.4 }, { transform: 'scale(1.3)', opacity: 0 }], { duration: 640, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)' });
+        play(fly, [{ transform: midway ? midway.fly : 'scale(0.5)' }, { transform: 'scale(1)' }], { duration: 760, delay: midway ? 0 : 90, easing: TV_EASE });
+        fade(parts.glass, was('glass'), 1, 380, midway ? 0 : 110);
+        fade(parts.rim, was('rim'), 1, 420, midway ? 0 : 180);
+        // Light runs across the glass and glints off its top corner.
+        play(sheen, [{ transform: 'translateX(-90px)' }, { transform: 'translateX(90px)' }], { duration: 700, delay: 480, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
+        play(glint, [{ opacity: 0.35, transform: 'scale(0.6)' }, { opacity: 1, transform: 'scale(1.15)', offset: 0.4 }, { opacity: 0.75, transform: 'scale(1)' }], { duration: 700, delay: 420, easing: 'ease-out' });
+        // Then it flies down into the taskbar, turning into the solid shield that stays there.
+        later(1300, () => {
+          const target = privacyTrayRect();
+          if (!target) {
+            play(fly, [{ transform: 'scale(1)' }, { transform: 'scale(1.18)' }], { duration: 520, easing: TV_EASE });
+            fade(parts.glass, 1, 0, 420); fade(parts.rim, 1, 0, 420);
+            later(300, () => document.body.classList.remove('privacy-arriving'));
+            return;
+          }
+          play(fly, [{ transform: 'scale(1)' }, { transform: toTray(target) }], { duration: 620, easing: TV_EASE });
+          play(check, [{ opacity: 1 }, { opacity: 1 }], { duration: 1 });
+          play(parts.solid, [{ opacity: 0 }, { opacity: 1, offset: 0.4 }, { opacity: 1, offset: 0.85 }, { opacity: 0 }], { duration: 620 });
+          fade(parts.glass, 1, 0, 300, 60); fade(parts.rim, 1, 0, 300, 60);
+          later(560, () => {
+            document.body.classList.remove('privacy-arriving');
+            play(document.querySelector('#trayPrivacy svg'), [{ transform: 'scale(0.5)' }, { transform: 'scale(1.3)', offset: 0.45 }, { transform: 'scale(1)' }], { duration: 460, easing: 'cubic-bezier(0.3, 0.7, 0.3, 1)', fill: 'none' });
+          });
+        });
+        return finish(1950);
+      }
+
+      // Off: the shield rises out of the taskbar and turns back to glass, then swells and
+      // dissolves into the glitter.
+      play(parts.veil, [{ opacity: was('veil') }, { opacity: 1, offset: 0.2 }, { opacity: 1, offset: 0.6 }, { opacity: 0 }], { duration: 1500, easing: 'linear' });
+      play(parts.glitter, [{ opacity: was('glitter') }, { opacity: 1, offset: 0.2 }, { opacity: 1, offset: 0.6 }, { opacity: 0 }], { duration: 1500, easing: 'linear' });
+      play(fly, midway ? [{ transform: midway.fly }, { transform: 'scale(1)' }]
+        : fromTray ? [{ transform: toTray(fromTray) }, { transform: 'scale(1)' }]
+        : [{ transform: 'scale(0.6)' }, { transform: 'scale(1)' }], { duration: 540, easing: TV_EASE });
+      if (midway) fade(parts.solid, was('solid'), 0, 200);
+      else play(parts.solid, fromTray ? [{ opacity: 1 }, { opacity: 1, offset: 0.4 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 0 }], { duration: 440 });
+      fade(parts.glass, was('glass'), 1, 300, midway ? 0 : 120);
+      fade(parts.rim, was('rim'), 1, 300, midway ? 0 : 120);
+      play(glint, [{ opacity: 0.75 }, { opacity: 0.75 }], { duration: 1 });
+      later(640, () => {
+        play(fly, [{ transform: 'scale(1)' }, { transform: 'scale(1.24)' }], { duration: 640, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)' });
+        fade(parts.glass, 1, 0, 560, 60, 'ease-in-out'); fade(parts.rim, 1, 0, 480, 0, 'ease-in-out');
+        play(ring, [{ transform: 'scale(1)', opacity: 0 }, { transform: 'scale(1.3)', opacity: 0.6, offset: 0.25 }, { transform: 'scale(2)', opacity: 0 }], { duration: 700, easing: 'ease-out' });
+      });
+      finish(1500);
+    }
+
+    try { if (localStorage.getItem(PRIVACY_KEY) === '1') applyPrivacyMode(true); } catch (e) {}
+    // Build the lens early, in idle time, so the first toggle doesn't pay for it.
+    (window.requestIdleCallback || (fn => setTimeout(fn, 3000)))(() => {
+      const h = Math.round(Math.min(innerHeight * 0.42, innerWidth * 0.4 * 126 / 96));
+      privacyLens(Math.round(h * 96 / 126), h);
+    }, { timeout: 6000 });
 
     // --- Task view: the windows themselves shrink into a grid over the blurred desktop, still
     // live, and go back where they were when one is picked. Only their transform moves, on a
@@ -2968,14 +3539,15 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
     function showNotification(title, msg, icon = "notifications", options = {}) {
       const time = new Date().toLocaleTimeString(hyadeOSI18n.locale, { hour: '2-digit', minute: '2-digit' });
       const app = options && options.app && options.app.id ? { id: String(options.app.id), title: String(options.app.title || options.app.id).slice(0, 60) } : null;
-      notificationsHistory.unshift({ title, msg, icon, time, app }); if (notificationsHistory.length > 30) notificationsHistory.pop(); updateNotificationCenter();
+      const showInPrivacy = !!(options && options.showInPrivacy);
+      notificationsHistory.unshift({ title, msg, icon, time, app, showInPrivacy }); if (notificationsHistory.length > 30) notificationsHistory.pop(); updateNotificationCenter();
       if (qsState.dnd || (app && mutedNotificationApps().includes(app.id))) return;
       const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = 'toast';
       // SECURITY (layer-2 XSS): title/msg may carry untrusted text (SSID, BT/app name); use DOM.
       const tIcon = document.createElement('div'); tIcon.className = 'toast-icon'; fillIcon(tIcon, icon);
       const tContent = document.createElement('div'); tContent.className = 'toast-content';
       const tTitle = document.createElement('div'); tTitle.className = 'toast-title'; tTitle.textContent = title == null ? '' : String(title);
-      const tMsg = document.createElement('div'); tMsg.className = 'toast-msg'; tMsg.textContent = msg == null ? '' : String(msg);
+      const tMsg = privateText(document.createElement('div'), msg, showInPrivacy); tMsg.classList.add('toast-msg');
       tContent.append(tTitle, tMsg); toast.append(tIcon, tContent);
       if (options && options.action && typeof options.action.run === 'function') tContent.appendChild(notificationActionButton(options.action, () => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 350); }));
       container.prepend(toast); setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 350); }, 4000);
@@ -3080,7 +3652,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
         const title = document.createElement('span'); title.className = 'nc-item-title'; title.textContent = n.title == null ? '' : String(n.title);
         const time = document.createElement('span'); time.className = 'nc-item-time'; time.textContent = n.time == null ? '' : String(n.time);
         row.append(title, time);
-        const msg = document.createElement('div'); msg.className = 'nc-item-msg'; msg.textContent = n.msg == null ? '' : String(n.msg);
+        const msg = privateText(document.createElement('div'), n.msg, n.showInPrivacy); msg.classList.add('nc-item-msg');
         body.append(row, msg);
         const close = document.createElement('button'); close.type = 'button'; close.className = 'nc-item-close material-symbols-outlined'; close.textContent = 'close';
         close.addEventListener('click', e => { e.stopPropagation(); dismissNotification(n, item); });
@@ -3519,7 +4091,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
         if (popupId === 'popup5') notesFrameReady = false;
         if (popupId === 'popup12') pictureFrameReady = false;
         if (popupId === 'popup13') videoFrameReady = false;
-        runningApps.delete(popupId); updateDock(); removeMediaSession(`app:${popupId}`);
+        runningApps.delete(popupId); forgetWindowUse(popupId); updateDock(); removeMediaSession(`app:${popupId}`);
       };
       // A minimized window is not on screen, so it has no animation to wait for.
       if (popup.style.display === "none") { cancelWindowExit(popup); finishClose(); }
@@ -3531,6 +4103,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
       Array.from(activePopups).forEach(p => p.classList.remove("focused")); 
       popup.classList.add("focused"); 
       popup.style.zIndex = getHighestZIndex(activePopups) + 1; 
+      noteWindowUse(popup);
       
       const iframe = popup.querySelector('iframe');
       if(iframe) {
@@ -3582,7 +4155,7 @@ if (!window.hyadeOSElectron && window.hyadeOSSElectron) window.hyadeOSElectron =
     function makeDraggable(el, handle, minTop) {
       let tileDropTarget = null, isDragging = false, offsetX = 0, offsetY = 0, baseLeft = 0, baseTop = 0, dragLeft = 0, dragTop = 0, dragW = 0, dragH = 0, dragMoved = false, rafId = 0, pendingX = 0, pendingY = 0, pointerId = null;
       // App tabs in the title bar (Terminal, Files) are dragged to reorder them, not to move the window.
-      const isInteractiveHeaderTarget = target => target.closest('.action-btn, .browser-tab-btn, #browserNewTab, .notes-tab-btn, #os-term-actions, #os-files-actions');
+      const isInteractiveHeaderTarget = target => target.closest('.action-btn, .bsb-icon-btn, .browser-nav-btn, .browser-ext-add, #browserZoom, .notes-tab-btn, #os-term-actions, #os-files-actions');
       handle.addEventListener('dblclick', (e) => { if (isInteractiveHeaderTarget(e.target) || tabletAppsOn()) return; toggleMaximize(el.id); });
       handle.style.touchAction = 'none';
       handle.addEventListener('pointerdown', dragMouseDown);
@@ -3862,6 +4435,11 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
     function browserDisplayUrl(url) {
       return !url || url === BROWSER_HOME || url === 'about:blank' ? '' : url;
     }
+    // The address pill shows just the site until it is clicked, like the sidebar browsers do.
+    function browserShortUrl(url) {
+      const shown = browserDisplayUrl(url);
+      try { return shown ? new URL(shown).hostname.replace(/^www./, '') : ''; } catch (e) { return shown; }
+    }
 
     function updateBrowserToolbar() {
       const tab = getActiveBrowserTab();
@@ -3875,7 +4453,7 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       reload.title = loading ? hyadeOSI18n.t("desktop.browser.stop-shortcut", "Stop (Esc)") : hyadeOSI18n.t("desktop.browser.reload-shortcut", "Reload (F5)");
 
       const input = browserEl('browserUrl');
-      if (document.activeElement !== input) input.value = browserDisplayUrl(tab?.url);
+      if (document.activeElement !== input) input.value = browserShortUrl(tab?.url);
       const icon = browserEl('browserUrlIcon');
       const shown = browserDisplayUrl(tab?.url);
       icon.textContent = !shown ? 'search' : shown.startsWith('https:') ? 'lock' : 'info';
@@ -3900,72 +4478,407 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       }
     }
 
-    function createBrowserTabButton(tab) {
-      const button = document.createElement('div');
-      button.className = 'browser-tab-btn';
-      button.dataset.browserTabId = String(tab.id);
-      button.setAttribute('role', 'tab');
-      button.tabIndex = 0;
-      button.innerHTML = `<span class="browser-tab-icon"><span class="material-symbols-outlined" style="font-size:15px;">public</span></span>
-        <span class="browser-tab-title"></span>
-        <button type="button" class="browser-tab-close material-symbols-outlined">close</button>`;
-      button.querySelector('.browser-tab-close').addEventListener('click', event => {
-        event.stopPropagation();
-        closeBrowserTab(tab.id);
-      });
-      button.addEventListener('click', () => selectBrowserTab(tab.id));
-      button.addEventListener('auxclick', event => { if (event.button === 1) { event.preventDefault(); closeBrowserTab(tab.id); } });
-      button.addEventListener('keydown', event => {
-        if (event.target !== button || (event.key !== 'Enter' && event.key !== ' ')) return;
-        event.preventDefault();
-        selectBrowserTab(tab.id);
-      });
-      tab.button = button;
-      browserEl('browserTabs').appendChild(button);
-      // Tabs grow in and shrink out; their neighbours follow because only the width moves.
-      button.animate([{ maxWidth: '0px', minWidth: '0px', opacity: 0 }, { maxWidth: '220px', minWidth: '60px', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+    // --- Sidebar: favorites, spaces, pinned and today's tabs, saved per account. ---
+    // The saved data lives in browser-sidebar-state.js; a live tab points at its saved item (tab.itemId).
+    // Saved items stay rows until clicked: a page loads only when its row is opened.
+    const BS = window.BrowserSidebarState;
+    const BROWSER_STATE_KEY = (window.hyadeOSUserKey || (k => k))('browserSidebar');
+    const readBrowserStorage = key => { try { return localStorage.getItem(key); } catch (e) { return null; } };
+    let browserState = BS.load(readBrowserStorage(BROWSER_STATE_KEY), readBrowserStorage('browserTheme'));
+    let browserSaveTimer = null, browserRenderQueued = false, browserDragId = null, browserSuppressNewTab = false;
+    const browserLastActive = new Map(); // spaceId -> itemId, reopened when switching back
+
+    function saveBrowserState(now = false) {
+      clearTimeout(browserSaveTimer);
+      const write = () => { try { localStorage.setItem(BROWSER_STATE_KEY, BS.serialize(browserState)); } catch (e) {} };
+      if (now) write(); else browserSaveTimer = setTimeout(write, 500);
+    }
+    const browserTabForItem = itemId => browserTabs.find(tab => tab.itemId === itemId) || null;
+    const browserItemUrl = url => (!url || url === BROWSER_HOME || url === 'about:blank') ? BS.NEW_TAB : url;
+    const browserPageUrl = url => url === BS.NEW_TAB ? BROWSER_HOME : url;
+    const browserEsc = value => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]);
+    const browserSpaceItemIds = space => [...space.pinned, ...space.today].map(item => item.id);
+
+    function browserItemTitle(item) {
+      if (item.title) return item.title;
+      if (item.url === BS.NEW_TAB) return hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab");
+      try { return new URL(item.url).hostname.replace(/^www\./, ''); } catch (e) { return item.url; }
     }
 
-    function updateBrowserTab(tab) {
-      const button = tab.button;
-      const title = tab.title || hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab");
-      button.querySelector('.browser-tab-title').textContent = title;
-      button.title = title;
-      button.querySelector('.browser-tab-close').setAttribute('aria-label', hyadeOSI18n.t("desktop.browser.close-tab", "Close {title}", { title }));
-      const icon = button.querySelector('.browser-tab-icon');
-      icon.classList.toggle('loading', !!tab.loading);
-      const currentImg = icon.querySelector('img');
-      if (tab.favicon && currentImg?.src !== tab.favicon) {
-        const img = document.createElement('img');
-        img.alt = '';
-        img.src = tab.favicon;
-        img.onerror = () => { tab.favicon = null; updateBrowserTab(tab); };
-        icon.replaceChildren(img);
-      } else if (!tab.favicon && currentImg) {
-        icon.innerHTML = '<span class="material-symbols-outlined" style="font-size:15px;">public</span>';
+    function browserFaviconEl(src, size) {
+      const globe = () => { const g = document.createElement('span'); g.className = 'material-symbols-outlined'; g.style.fontSize = size + 'px'; g.textContent = 'public'; return g; };
+      if (!src) return globe();
+      const img = document.createElement('img');
+      img.alt = '';
+      img.src = src;
+      img.onerror = () => img.replaceWith(globe());
+      return img;
+    }
+
+    function browserRowEl(item, section, activeItemId) {
+      const live = browserTabForItem(item.id);
+      const row = document.createElement('div');
+      row.className = 'bsb-row' + (item.id === activeItemId ? ' active' : '');
+      row.setAttribute('role', 'listitem');
+      row.tabIndex = 0;
+      row.draggable = true;
+      row.dataset.itemId = item.id;
+      row.dataset.section = section;
+      const title = browserItemTitle(item);
+      row.title = title;
+      const icon = document.createElement('span');
+      icon.className = 'bsb-row-icon' + (live?.loading ? ' loading' : '');
+      icon.append(browserFaviconEl(item.favicon, 16));
+      const label = document.createElement('span');
+      label.className = 'bsb-row-title';
+      label.textContent = title;
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'bsb-row-close material-symbols-outlined';
+      close.textContent = 'close';
+      close.setAttribute('aria-label', hyadeOSI18n.t("desktop.browser.close-tab", "Close {title}", { title }));
+      close.addEventListener('click', event => { event.stopPropagation(); closeBrowserItem(item.id); });
+      row.append(icon, label, close);
+      wireBrowserItemEl(row, item.id);
+      return row;
+    }
+
+    function browserFavEl(item, index, activeItemId) {
+      const live = browserTabForItem(item.id);
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'bsb-fav' + (item.id === activeItemId ? ' active' : '') + (live?.loading ? ' loading' : '');
+      tile.setAttribute('role', 'listitem');
+      tile.draggable = true;
+      tile.dataset.itemId = item.id;
+      tile.dataset.section = 'favorites';
+      const title = browserItemTitle(item);
+      tile.title = index < 9 ? `${title} (Ctrl+${index + 1})` : title;
+      tile.setAttribute('aria-label', title);
+      tile.append(browserFaviconEl(item.favicon, 20));
+      wireBrowserItemEl(tile, item.id);
+      return tile;
+    }
+
+    function wireBrowserItemEl(el, itemId) {
+      el.addEventListener('click', () => openBrowserItem(itemId));
+      el.addEventListener('auxclick', event => { if (event.button === 1) { event.preventDefault(); closeBrowserItem(itemId); } });
+      el.addEventListener('keydown', event => {
+        if (event.target !== el) return;
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openBrowserItem(itemId); }
+        if (event.key === 'Delete') { event.preventDefault(); closeBrowserItem(itemId); }
+        if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) { event.preventDefault(); const r = el.getBoundingClientRect(); showBrowserRowMenu(itemId, r.left + 20, r.bottom); }
+      });
+      el.addEventListener('contextmenu', event => { event.preventDefault(); showBrowserRowMenu(itemId, event.clientX, event.clientY); });
+      el.addEventListener('dragstart', event => {
+        browserDragId = itemId;
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', itemId);
+        el.classList.add('dragging');
+        document.getElementById('popup2').classList.add('bsb-dragging');
+      });
+      el.addEventListener('dragend', () => {
+        browserDragId = null;
+        document.getElementById('popup2').classList.remove('bsb-dragging');
+        clearBrowserDropMarks();
+        renderBrowserSidebar();
+      });
+    }
+
+    function scheduleBrowserRender() {
+      if (browserRenderQueued) return;
+      browserRenderQueued = true;
+      requestAnimationFrame(() => { browserRenderQueued = false; renderBrowserSidebar(); });
+    }
+
+    function renderBrowserSidebar() {
+      if (browserDragId) return; // replaced rows would end the drag; dragend renders
+      const popup = document.getElementById('popup2');
+      const space = BS.currentSpace(browserState);
+      popup.style.setProperty('--bs-tint', space.color);
+      popup.style.setProperty('--bs-w', browserState.sidebarWidth + 'px');
+      browserEl('browserSpaceName').textContent = space.name;
+      tintBrowserHomes();
+      const activeItemId = getActiveBrowserTab()?.itemId;
+      browserEl('browserFavs').replaceChildren(...browserState.favorites.map((item, i) => browserFavEl(item, i, activeItemId)));
+      browserEl('browserPinned').replaceChildren(...space.pinned.map(item => browserRowEl(item, 'pinned', activeItemId)));
+      browserEl('browserToday').replaceChildren(...space.today.map(item => browserRowEl(item, 'today', activeItemId)));
+      browserEl('browserClearToday').parentElement.classList.toggle('empty', !space.today.length);
+      popup.querySelector(`[data-item-id="${CSS.escape(activeItemId || '')}"]`)?.scrollIntoView({ block: 'nearest' });
+    }
+
+    function applyBrowserLayout() {
+      const popup = document.getElementById('popup2');
+      popup.classList.toggle('bsb-collapsed', browserState.collapsed);
+      if (!browserState.collapsed) popup.classList.remove('bsb-peek');
+      renderBrowserSidebar();
+    }
+
+    // The new-tab page glows in the current space's color. It runs in the browser's own session,
+    // so it can't read the desktop's settings: the color is set on it once it has loaded.
+    function tintBrowserHome(tab) {
+      if (!tab.ready || tab.url !== BROWSER_HOME) return;
+      const color = BS.currentSpace(browserState).color; // always #rrggbb (checked by the state module)
+      tab.view.executeJavaScript(`document.documentElement.style.setProperty('--tint', '${color}')`).catch(() => {});
+    }
+    const tintBrowserHomes = () => browserTabs.forEach(tintBrowserHome);
+
+    function toggleBrowserSidebar(force) {
+      browserState.collapsed = typeof force === 'boolean' ? force : !browserState.collapsed;
+      saveBrowserState();
+      applyBrowserLayout();
+    }
+
+    function showBrowserEmpty() {
+      activeBrowserTabId = null;
+      browserTabs.forEach(tab => { tab.view.hidden = true; tab.errorEl.hidden = true; });
+      browserEl('browserEmpty').hidden = false;
+      closeBrowserFind();
+      browserEndUrlEditing();
+      updateBrowserToolbar();
+      renderBrowserSidebar();
+    }
+
+    function openBrowserItem(itemId) {
+      const live = browserTabForItem(itemId);
+      if (live) { selectBrowserTab(live.id); return; }
+      const found = BS.findItem(browserState, itemId);
+      if (found) createBrowserTab(browserPageUrl(found.item.url), itemId);
+    }
+
+    // Closing a today tab removes it; closing a pinned tab or a favorite only unloads its page.
+    function closeBrowserItem(itemId) {
+      const live = browserTabForItem(itemId);
+      if (live) { closeBrowserTab(live.id); return; }
+      const found = BS.findItem(browserState, itemId);
+      if (found?.section === 'today') { BS.removeItem(browserState, itemId); saveBrowserState(); renderBrowserSidebar(); }
+    }
+
+    function switchBrowserSpace(spaceId) {
+      if (!BS.getSpace(browserState, spaceId)) return;
+      browserState.currentSpace = spaceId;
+      saveBrowserState();
+      const ids = browserSpaceItemIds(BS.currentSpace(browserState));
+      const last = browserLastActive.get(spaceId);
+      const target = (last && ids.includes(last)) ? last : ids.find(id => browserTabForItem(id)) || null;
+      if (target) openBrowserItem(target);
+      else showBrowserEmpty();
+    }
+
+    function cycleBrowserTab(step) {
+      const ids = browserSpaceItemIds(BS.currentSpace(browserState));
+      if (!ids.length) return;
+      const index = ids.indexOf(getActiveBrowserTab()?.itemId);
+      openBrowserItem(ids[(index + step + ids.length) % ids.length]);
+    }
+
+    // --- Right-click menu on a tab or favorite ---
+    function hideBrowserPopovers() {
+      browserEl('browserRowMenu').hidden = true;
+      browserEl('browserSpaceMenu').hidden = true;
+    }
+
+    function placeBrowserPopover(menu, clientX, clientY) {
+      const popup = document.getElementById('popup2').getBoundingClientRect();
+      menu.hidden = false;
+      const width = menu.offsetWidth, height = menu.offsetHeight;
+      menu.style.left = Math.max(6, Math.min(clientX - popup.left, popup.width - width - 6)) + 'px';
+      menu.style.top = Math.max(6, Math.min(clientY - popup.top, popup.height - height - 6)) + 'px';
+    }
+
+    function browserMenuButton(icon, label, act) {
+      return `<button type="button" role="menuitem" data-act="${act}"><span class="material-symbols-outlined check" style="color:inherit">${icon}</span>${browserEsc(label)}</button>`;
+    }
+
+    function showBrowserRowMenu(itemId, clientX, clientY) {
+      const found = BS.findItem(browserState, itemId);
+      if (!found) return;
+      const live = browserTabForItem(itemId);
+      const menu = browserEl('browserRowMenu');
+      const items = [];
+      if (found.section === 'favorites') {
+        items.push(browserMenuButton('star', hyadeOSI18n.t("desktop.browser.remove-favorite", 'Remove from Favorites'), 'unfavorite'));
+        if (found.item.savedUrl && found.item.savedUrl !== found.item.url) items.push(browserMenuButton('history', hyadeOSI18n.t("desktop.browser.back-to-saved", 'Go back to saved page'), 'reset'));
+      } else {
+        items.push(browserMenuButton('star', hyadeOSI18n.t("desktop.browser.add-favorite", 'Add to Favorites'), 'favorite'));
+        items.push(found.section === 'pinned'
+          ? browserMenuButton('keep_off', hyadeOSI18n.t("desktop.browser.unpin", 'Unpin'), 'unpin')
+          : browserMenuButton('keep', hyadeOSI18n.t("desktop.browser.pin", 'Pin'), 'pin'));
       }
-      tab.errorEl.hidden = !tab.error;
+      if (found.item.url !== BS.NEW_TAB) items.push(browserMenuButton('link', hyadeOSI18n.t("desktop.browser.copy-link", 'Copy link'), 'copy'));
+      items.push('<hr>');
+      if (live && found.section !== 'today') items.push(browserMenuButton('close', hyadeOSI18n.t("desktop.browser.unload", 'Close page'), 'unload'));
+      items.push(found.section === 'today'
+        ? browserMenuButton('close', hyadeOSI18n.t("desktop.browser.close-tab-short", 'Close tab'), 'remove')
+        : browserMenuButton('delete', hyadeOSI18n.t("desktop.browser.remove", 'Remove'), 'remove'));
+      menu.innerHTML = items.join('');
+      menu.onclick = event => {
+        const act = event.target.closest('button')?.dataset.act;
+        if (!act) return;
+        hideBrowserPopovers();
+        const spaceId = found.space?.id || browserState.currentSpace;
+        if (act === 'favorite') BS.moveItem(browserState, itemId, { section: 'favorites' });
+        if (act === 'unfavorite') BS.moveItem(browserState, itemId, { section: 'today', spaceId: browserState.currentSpace, index: 0 });
+        if (act === 'pin') BS.moveItem(browserState, itemId, { section: 'pinned', spaceId });
+        if (act === 'unpin') BS.moveItem(browserState, itemId, { section: 'today', spaceId, index: 0 });
+        if (act === 'reset') {
+          const saved = found.item.savedUrl;
+          const tab = browserTabForItem(itemId);
+          if (tab) { selectBrowserTab(tab.id); navigateBrowser(saved); } else { BS.updateItem(browserState, itemId, { url: saved }); openBrowserItem(itemId); }
+        }
+        if (act === 'copy') navigator.clipboard?.writeText(found.item.url).catch(() => {});
+        if (act === 'unload') { const tab = browserTabForItem(itemId); if (tab) closeBrowserTab(tab.id); }
+        if (act === 'remove') {
+          const tab = browserTabForItem(itemId);
+          BS.removeItem(browserState, itemId);
+          if (tab) closeBrowserTab(tab.id);
+        }
+        saveBrowserState();
+        renderBrowserSidebar();
+      };
+      placeBrowserPopover(menu, clientX, clientY);
+      menu.querySelector('button')?.focus();
+    }
+
+    // --- Spaces menu (the colored pill at the top) ---
+    function showBrowserSpaceMenu() {
+      const menu = browserEl('browserSpaceMenu');
+      if (!menu.hidden) { menu.hidden = true; return; }
+      const current = BS.currentSpace(browserState);
+      const swatches = BROWSER_THEMES.filter(([id]) => id.startsWith('#')).map(([id]) =>
+        `<button type="button" class="browser-theme${id === current.color ? ' on' : ''}" data-color="${id}" style="--sw:${id}" title="${id}"></button>`).join('') +
+        `<button type="button" class="browser-theme browser-theme-custom${BROWSER_THEMES.some(([id]) => id === current.color) ? '' : ' on'}" style="--sw:conic-gradient(#ff6b6b, #fcc419, #51cf66, #339af0, #cc5de8, #ff6b6b)" title="${browserEsc(hyadeOSI18n.t("desktop.browser.custom-color", 'Custom color'))}"><span class="material-symbols-outlined">colorize</span><input type="color" value="${current.color}" aria-label="${browserEsc(hyadeOSI18n.t("desktop.browser.custom-color", 'Custom color'))}"></button>`;
+      menu.innerHTML = `
+        <div class="menu-label">${browserEsc(hyadeOSI18n.t("desktop.browser.spaces", 'Spaces'))}</div>
+        ${browserState.spaces.map(space => `<button type="button" role="menuitemradio" aria-checked="${space.id === current.id}" data-space="${space.id}"><span class="bsb-space-swatch" style="--sw:${space.color}"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${browserEsc(space.name)}</span><span class="material-symbols-outlined check">${space.id === current.id ? 'check' : ''}</span></button>`).join('')}
+        ${browserMenuButton('add', hyadeOSI18n.t("desktop.browser.new-space", 'New space'), 'new')}
+        <hr><div class="menu-label">${browserEsc(hyadeOSI18n.t("desktop.browser.space-name", 'Space name'))}</div>
+        <input class="bsb-rename" type="text" maxlength="40" value="${browserEsc(current.name)}" aria-label="${browserEsc(hyadeOSI18n.t("desktop.browser.space-name", 'Space name'))}">
+        <div class="browser-themes">${swatches}</div>
+        ${browserState.spaces.length > 1 ? browserMenuButton('delete', hyadeOSI18n.t("desktop.browser.delete-space", 'Delete space'), 'delete') : ''}`;
+      menu.onclick = async event => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        if (button.dataset.space) { hideBrowserPopovers(); switchBrowserSpace(button.dataset.space); return; }
+        if (button.dataset.color) { BS.updateSpace(browserState, current.id, { color: button.dataset.color }); saveBrowserState(); renderBrowserSidebar(); menu.hidden = true; showBrowserSpaceMenu(); return; }
+        const act = button.dataset.act;
+        if (act === 'new') {
+          const space = BS.addSpace(browserState, hyadeOSI18n.t("desktop.browser.new-space-name", 'Space {n}', { n: browserState.spaces.length + 1 }), BROWSER_THEMES[2 + (browserState.spaces.length % 6)][0]);
+          switchBrowserSpace(space.id);
+          menu.hidden = true;
+          showBrowserSpaceMenu();
+          const rename = menu.querySelector('.bsb-rename');
+          rename?.focus();
+          rename?.select();
+        }
+        if (act === 'delete') {
+          hideBrowserPopovers();
+          const space = BS.currentSpace(browserState);
+          const count = space.pinned.length + space.today.length;
+          const ok = await mDialog.confirm(hyadeOSI18n.t("desktop.browser.delete-space-confirm", 'Delete "{name}"? Its {count} tabs will be closed.', { name: space.name, count }));
+          if (!ok) return;
+          browserSpaceItemIds(space).forEach(id => { const tab = browserTabForItem(id); if (tab) { browserTabs.splice(browserTabs.indexOf(tab), 1); destroyBrowserTab(tab); } });
+          BS.removeSpace(browserState, space.id);
+          switchBrowserSpace(browserState.currentSpace);
+        }
+      };
+      const rename = menu.querySelector('.bsb-rename');
+      const commit = () => { BS.updateSpace(browserState, current.id, { name: rename.value }); saveBrowserState(); renderBrowserSidebar(); };
+      rename.addEventListener('change', commit);
+      rename.addEventListener('keydown', event => { if (event.key === 'Enter') { commit(); hideBrowserPopovers(); } if (event.key === 'Escape') hideBrowserPopovers(); });
+      const custom = menu.querySelector('.browser-theme-custom input');
+      custom.addEventListener('input', () => { BS.updateSpace(browserState, current.id, { color: custom.value }); saveBrowserState(); renderBrowserSidebar(); });
+      const pill = browserEl('browserSpaceBtn').getBoundingClientRect();
+      placeBrowserPopover(menu, pill.left, pill.bottom + 6);
+    }
+
+    // --- Drag and drop: reorder, pin/unpin, and drop on the grid to make a favorite. ---
+    function clearBrowserDropMarks() {
+      document.querySelectorAll('#popup2 .drop-before, #popup2 .drop-after').forEach(el => el.classList.remove('drop-before', 'drop-after'));
+    }
+
+    function browserDropTarget(event) {
+      const zone = event.target.closest('#browserFavs, #browserPinned, #browserToday, .bsb-divider, #browserNewTab');
+      if (!zone) return null;
+      const spaceId = browserState.currentSpace;
+      if (zone.id === 'browserFavs') {
+        const tiles = [...zone.children];
+        const hit = event.target.closest('.bsb-fav');
+        let index = tiles.length;
+        if (hit) { const r = hit.getBoundingClientRect(); index = tiles.indexOf(hit) + (event.clientX > r.left + r.width / 2 ? 1 : 0); }
+        return { section: 'favorites', index, el: tiles[index] || null, mark: 'drop-before' };
+      }
+      if (zone.classList.contains('bsb-divider')) return { section: 'today', spaceId, index: 0, el: browserEl('browserToday').firstElementChild, mark: 'drop-before' };
+      if (zone.id === 'browserNewTab') return { section: 'today', spaceId, index: Infinity, el: browserEl('browserToday').lastElementChild, mark: 'drop-after' };
+      const rows = [...zone.children];
+      const hit = event.target.closest('.bsb-row');
+      let index = rows.length;
+      if (hit) { const r = hit.getBoundingClientRect(); index = rows.indexOf(hit) + (event.clientY > r.top + r.height / 2 ? 1 : 0); }
+      const el = rows[index] || rows[rows.length - 1] || null;
+      return { section: zone.id === 'browserPinned' ? 'pinned' : 'today', spaceId, index, el, mark: rows[index] ? 'drop-before' : 'drop-after' };
+    }
+
+    (function setupBrowserDragDrop() {
+      const sidebar = browserEl('browserSidebar');
+      sidebar.addEventListener('dragover', event => {
+        if (!browserDragId) return;
+        const target = browserDropTarget(event);
+        if (!target) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        clearBrowserDropMarks();
+        target.el?.classList.add(target.mark);
+      });
+      sidebar.addEventListener('drop', event => {
+        if (!browserDragId) return;
+        const target = browserDropTarget(event);
+        if (!target) return;
+        event.preventDefault();
+        BS.moveItem(browserState, browserDragId, { section: target.section, spaceId: target.spaceId, index: target.index, adjust: true });
+        saveBrowserState();
+        // dragend renders once the drag is over
+      });
+    })();
+
+    function updateBrowserTab(tab) {
+      if (tab.itemId) {
+        const changes = { url: browserItemUrl(tab.url), favicon: tab.favicon };
+        if (!tab.loading || !BS.findItem(browserState, tab.itemId)?.item.title) changes.title = tab.title || '';
+        BS.updateItem(browserState, tab.itemId, changes);
+        saveBrowserState();
+      }
+      tab.errorEl.hidden = tab.id !== activeBrowserTabId || !tab.error;
       if (tab.error) {
         tab.errorEl.querySelector('p').textContent = `${tab.error.url}\n${tab.error.description}`;
       }
+      scheduleBrowserRender();
       if (tab.id === activeBrowserTabId) updateBrowserToolbar();
     }
 
     function selectBrowserTab(tabId) {
       const selected = browserTabs.find(tab => tab.id === tabId);
       if (!selected) return;
+      const found = BS.findItem(browserState, selected.itemId);
+      // A tab in another space (e.g. opened from the dynamic island) brings its space along.
+      if (found?.space && found.space.id !== browserState.currentSpace) { browserState.currentSpace = found.space.id; saveBrowserState(); }
+      browserLastActive.set(browserState.currentSpace, selected.itemId);
       activeBrowserTabId = tabId;
       browserTabs.forEach(tab => {
         const active = tab.id === tabId;
         tab.view.hidden = !active;
         tab.errorEl.hidden = !active || !tab.error;
-        tab.button.classList.toggle('active', active);
-        tab.button.setAttribute('aria-selected', String(active));
       });
-      selected.button.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      browserEl('browserEmpty').hidden = true;
       closeBrowserFind();
-      browserEl('browserUrl').value = browserDisplayUrl(selected.url);
+      browserEndUrlEditing();
       updateBrowserToolbar();
+      renderBrowserSidebar();
+    }
+
+    // Switching tab or space ends any address editing, so the field shows the new tab's address.
+    function browserEndUrlEditing() {
+      const input = browserEl('browserUrl');
+      if (document.activeElement === input) input.blur();
     }
 
     function attachBrowserTabEvents(tab) {
@@ -3976,6 +4889,7 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       view.addEventListener('dom-ready', () => {
         view.executeJavaScript(WEBVIEW_MEDIA_HOOK).catch(() => {});
         tab.ready = true;
+        tintBrowserHome(tab);
         if (tab.zoom && tab.zoom !== 1) view.setZoomFactor(tab.zoom);
         tab.progress = 70;
         refresh();
@@ -4029,7 +4943,10 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       });
     }
 
-    function createBrowserTab(url = BROWSER_HOME) {
+    // Opens a page in a new webview. Without itemId it is a new tab at the top of today's list;
+    // with one, it loads that saved row (pinned tab, favorite, restored tab).
+    function createBrowserTab(url = BROWSER_HOME, itemId = null) {
+      if (typeof url !== 'string') url = BROWSER_HOME; // onclick="createBrowserTab()" from a button
       const view = document.createElement('webview');
       view.className = 'browser-view';
       view.setAttribute('webpreferences', 'contextIsolation=yes,nodeIntegration=no,sandbox=yes');
@@ -4044,8 +4961,10 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       errorEl.innerHTML = `<span class="material-symbols-outlined">cloud_off</span><h2>${hyadeOSI18n.t("desktop.browser.cant-reach", "Can't reach this page")}</h2>
         <p style="white-space:pre-line"></p><button type="button">${hyadeOSI18n.t("common.retry", "Try again")}</button>`;
 
-      const tab = { id: nextBrowserTabId++, title: hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab"), url: url || BROWSER_HOME, view, errorEl,
-        loading: false, ready: false, favicon: null, error: null, zoom: 1, progress: 0 };
+      const saved = itemId ? BS.findItem(browserState, itemId)?.item : null;
+      if (!saved) itemId = BS.addToday(browserState, browserState.currentSpace, { url: browserItemUrl(url), title: '', favicon: null }).id;
+      const tab = { id: nextBrowserTabId++, itemId, title: saved?.title || hyadeOSI18n.t("desktop.browser.new-tab-title", "New Tab"), url: url || BROWSER_HOME, view, errorEl,
+        loading: false, ready: false, favicon: saved?.favicon || null, error: null, zoom: 1, progress: 0 };
       errorEl.querySelector('button').addEventListener('click', () => {
         tab.error = null;
         tab.view.src = tab.url;
@@ -4054,26 +4973,33 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       attachBrowserTabEvents(tab);
       browserEl('browserTabContent').append(view, errorEl);
       browserTabs.push(tab);
-      createBrowserTabButton(tab);
-      updateBrowserTab(tab);
+      saveBrowserState();
       selectBrowserTab(tab.id);
       if (!url || url === BROWSER_HOME) setTimeout(() => browserEl('browserUrl').focus(), 0);
       return tab;
     }
 
+    // When the window opens: show the saved rows and reopen the tab that was last in front.
     function ensureBrowserTabs() {
-      if (browserTabs.length === 0) createBrowserTab();
+      applyBrowserLayout();
+      requestAnimationFrame(() => document.getElementById('popup2').classList.add('bsb-ready'));
+      if (browserTabs.length > 0) return;
+      if (browserSuppressNewTab) return; // a link is about to open in its own new tab
+      const space = BS.currentSpace(browserState);
+      const ids = browserSpaceItemIds(space);
+      const last = browserLastActive.get(space.id);
+      const target = (last && ids.includes(last)) ? last : space.today[0]?.id || space.pinned[0]?.id;
+      if (target) openBrowserItem(target);
+      else if (!browserSuppressNewTab) createBrowserTab();
+      else showBrowserEmpty();
     }
 
     // Links with target=_blank / window.open from any web page arrive here (see launcher.js).
     function openUrlInBrowserTab(url) {
-      if (!document.getElementById('popup2').classList.contains('active') || browserTabs.length === 0) {
-        openPopup('popup2');
-        navigateBrowser(url);
-      } else {
-        createBrowserTab(url);
-        focusPopup(document.getElementById('popup2'));
-      }
+      browserSuppressNewTab = true;
+      try { if (!document.getElementById('popup2').classList.contains('active')) openPopup('popup2'); } finally { browserSuppressNewTab = false; }
+      createBrowserTab(url);
+      focusPopup(document.getElementById('popup2'));
     }
 
     function destroyBrowserTab(tab) {
@@ -4081,28 +5007,39 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       // Removing the webview ends its page; pointing it at about:blank first raced its teardown.
       tab.view.remove();
       tab.errorEl.remove();
-      const button = tab.button;
-      button.style.pointerEvents = 'none';
-      button.animate([{ maxWidth: button.offsetWidth + 'px', minWidth: '0px', opacity: 1 }, { maxWidth: '0px', minWidth: '0px', paddingLeft: '0px', paddingRight: '0px', opacity: 0 }], { duration: 200, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }).finished.then(() => button.remove(), () => button.remove());
     }
 
+    // Closing a today tab removes its row; a pinned tab or a favorite keeps its row and only unloads.
+    // The tab in front moves to the nearest open tab of the space, or to the empty page.
     function closeBrowserTab(tabId) {
       const index = browserTabs.findIndex(tab => tab.id === tabId);
       if (index < 0) return;
       const [tab] = browserTabs.splice(index, 1);
+      const found = BS.findItem(browserState, tab.itemId);
+      const order = browserSpaceItemIds(BS.currentSpace(browserState));
+      const position = order.indexOf(tab.itemId);
+      if (found?.section === 'today') BS.removeItem(browserState, tab.itemId);
       destroyBrowserTab(tab);
-      if (activeBrowserTabId !== tabId) return;
+      saveBrowserState();
+      if (activeBrowserTabId !== tabId) { renderBrowserSidebar(); return; }
       activeBrowserTabId = null;
-      if (browserTabs.length === 0) createBrowserTab();
-      else selectBrowserTab(browserTabs[Math.min(index, browserTabs.length - 1)].id);
+      const open = order.filter(id => id !== tab.itemId && browserTabForItem(id));
+      const after = open.find(id => order.indexOf(id) > position);
+      const next = after || open[open.length - 1];
+      if (next) openBrowserItem(next);
+      else showBrowserEmpty();
     }
 
+    // The window was closed: pages unload, the rows stay saved for next time.
     function closeBrowserTabs() {
       browserTabs.forEach(destroyBrowserTab);
       browserTabs = [];
       activeBrowserTabId = null;
       closeBrowserFind();
       browserEl('browserMenu').hidden = true;
+      hideBrowserPopovers();
+      document.getElementById('popup2').classList.remove('bsb-ready', 'bsb-peek');
+      saveBrowserState(true);
     }
 
     function navigateBrowser(value = browserEl('browserUrl').value) {
@@ -4125,8 +5062,8 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
     function performSpotlightWebSearch(query) {
       if (!query.trim()) return;
       closeSpotlight();
-      openPopup('popup2');
-      navigateBrowser(query);
+      try { const url = normalizeBrowserUrl(query); if (url) openUrlInBrowserTab(url); }
+      catch (error) { showNotification(hyadeOSI18n.t("desktop.browser.open-failed", "Unable to open website"), error.message, '⚠️'); }
     }
 
     document.addEventListener('click', (e) => { if(e.target.id === 'spotlightSearch') closeSpotlight(); });
@@ -4193,8 +5130,6 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
           <button data-act="zoom-in" style="width:auto;padding:4px 10px">+</button>
         </div>
         <button data-act="extensions"><span class="material-symbols-outlined check" style="color:inherit">extension</span>${hyadeOSI18n.t("desktop.browser.extensions", "Extensions")}</button>
-        <hr><div class="menu-label">${hyadeOSI18n.t("desktop.browser.theme", "Theme")}</div>
-        <div class="browser-themes">${browserThemeSwatches()}</div>
         <hr><div class="menu-label">${hyadeOSI18n.t("desktop.browser.search-engine", "Search engine")}</div>
         ${Object.entries(BROWSER_ENGINES).map(([id, e]) =>
           `<button data-engine="${id}"><span class="material-symbols-outlined check">${id === engine ? 'check' : ''}</span>${e.name}</button>`).join('')}
@@ -4203,7 +5138,6 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       menu.onclick = async event => {
         const item = event.target.closest('button');
         if (!item) return;
-        if (item.dataset.theme) { setBrowserTheme(item.dataset.theme); toggleBrowserMenu(true); return; }
         if (item.dataset.engine) {
           try { localStorage.setItem('browserSearchEngine', item.dataset.engine); } catch (e) {}
           toggleBrowserMenu(true);
@@ -4221,8 +5155,6 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
           catch (error) { showNotification(hyadeOSI18n.t("desktop.app.browser", "Browser"), error.message || hyadeOSI18n.t("desktop.browser.clear-failed", "Could not clear browsing data."), '⚠️'); }
         }
       };
-      const custom = menu.querySelector('.browser-theme-custom input');
-      if (custom) custom.addEventListener('input', () => setBrowserTheme(custom.value));
       menu.hidden = false;
     }
 
@@ -4346,28 +5278,6 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       ['default', '#2a2d33'], ['accent', 'var(--m3-accent-active)'], ['#4263eb', '#4263eb'], ['#2f9e44', '#2f9e44'],
       ['#9c36b5', '#9c36b5'], ['#e64980', '#e64980'], ['#1098ad', '#1098ad'], ['#f08c00', '#f08c00']
     ];
-    const getBrowserTheme = () => { try { return localStorage.getItem('browserTheme') || 'default'; } catch (e) { return 'default'; } };
-    function browserThemeSwatches() {
-      const current = getBrowserTheme();
-      const custom = current.startsWith('#') && !BROWSER_THEMES.some(([id]) => id === current);
-      return BROWSER_THEMES.map(([id, color]) => `<button class="browser-theme${id === current ? ' on' : ''}" data-theme="${id}" style="--sw:${color}" title="${id === 'default' ? hyadeOSI18n.t("desktop.browser.theme-default", "Default") : id === 'accent' ? hyadeOSI18n.t("desktop.browser.theme-accent", "System accent") : id}"></button>`).join('') +
-        `<button class="browser-theme browser-theme-custom${custom ? ' on' : ''}" style="--sw:${custom ? current : 'conic-gradient(#ff6b6b, #fcc419, #51cf66, #339af0, #cc5de8, #ff6b6b)'}" title="${hyadeOSI18n.t("desktop.browser.theme-custom", "Custom colour")}"><span class="material-symbols-outlined">colorize</span><input type="color" value="${custom ? current : '#4263eb'}"></button>`;
-    }
-    function applyBrowserTheme() {
-      const popup = document.getElementById('popup2'), theme = getBrowserTheme();
-      const seed = theme === 'accent' ? 'var(--m3-accent-active)' : /^#[0-9a-f]{6}$/i.test(theme) ? theme : null;
-      ['--bt-frame', '--bt-bg', '--bt-toolbar', '--bt-accent'].forEach(name => popup.style.removeProperty(name));
-      if (!seed) return;
-      popup.style.setProperty('--bt-frame', `color-mix(in srgb, ${seed} 20%, #16181c)`);
-      popup.style.setProperty('--bt-bg', `color-mix(in srgb, ${seed} 12%, #111316)`);
-      popup.style.setProperty('--bt-toolbar', `color-mix(in srgb, ${seed} 26%, #22252a)`);
-      popup.style.setProperty('--bt-accent', `color-mix(in srgb, ${seed} 80%, #fff)`);
-    }
-    function setBrowserTheme(theme) {
-      try { localStorage.setItem('browserTheme', theme); } catch (e) {}
-      applyBrowserTheme();
-    }
-
     // --- Extensions: Chrome Web Store or unpacked, run only inside the browser's session. ---
     const BROWSER_PARTITION = 'persist:hyadeoss-browser'; // legacy name, kept: it holds the browser's logins and extensions
     const browserExtApi = () => window.hyadeOSElectron?.browserExtensions;
@@ -4512,7 +5422,7 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
       switch (name) {
         case 'new-tab': createBrowserTab(); break;
         case 'close-tab': if (tab) closeBrowserTab(tab.id); break;
-        case 'focus-url': browserEl('browserUrl').focus(); browserEl('browserUrl').select(); break;
+        case 'focus-url': if (browserState.collapsed) document.getElementById('popup2').classList.add('bsb-peek'); browserEl('browserUrl').focus(); browserEl('browserUrl').select(); break;
         case 'reload': browserNav('reload'); break;
         case 'back': browserNav('back'); break;
         case 'forward': browserNav('fwd'); break;
@@ -4520,20 +5430,19 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
         case 'zoom-in': browserZoom(1); break;
         case 'zoom-out': browserZoom(-1); break;
         case 'zoom-reset': browserZoom(0); break;
-        case 'next-tab':
-        case 'prev-tab': {
-          if (browserTabs.length < 2 || !tab) break;
-          const index = browserTabs.indexOf(tab);
-          const step = name === 'next-tab' ? 1 : -1;
-          selectBrowserTab(browserTabs[(index + step + browserTabs.length) % browserTabs.length].id);
-          break;
+        case 'next-tab': cycleBrowserTab(1); break;
+        case 'prev-tab': cycleBrowserTab(-1); break;
+        case 'toggle-sidebar': toggleBrowserSidebar(); break;
+        default: {
+          const fav = /^favorite-([1-9])$/.exec(name);
+          if (fav && browserState.favorites[fav[1] - 1]) openBrowserItem(browserState.favorites[fav[1] - 1].id);
         }
       }
     }
 
     (function setupBrowserControls() {
       const urlInput = browserEl('browserUrl');
-      urlInput.addEventListener('focus', () => setTimeout(() => urlInput.select(), 0));
+      urlInput.addEventListener('focus', () => { urlInput.value = browserDisplayUrl(getActiveBrowserTab()?.url); setTimeout(() => urlInput.select(), 0); });
       urlInput.addEventListener('input', event => updateBrowserSuggestions(!/^delete/.test(event.inputType || '')));
       urlInput.addEventListener('keydown', event => {
         if (handleBrowserSuggestKeys(event)) return;
@@ -4546,7 +5455,49 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
         const pop = browserEl('browserExtPopup');
         if (!pop.hidden && !pop.contains(event.target) && !event.target.closest('.browser-ext-btn')) closeBrowserExtPopup();
       });
-      applyBrowserTheme();
+      // Sidebar: spaces pill, peek when collapsed, resizing, closing popovers.
+      browserEl('browserSpaceBtn').addEventListener('click', event => { event.stopPropagation(); browserEl('browserRowMenu').hidden = true; showBrowserSpaceMenu(); });
+      browserEl('browserClearToday').addEventListener('click', () => {
+        const removed = BS.clearToday(browserState, browserState.currentSpace);
+        removed.forEach(item => { const tab = browserTabForItem(item.id); if (tab) { browserTabs.splice(browserTabs.indexOf(tab), 1); destroyBrowserTab(tab); } });
+        saveBrowserState();
+        if (!getActiveBrowserTab()) switchBrowserSpace(browserState.currentSpace);
+        else renderBrowserSidebar();
+      });
+      const browserPopup = document.getElementById('popup2');
+      const sidebarEl = browserEl('browserSidebar');
+      const keepPeek = () => browserEl('browserUrl') === document.activeElement || !browserEl('browserSpaceMenu').hidden || !browserEl('browserRowMenu').hidden;
+      browserEl('browserPeek').addEventListener('mouseenter', () => { if (browserState.collapsed) browserPopup.classList.add('bsb-peek'); });
+      sidebarEl.addEventListener('mouseleave', () => { if (!keepPeek()) browserPopup.classList.remove('bsb-peek'); });
+      urlInput.addEventListener('blur', () => setTimeout(() => { if (!sidebarEl.matches(':hover') && !keepPeek()) browserPopup.classList.remove('bsb-peek'); }, 0));
+      browserEl('browserResize').addEventListener('pointerdown', event => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        const handle = event.currentTarget;
+        handle.setPointerCapture(event.pointerId);
+        const left = browserPopup.getBoundingClientRect().left;
+        browserPopup.classList.remove('bsb-ready'); // the card follows the pointer without easing
+        const move = e => {
+          browserState.sidebarWidth = Math.round(Math.min(BS.WIDTH.max, Math.max(BS.WIDTH.min, e.clientX - left)));
+          browserPopup.style.setProperty('--bs-w', browserState.sidebarWidth + 'px');
+        };
+        const up = () => {
+          handle.removeEventListener('pointermove', move);
+          handle.removeEventListener('pointerup', up);
+          browserPopup.classList.add('bsb-ready');
+          saveBrowserState();
+        };
+        handle.addEventListener('pointermove', move);
+        handle.addEventListener('pointerup', up);
+      });
+      document.addEventListener('mousedown', event => {
+        if (event.target.closest('#browserSpaceMenu, #browserRowMenu, #browserSpaceBtn')) return;
+        hideBrowserPopovers();
+      });
+      browserPopup.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && (!browserEl('browserSpaceMenu').hidden || !browserEl('browserRowMenu').hidden)) { event.stopPropagation(); hideBrowserPopovers(); }
+      });
+      applyBrowserLayout();
       refreshBrowserExtensions();
       const findInput = browserEl('browserFindInput');
       findInput.addEventListener('input', () => browserFind(true, false));
@@ -4569,6 +5520,8 @@ if (tilingActive() && el.classList.contains('tiled')) { tileDropTarget = tileUnd
         else if (event.altKey && key === 'arrowleft') name = 'back';
         else if (event.altKey && key === 'arrowright') name = 'forward';
         else if (ctrl && key === 'tab') name = event.shiftKey ? 'prev-tab' : 'next-tab';
+        else if (ctrl && event.shiftKey && key === 'b') name = 'toggle-sidebar';
+        else if (ctrl && /^[1-9]$/.test(key)) name = 'favorite-' + key;
         else if (ctrl) name = { t: 'new-tab', w: 'close-tab', l: 'focus-url', f: 'find', '=': 'zoom-in', '+': 'zoom-in', '-': 'zoom-out', '0': 'zoom-reset' }[key] || null;
         if (!name) return;
         event.preventDefault();
