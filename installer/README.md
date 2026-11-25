@@ -15,10 +15,12 @@ from `hyadeOSS.Setup.2.0.4.exe`.
 | `RELEASE-NOTES.md` | the notes of the release (update them with each release) |
 
 ## Make an installer
-1. Raise `version` in `../version.json` (and merge): the installer replaces the system copy on a PC **only if its version is newer** than the installed one.
-2. GitHub › Actions › *Build installer* › *Run workflow*. Tick *draft_release* to attach it to a **draft** release `v<version>`; try it, then publish.
-   (A pull request that touches `installer/` builds and tests it too; a pushed tag `v*` does the same and drafts the release.)
-3. The workflow only drafts: publishing the release is yours.
+You do not start anything by hand any more:
+1. Raise `version` in `../version.json` and add that version's section (English, then Italian) at the top of `RELEASE-NOTES.md`. The installer replaces the system copy on a PC **only if its version is newer** than the installed one.
+2. Merge the pull request into `main`. The *Build installer* workflow starts by itself when `version.json` changes on `main`: it builds the installer, proves on Windows that it updates a 2.0.4 installation in place and starts, then creates (or refreshes) the **draft** release `v<version>` with the installer attached and that version's notes.
+3. Try the installer from the draft, then press **Publish**. Publishing is still yours; an automatic run never touches a release that is already published.
+
+The old ways still work: *Actions › Build installer › Run workflow* (tick *draft_release* to attach it to a draft), a pull request that touches `installer/` (build and tests only), and a pushed tag `v*` (builds and drafts the release; the tag must match `version.json`).
 
 Locally (Windows): `cd installer && npm ci && npm run dist` (the file lands in `installer/dist`).
 
