@@ -3225,7 +3225,7 @@ async function startVm(vmId, config, restarts = 0) {
     const crashed = !vm.stopping && code !== 0;
     vmExits[vmId] = { code, at: Date.now(), crashed };
     vmLog(vmId, 'sys', vm.stopping ? 'Guest shut down.' : `Guest exited with code ${code}.`);
-    // Give up after a few quick crashes in a row so a broken disk can't loop forever.
+    // Give up after a few quick crashes in a row so a faulty disk can't loop forever.
     const ranLong = Date.now() - vm.startedAt > 60000;
     const nextRestarts = ranLong ? 0 : restarts + 1;
     if (crashed && config.autoRestart && nextRestarts <= 3 && !activeVMs[vmId]) {
