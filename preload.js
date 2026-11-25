@@ -23,6 +23,9 @@ contextBridge.exposeInMainWorld('hyadeOSElectron', Object.freeze({
         paste: text => ipcRenderer.invoke('hyadeos:clipboard-paste', String(text))
     }),
     insertText: text => ipcRenderer.invoke('hyadeos:insert-text', String(text)),
+    // Privacy mode (blank in screenshots and screen sharing) and the Alt+Tab window switcher: next, prev, commit, cancel (see launcher.js).
+    setPrivacy: on => ipcRenderer.invoke('hyadeos:set-privacy', !!on),
+    onShellSwitcher: callback => ipcRenderer.on('shell:switcher', (_event, action) => callback(String(action))),
     // An update changed the shell's own files: a full restart loads them (see launcher.js).
     onRestartNeeded: callback => ipcRenderer.on('system:restart-needed', () => callback()),
     relaunch: () => ipcRenderer.invoke('hyadeos:relaunch'),

@@ -477,10 +477,12 @@ async function checkSystemUpdates() {
     const data = await response.json();
     if (!response.ok || data.error) throw new Error(data.error || hyadeOSI18n.t("settings.updater.check-failed", "Update check failed"));
 
-    if (data.updateAvailable) {
+    if (data.updateAvailable && data.staged) {
+      showReadyToInstall(data.latest);
+    } else if (data.updateAvailable) {
       setSystemStatus('auto_awesome', `hyadeOS v${data.latest}`,
         data.changelog || hyadeOSI18n.t("settings.updater.system-available", "System update available · v{current} → v{latest}", { current: data.current, latest: data.latest }));
-      setAction(action, hyadeOSI18n.t("settings.updater.install-restart", "Install & restart"), startSystemUpdate);
+      setAction(action, hyadeOSI18n.t("settings.updater.update-now", "Update Now"), startSystemUpdate);
     } else if (data.older) {
       // The chosen channel is behind the installed version (e.g. Stable while running a Beta): say so, and let the user choose.
       setSystemStatus('history', hyadeOSI18n.t("settings.updater.older-title", "hyadeOS v{latest} ({channel})", { latest: data.latest, channel: channelLabel(data.channel) }),
@@ -597,7 +599,9 @@ function updateProgress(kind, percent, status) {
   const progress = document.getElementById(`${kind}Progress`);
   const fill = document.getElementById(`${kind}ProgressFill`);
   progress.hidden = false;
-  document.getElementById(`${kind}ProgressStatus`).textContent = status || hyadeOSI18n.t("settings.updater.updating", "Updating…");
+  const known = { 'Downloading...': hyadeOSI18n.t("settings.updater.downloading", "Downloading…"), 'Checking the download...': hyadeOSI18n.t("settings.updater.checking-download", "Checking the download…"),
+    'Verifying the release signature...': hyadeOSI18n.t("settings.updater.verifying", "Verifying the signature…"), 'Ready to install': hyadeOSI18n.t("settings.updater.ready", "Ready to install") };
+  document.getElementById(`${kind}ProgressStatus`).textContent = known[status] || status || hyadeOSI18n.t("settings.updater.updating", "Updating…");
   document.getElementById(`${kind}ProgressPercent`).textContent = `${Math.round(percent)}%`;
   fill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
   fill.classList.toggle('complete', percent >= 100);
@@ -610,7 +614,22 @@ function startSystemUpdate() {
   action.hidden = true;
   document.getElementById('systemProgress').hidden = false;
   setBusy(true);
-  startProgressStream('system', '/api/system/ota-update');
+  startProgressStream('system', '/api/system/ota-download');
+}
+
+// Downloaded: installing happens on the restart, on the boot screen.
+function showReadyToInstall(version) {
+  const action = document.getElementById('systemAction');
+  document.getElementById('systemProgress').hidden = true;
+  setSystemStatus('auto_awesome', `hyadeOS v${version}`,
+    hyadeOSI18n.t("settings.updater.ready-to-install", "Downloaded and ready to install. hyadeOS will restart to install it."));
+  setAction(action, hyadeOSI18n.t("settings.updater.restart-now", "Restart Now"), restartToInstall);
+}
+function restartToInstall() {
+  const action = document.getElementById('systemAction');
+  action.textContent = hyadeOSI18n.t("settings.updater.restarting", "Restarting…");
+  setBusy(true);
+  window.top.postMessage({ type: 'install-update' }, location.origin);
 }
 
 function startSotaUpdate() {
@@ -645,7 +664,7 @@ function startProgressStream(kind, url) {
     updateProgress(kind, data.percent, data.status);
     if (!data.finished) return;
     eventSource.close();
-    finishUpdate(kind, data.percent >= 100, data.status || hyadeOSI18n.t("settings.updater.finished", "Update finished."));
+    finishUpdate(kind, data.percent >= 100, data.status || hyadeOSI18n.t("settings.updater.finished", "Update finished."), data);
   };
   eventSource.onerror = () => {
     eventSource.close();
@@ -653,16 +672,18 @@ function startProgressStream(kind, url) {
   };
 }
 
-function finishUpdate(kind, succeeded, message) {
+function finishUpdate(kind, succeeded, message, data = {}) {
   activeUpdate = null;
   setBusy(false);
   if (kind === 'system') {
     const action = document.getElementById('systemAction');
+    if (succeeded && data.ready) { showReadyToInstall(data.version); return; }
     if (succeeded) {
       setSystemStatus('check', hyadeOSI18n.t("settings.updater.installed", "System update installed"), hyadeOSI18n.t("settings.updater.restart-to-finish", "Restart hyadeOS to finish applying it."), true);
       setAction(action, hyadeOSI18n.t("settings.updater.restart", "Restart"), () => window.parent.location.reload());
     } else {
-      setSystemStatus('error', hyadeOSI18n.t("settings.updater.failed", "System update failed"), hyadeOSI18n.t("settings.updater.not-updated", "Your system was not updated."));
+      document.getElementById('systemProgress').hidden = true;
+      setSystemStatus('error', hyadeOSI18n.t("settings.updater.download-failed", "The update could not be downloaded"), hyadeOSI18n.t("settings.updater.not-updated", "Your system was not updated."));
       setAction(action, hyadeOSI18n.t("common.retry", "Try again"), startSystemUpdate);
       setNotice('systemNotice', message, true);
     }

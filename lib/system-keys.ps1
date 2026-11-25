@@ -6,6 +6,7 @@
 #   win            the Windows key pressed and released alone (opens the hyadeOS Start)
 #   win+<key>      a combination, e.g. win+d, win+e, win+tab, win+l, win+shift+s, win+ctrl+left
 #   alt+f4         closes the hyadeOS app in front instead of the whole system
+#   alt+tab        (alt+shift+tab) the hyadeOS window switcher instead of the one of Windows
 #
 # Any other window keeps the normal Windows behaviour. Ctrl+Alt+Del is never touched (no
 # app can). The launcher writes "enable" or "disable" to stdin (Settings > General >
@@ -40,7 +41,7 @@ public static class HyadeOSSystemKeys {
   const int WH_KEYBOARD_LL = 13;
   const int WM_KEYDOWN = 0x100, WM_SYSKEYDOWN = 0x104;
   const uint LLKHF_ALTDOWN = 0x20;
-  const uint VK_LWIN = 0x5B, VK_RWIN = 0x5C, VK_F4 = 0x73;
+  const uint VK_LWIN = 0x5B, VK_RWIN = 0x5C, VK_F4 = 0x73, VK_TAB = 0x09;
 
   static IntPtr target;
   static HookProc proc;
@@ -137,6 +138,10 @@ public static class HyadeOSSystemKeys {
         return new IntPtr(1);
       } else if (down && key.vkCode == VK_F4 && (key.flags & LLKHF_ALTDOWN) != 0 && enabled && GetForegroundWindow() == target) {
         Emit("alt+f4");
+        return new IntPtr(1);
+      } else if (down && key.vkCode == VK_TAB && (key.flags & LLKHF_ALTDOWN) != 0 && enabled && GetForegroundWindow() == target) {
+        // Windows would open its own switcher: hyadeOS shows its own (the launcher turns these into next/prev).
+        Emit(shiftDown ? "alt+shift+tab" : "alt+tab");
         return new IntPtr(1);
       }
     }

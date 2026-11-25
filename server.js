@@ -4,7 +4,7 @@
 // Licensed under the Apache License, Version 2.0; you can use this file if you give credits to the original creators and you may not use this file except in compliance with the License. 
 // Obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. 
 
-const { envVar } = require("./lib/env");
+const { envVar, envPair } = require("./lib/env");
 const { LEGACY_TWM_FILE, isListedDesktop } = require("./lib/legacy-names");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -84,11 +84,23 @@ const CONTENT_SECURITY_POLICY = [
   "base-uri 'self'",
   "frame-ancestors 'self'"
 ].join("; ");
+// The Sandbox app's whole job is showing another hyadeOS in an iframe: local guests on
+// their own 127.0.0.1 port, or a remote PC over plain http. Only that page gets http: frames.
+const SANDBOX_APP_CSP = CONTENT_SECURITY_POLICY.replace(/frame-src [^;]*/, `frame-src 'self' https: http: ${APPS_ORIGIN}`);
+// When this kernel is itself a guest inside a host's Sandbox app, the host has to be
+// allowed to frame it (the host passes its own origins in HYADEOS_SANDBOX_PARENT).
+const SANDBOX_PARENT = String(envVar("SANDBOX_PARENT") || "")
+  .split(/\s+/).filter(origin => /^https?:\/\/[\w.-]+(:\d+)?$/.test(origin)).join(" ");
+const BASE_CSP = SANDBOX_PARENT
+  ? CONTENT_SECURITY_POLICY.replace("frame-ancestors 'self'", `frame-ancestors 'self' ${SANDBOX_PARENT}`)
+  : CONTENT_SECURITY_POLICY;
 app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", CONTENT_SECURITY_POLICY);
+  const isSandboxApp = req.path === "/desktop/apps/sandbox/" || req.path === "/desktop/apps/sandbox/index.html";
+  res.setHeader("Content-Security-Policy", isSandboxApp ? SANDBOX_APP_CSP : BASE_CSP);
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "no-referrer");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  // X-Frame-Options can't name another origin; frame-ancestors above does the job for guests.
+  if (!SANDBOX_PARENT) res.setHeader("X-Frame-Options", "SAMEORIGIN");
   next();
 });
 
@@ -97,7 +109,7 @@ if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
   throw new Error('HYADEOS_PORT must be a valid TCP port');
 }
 const currentOS = process.platform;
-const SERVER_EXIT_CODES = Object.freeze({ SHUTDOWN: 20, UPDATE_RESTART: 21, KERNEL_REBOOT: 22 });
+const SERVER_EXIT_CODES = Object.freeze({ SHUTDOWN: 20, UPDATE_RESTART: 21, KERNEL_REBOOT: 22, INSTALL_UPDATE: 23 });
 const BACKEND_INSTANCE_ID = envVar("BACKEND_INSTANCE_ID") || null;
 let httpServer = null;
 let serverExitStarted = false;
@@ -364,16 +376,16 @@ const users = createUsers({ baseDir: __dirname, getConfig: () => config, saveCon
 // Standard (non-admin) accounts: whatever installs software, runs commands or changes the
 // system for everyone belongs to administrators. Enforced here, whatever the UI shows.
 const ADMIN_ONLY_ROUTES = [
-  /^\/api\/store\/(install|uninstall|do-upgrade|publish|eula|auto-update|app-permissions)\b/,
-  /^\/api\/remote\/exec\b/, /^\/api\/sandbox\//, /^\/api\/recovery\//,
-  /^\/api\/system\/(factory-reset|reset-settings|reset-desktop|restore|backup|boot-logo|update-channel|keyring|ota-update|sota-update|health-report)\b/,
+  /^\/api\/store\/(install|uninstall|do-upgrade|publish|eula|auto-update|app-permissions|sideload|sources)\b/,
+  /^\/api\/remote\/exec\b/, /^\/api\/sandbox\//, /^\/api\/recovery\//, /^\/api\/terminal\//,
+  /^\/api\/system\/(factory-reset|reset-settings|reset-desktop|restore|backup|boot-logo|update-channel|keyring|ota-update|ota-download|install-staged-update|sota-update|health-report)\b/,
   /^\/api\/users\/(create|update|delete|reset-password|guest|limits)\b/,
   /^\/api\/rules\/(save|enabled)\b/,
   /^\/(save-settings|clear-settings|set-password|clear-password|upload-wallpaper|upload-live-wallpaper)$/,
   /^\/api\/wallpaper\/live\/remove$/, /^\/api\/preferences$/
 ];
 // Reading is fine, except where the read itself acts or hands out secrets.
-const ADMIN_ONLY_READS = /^\/api\/system\/(backup|keyring|ota-update|sota-update|health-report)\b/;
+const ADMIN_ONLY_READS = /^\/api\/(system\/(backup|keyring|ota-update|ota-download|sota-update|health-report)\b|terminal\/)/;
 function requireAdminFor(req, res, next) {
   if (req.user?.admin || !ADMIN_ONLY_ROUTES.some(route => route.test(req.path))) return next();
   if ((req.method === "GET" || req.method === "HEAD") && !ADMIN_ONLY_READS.test(req.path)) return next();
@@ -479,9 +491,12 @@ require("./spotify").registerSpotifyRoutes(app, {
 });
 const requireAuthJson = (req, res, next) => (!config.passwordHash || hasValidSession(req))
   ? next() : res.status(401).json({ success: false, error: "Authentication required. Please log in again." });
+require("./lib/terminal-net").registerTerminalNetRoutes(app, { requireAuth: requireAuthJson, resolveHomeEntry });
 require("./media-session").registerMediaSessionRoutes(app, { requireAuth: requireAuthJson });
 require("./bluetooth-watch").registerBluetoothWatchRoutes(app, { requireAuth: requireAuthJson });
 require("./online-services").registerOnlineServiceRoutes(app, { getConfig: () => config, saveConfig, requireAuth: requireAuthJson });
+// Random photo behind the Browser's new tab page (no login: that page runs in the browser's own session).
+require("./lib/browser-wallpaper").registerBrowserWallpaperRoute(app);
 
 app.get('/api/system/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
@@ -1470,11 +1485,27 @@ app.post("/api/email/verify-code", async (req, res) => {
   if (!isValidEmail(email)) return res.status(400).json({ success: false, error: "Invalid email address." });
   const result = await checkCode("verify", email, req.body.code);
   if (!result.ok) return res.status(400).json({ success: false, error: result.error });
+  // Activation: the device is bound once an email is verified; the date is kept until that email changes.
+  if (!config.verified || !config.activatedAt || (config.email || "").toLowerCase() !== email.toLowerCase()) config.activatedAt = new Date().toISOString();
   config.email = email;
   config.verified = true;
   config.mailToken = result.token || null;
   saveConfig();
-  res.json({ success: true, message: "Email verified!" });
+  res.json({ success: true, message: "Email verified!", activatedAt: config.activatedAt });
+});
+
+// --- ACTIVATION (Settings > About > Activation) ---
+// Activated = an email verified through the mail relay is bound to this system's account.
+// activatedAt is null for systems verified before the date was recorded.
+app.get("/api/activation", requireAuthJson, (req, res) => {
+  res.json({
+    success: true,
+    activated: Boolean(config.verified && config.email),
+    email: config.email || "",
+    username: config.username || "",
+    activatedAt: config.verified && config.activatedAt ? config.activatedAt : null,
+    mailAvailable: mail.configured
+  });
 });
 
 // --- PASSWORD RECOVERY (uses the verified email) ---
@@ -1635,7 +1666,9 @@ const DESKTOP_STYLE_SCHEMA = {
   nightWarmth: v => clampNumber(v, 10, 60),
   nightSchedule: v => ["off", "sunset", "custom"].includes(v) ? v : undefined,
   nightFrom: v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : undefined,
-  nightTo: v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : undefined
+  nightTo: v => /^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : undefined,
+  tiling: v => typeof v === "boolean" ? v : undefined,
+  tilingGap: v => clampNumber(v, 0, 32)
 };
 function clampNumber(value, min, max) {
   const n = Number(value);
@@ -1696,6 +1729,7 @@ app.post("/save-settings", (req, res) => {
     if (!isValidEmail(cleanEmail)) return res.status(400).json({ success: false, error: "Invalid email address." });
     if ((config.email || "").toLowerCase() !== cleanEmail.toLowerCase()) {
       config.verified = false;
+      delete config.activatedAt;
       config.sendReports = false;
       scheduleDailyEmail();
     }
@@ -2071,6 +2105,7 @@ app.post("/api/system/reset-settings", (req, res) => {
   config.sendReports = false;
   config.email = "";
   config.verified = false;
+  delete config.activatedAt;
   ["darkMode", "performance", "animations", "developer", "allowFlashing"].forEach(key => delete config[key]);
   saveConfig();
   scheduleDailyEmail();
@@ -2086,59 +2121,157 @@ app.post("/api/system/reset-desktop", (req, res) => {
   res.json({ success: true, message: "Desktop ripristinato" });
 });
 
-const REMOTE_CATALOG_URL = "https://raw.githubusercontent.com/hyadeOSS/store-catalog/main/store-catalog.json";
-const localCatalogFile = path.join(__dirname, "store-catalog.json");
+// --- STORE: CATALOG SOURCES ---
+// The Store reads two catalogs. "stable" is always on; "insiders" is an opt-in source of
+// early builds (Store › Settings). Sources are additive: an app can be stable-only,
+// insiders-only, or exist in both, and then the user picks one build at install.
+// Each source is a remote JSON list cached locally, merged with apps published on this
+// machine (lib/store-sources.js holds the pure merge logic).
+const { STORE_CHANNELS, storeChannel, buildStoreCatalog, isHomeVirtualPath, isInside, sideloadCopyFilter, sideloadLabels } = require("./lib/store-sources");
+const STORE_CATALOG_SOURCES = {
+  stable: {
+    remote: "https://raw.githubusercontent.com/hyadeOSS/store-catalog/main/store-catalog.json",
+    local: path.join(__dirname, "store-catalog.json")
+  },
+  insiders: {
+    remote: "https://raw.githubusercontent.com/hyadeOSS/store-catalog/main/store-catalog-insiders.json",
+    local: path.join(__dirname, "store-catalog-insiders.json")
+  }
+};
+const localCatalogFile = STORE_CATALOG_SOURCES.stable.local;
+if (!config.storeSources || typeof config.storeSources !== "object") config.storeSources = { insiders: false };
+const insidersEnabled = () => Boolean(config.storeSources && config.storeSources.insiders);
+
+function readLocalCatalog(channel) {
+  try {
+    const data = JSON.parse(fs.readFileSync(STORE_CATALOG_SOURCES[channel].local, "utf8"));
+    return Array.isArray(data) ? data.filter(a => a && typeof a.id === "string") : [];
+  } catch (e) { return []; }
+}
+
+function writeLocalCatalog(channel, catalog) {
+  fs.writeFileSync(STORE_CATALOG_SOURCES[channel].local, JSON.stringify(catalog, null, 2));
+}
+
+// Fetch one source and merge in the apps that only exist locally (published here).
+// Offline, the cached copy is used as-is.
+async function refreshCatalog(channel) {
+  const local = readLocalCatalog(channel);
+  try {
+    const response = await fetch(STORE_CATALOG_SOURCES[channel].remote);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const remote = await response.json();
+    if (!Array.isArray(remote)) throw new Error("Catalog is not a list");
+    const catalog = remote.filter(a => a && typeof a.id === "string");
+    const remoteIds = new Set(catalog.map(a => a.id));
+    const localIds = new Set(local.map(a => a.id));
+    const addedCount = catalog.filter(a => !localIds.has(a.id)).length;
+    local.forEach(a => { if (!remoteIds.has(a.id)) catalog.push(a); });
+    writeLocalCatalog(channel, catalog);
+    return { ok: true, catalog, addedCount };
+  } catch (e) {
+    return { ok: false, catalog: local, addedCount: 0, error: e.message };
+  }
+}
+
+async function loadStoreCatalog({ refresh = true } = {}) {
+  const withInsiders = insidersEnabled();
+  const [stable, insiders] = await Promise.all([
+    refresh ? refreshCatalog("stable").then(r => r.catalog) : readLocalCatalog("stable"),
+    withInsiders ? (refresh ? refreshCatalog("insiders").then(r => r.catalog) : readLocalCatalog("insiders")) : null
+  ]);
+  return buildStoreCatalog(stable, insiders);
+}
 
 // The app store is the public software layer of hyadeOS.
 // It blends a remote catalog with local packages so the desktop can stay fresh without
 // losing custom apps that are built specifically for a branch or device.
 app.get("/api/store/catalog", async (req, res) => {
-  let catalog = [];
-  try {
-    const response = await fetch(REMOTE_CATALOG_URL);
-    if (response.ok) {
-      catalog = await response.json();
-      
-      if (fs.existsSync(localCatalogFile)) {
-        const localCatalog = JSON.parse(fs.readFileSync(localCatalogFile, "utf8"));
-        const remoteIds = new Set(catalog.map(a => a.id));
-        localCatalog.forEach(localApp => {
-          if (!remoteIds.has(localApp.id)) catalog.push(localApp);
-        });
-      }
-      fs.writeFileSync(localCatalogFile, JSON.stringify(catalog, null, 2));
-    }
-  } catch (err) {
-    if (fs.existsSync(localCatalogFile)) {
-      catalog = JSON.parse(fs.readFileSync(localCatalogFile, "utf8"));
-    }
-  }
-  res.json(catalog);
+  res.json(await loadStoreCatalog());
 });
 
 app.get("/api/store/update", async (req, res) => {
-  let oldCatalog = [];
-  if (fs.existsSync(localCatalogFile)) oldCatalog = JSON.parse(fs.readFileSync(localCatalogFile, "utf8"));
-  const oldIds = new Set(oldCatalog.map(a => a.id));
+  const channels = insidersEnabled() ? STORE_CHANNELS : ["stable"];
+  const results = await Promise.all(channels.map(refreshCatalog));
+  if (results.every(r => !r.ok)) return res.status(500).json({ success: false, error: "Failed to fetch remote catalog" });
+  res.json({ success: true, addedCount: results.reduce((n, r) => n + r.addedCount, 0) });
+});
 
-  try {
-    const response = await fetch(REMOTE_CATALOG_URL);
-    if (!response.ok) throw new Error("Fetch failed");
-    const remoteCatalog = await response.json();
-    
-    let addedCount = 0;
-    remoteCatalog.forEach(app => { if (!oldIds.has(app.id)) addedCount++; });
-    
-    const remoteIds = new Set(remoteCatalog.map(a => a.id));
-    oldCatalog.forEach(localApp => {
-      if (!remoteIds.has(localApp.id)) remoteCatalog.push(localApp);
-    });
+app.get("/api/store/sources", (req, res) => {
+  res.json({ stable: true, insiders: insidersEnabled() });
+});
 
-    fs.writeFileSync(localCatalogFile, JSON.stringify(remoteCatalog, null, 2));
-    res.json({ success: true, addedCount });
-  } catch (err) {
-    res.status(500).json({ success: false, error: "Failed to fetch remote catalog" });
+// Administrators only (ADMIN_ONLY_ROUTES): the source decides what every account can install.
+app.post("/api/store/sources", (req, res) => {
+  config.storeSources = { insiders: req.body && req.body.insiders === true };
+  saveConfig();
+  res.json({ success: true, stable: true, insiders: insidersEnabled() });
+});
+
+// The version each build of a catalog app declares (catalog field, else its repo's
+// version.json). The repo is looked up in the catalog, never taken from the request.
+app.get("/api/store/app-versions", async (req, res) => {
+  const id = String(req.query.id || "");
+  const entry = (await loadStoreCatalog({ refresh: false })).find(a => a.id === id);
+  if (!entry) return res.status(404).json({ success: false, error: "Unknown app" });
+  const versions = {};
+  await Promise.all(entry.variants.map(async v => {
+    versions[v.channel] = v.version || (isAllowedRepoUrl(v.repoUrl) && /\.git$/.test(v.repoUrl) ? await fetchRepoVersion(v.repoUrl) : null);
+  }));
+  res.json({ success: true, versions });
+});
+
+// --- STORE: SCREENSHOTS ---
+// A catalog entry may list its own screenshots. Otherwise they are read from the app's
+// GitHub repository: image files in screenshots/ (or .github/screenshots/), sorted by
+// name. Results are cached for an hour so browsing doesn't burn the GitHub API quota.
+const SCREENSHOT_EXT = /\.(png|jpe?g|webp|gif)$/i;
+const screenshotCache = new Map();
+
+async function fetchRepoScreenshots(repoUrl) {
+  const source = githubOwnerRepo(repoUrl);
+  if (!source) return [];
+  const key = `${source.owner}/${source.repo}`.toLowerCase();
+  const cached = screenshotCache.get(key);
+  if (cached && Date.now() - cached.at < 60 * 60 * 1000) return cached.list;
+  let list = [];
+  for (const dir of ["screenshots", ".github/screenshots"]) {
+    try {
+      const r = await fetch(`https://api.github.com/repos/${source.owner}/${source.repo}/contents/${dir}`, {
+        headers: { Accept: "application/vnd.github+json", "User-Agent": "hyadeOS-Store" }
+      });
+      if (!r.ok) continue;
+      const items = await r.json();
+      if (!Array.isArray(items)) continue;
+      list = items
+        .filter(item => item && item.type === "file" && SCREENSHOT_EXT.test(item.name) && typeof item.download_url === "string" && /^https:\/\//.test(item.download_url))
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+        .slice(0, 10)
+        .map(item => item.download_url);
+      if (list.length) break;
+    } catch (e) { /* offline: no screenshots */ }
   }
+  screenshotCache.set(key, { at: Date.now(), list });
+  return list;
+}
+
+// ?id= for a catalog app (its build for ?channel=), or ?repoUrl= to preview while submitting.
+app.get("/api/store/screenshots", async (req, res) => {
+  let repoUrl = "";
+  if (req.query.id) {
+    const entry = (await loadStoreCatalog({ refresh: false })).find(a => a.id === String(req.query.id));
+    if (!entry) return res.status(404).json({ success: false, error: "Unknown app" });
+    const variant = entry.variants.find(v => v.channel === storeChannel(req.query.channel)) || entry.variants[0];
+    const own = (variant && Array.isArray(variant.screenshots) && variant.screenshots.length && variant.screenshots) || entry.screenshots;
+    if (Array.isArray(own) && own.length) {
+      return res.json({ success: true, source: "catalog", screenshots: own.filter(u => typeof u === "string").slice(0, 10) });
+    }
+    repoUrl = (variant && variant.repoUrl) || entry.repoUrl;
+  } else {
+    repoUrl = String(req.query.repoUrl || "");
+  }
+  if (!isAllowedRepoUrl(repoUrl)) return res.status(400).json({ success: false, error: "Not a GitHub repository" });
+  res.json({ success: true, source: "repo", screenshots: await fetchRepoScreenshots(repoUrl) });
 });
 
 // Version-aware upgrade check. For each installed app we compare the version it was
@@ -2282,36 +2415,64 @@ app.get("/api/store/app-info", async (req, res) => {
   res.json(info);
 });
 
-app.post("/api/store/publish", appIconUpload.single("iconFile"), (req, res) => {
-  try {
-    const { id, title, developer, desc, repoUrl, icon, eula } = req.body;
-    if (!id || !title || !developer || !desc || !repoUrl) {
-      return res.status(400).json({ success: false, error: "Missing required fields" });
+// --- STORE: PUBLISHING ---
+// Adds an app to this machine's catalog for the chosen source. The ID is the folder the
+// app installs into, so it follows the same rule as install (letters, digits, - and _).
+// Own upload handler: icons keep the shared naming, screenshots get unique names.
+const storePublishUpload = multer({
+  limits: IMAGE_UPLOAD_LIMIT,
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, path.join(__dirname, "desktop/assets")),
+    filename: (req, file, cb) => {
+      const safeId = typeof req.body.id === "string" && req.body.id ? req.body.id.replace(/[^a-zA-Z0-9_-]/g, "") : "app";
+      if (file.fieldname === "screenshotFiles") {
+        const ext = { "image/jpeg": "jpg", "image/webp": "webp" }[file.mimetype] || "png";
+        return cb(null, `shot_${safeId}_${Date.now()}_${crypto.randomBytes(3).toString("hex")}.${ext}`);
+      }
+      cb(null, `icon_${safeId}_${Date.now()}.png`);
     }
+  }),
+  fileFilter: (req, file, cb) => cb(null, ["image/png", "image/jpeg"].includes(file.mimetype) || (file.fieldname === "screenshotFiles" && file.mimetype === "image/webp"))
+});
+app.post("/api/store/publish", storePublishUpload.fields([{ name: "iconFile", maxCount: 1 }, { name: "screenshotFiles", maxCount: 8 }]), (req, res) => {
+  const iconFile = req.files && req.files.iconFile && req.files.iconFile[0];
+  const shotFiles = (req.files && req.files.screenshotFiles) || [];
+  const discardUploads = () => [iconFile, ...shotFiles].forEach(file => { if (file) fs.rm(file.path, { force: true }, () => {}); });
+  const fail = (status, body) => { discardUploads(); return res.status(status).json(body); };
+  try {
+    const field = (name, max) => (typeof req.body[name] === "string" ? req.body[name].trim().slice(0, max) : "");
+    const id = field("id", 64);
+    const title = field("title", 80);
+    const developer = field("developer", 80);
+    const desc = field("desc", 4000);
+    const repoUrl = field("repoUrl", 500);
+    const icon = field("icon", 300);
+    const eula = field("eula", 20000);
+    const channel = storeChannel(req.body.channel);
+
+    if (!id || !title || !developer || !desc || !repoUrl) {
+      return fail(400, { success: false, error: "Missing required fields" });
+    }
+    if (!isValidAppId(id)) return fail(400, { success: false, field: "id", error: "The ID can only use letters, digits, - and _" });
+    if (isBuiltInAppId(id)) return fail(409, { success: false, field: "id", error: `"${id}" is a built-in app` });
+    if (!isAllowedRepoUrl(repoUrl)) return fail(400, { success: false, field: "repoUrl", error: "Use an https github.com repository or raw .html link" });
 
     let iconPath = "📦";
-    if (req.file) {
-      iconPath = `/desktop/assets/${req.file.filename}`;
-    } else if (icon) {
-      iconPath = icon;
-    } else {
-      iconPath = getRawGithubUrl(repoUrl) || "📦";
-    }
+    if (iconFile) iconPath = `/desktop/assets/${iconFile.filename}`;
+    else if (icon) iconPath = icon;
+    else iconPath = getRawGithubUrl(repoUrl) || "📦";
 
     const newApp = { id, title, developer, desc, repoUrl, icon: iconPath };
     if (eula) newApp.eula = eula;
+    // Uploaded screenshots win; without any, the Store reads the repo's screenshots/ folder.
+    if (shotFiles.length) newApp.screenshots = shotFiles.map(file => `/desktop/assets/${file.filename}`);
 
-    let catalog = [];
-    if (fs.existsSync(localCatalogFile)) {
-      catalog = JSON.parse(fs.readFileSync(localCatalogFile, "utf8"));
-    }
-    
-    catalog = catalog.filter(a => a.id !== id);
+    const catalog = readLocalCatalog(channel).filter(a => a.id !== id);
     catalog.push(newApp);
-    
-    fs.writeFileSync(localCatalogFile, JSON.stringify(catalog, null, 2));
-    res.json({ success: true, app: newApp });
+    writeLocalCatalog(channel, catalog);
+    res.json({ success: true, app: { ...newApp, channel } });
   } catch (err) {
+    discardUploads();
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -2339,12 +2500,19 @@ const installProgress = {};
 function isValidAppId(appId) {
   return typeof appId === 'string' && /^[a-zA-Z0-9_-]+$/.test(appId);
 }
+// A folder in desktop/apps that the Store did not put there is part of the OS (terminal,
+// settings...): publishing or sideloading over it would replace it, so that ID is refused.
+function isBuiltInAppId(appId) {
+  if ((config.installedApps || []).some(app => app.appId === appId)) return false;
+  return fs.existsSync(path.join(__dirname, "desktop", "apps", appId));
+}
 
 app.post("/api/store/install", async (req, res) => {
   // This is the installation pipeline used by the app store.
   // It accepts GitHub repos or direct file URLs, downloads the app bundle, and registers
   // it inside the desktop shell so it behaves like a native hyadeOS app.
   const { appId, title, icon, repoUrl } = req.body;
+  const channel = storeChannel(req.body.channel);
   if (!isValidAppId(appId)) return res.status(400).json({ success: false, error: "Invalid app ID" });
   // SECURITY (A-07 adjacent): only install from an https github.com URL.
   if (!isAllowedRepoUrl(repoUrl)) {
@@ -2396,13 +2564,14 @@ app.post("/api/store/install", async (req, res) => {
     const existing = config.installedApps.find(app => app.appId === appId);
     if (existing) {
       existing.repoUrl = repoUrl;
+      existing.channel = channel;
       existing.grantedPermissions = grantedPermissions;
       if (installedVersion) existing.version = installedVersion;
     } else {
-      config.installedApps.push({ appId, title, icon: localIconPath, url: relativeUrl, repoUrl, version: installedVersion || null, grantedPermissions });
+      config.installedApps.push({ appId, title, icon: localIconPath, url: relativeUrl, repoUrl, channel, version: installedVersion || null, grantedPermissions });
     }
     fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
-    res.json({ success: true, message: "Installation complete" });
+    res.json({ success: true, message: "Installation complete", channel, version: installedVersion || null });
   }
 
   const isSingleFile = !repoUrl.endsWith(".git");
@@ -2433,6 +2602,69 @@ app.post("/api/store/install", async (req, res) => {
     }
     finishInstall();
   }
+});
+
+// Sideload: install an app from a folder (with an index.html) or a single .html file in
+// the administrator's home, e.g. "store add ~/Projects/myapp" in the Terminal. The app is
+// recorded with a "local:" source, so it counts as third-party and runs isolated on its
+// own origin like any app not published by the hyadeOS team. Administrators only
+// (ADMIN_ONLY_ROUTES). The source must be inside the home partition, symbolic links are
+// never followed or copied, and the app can only be granted what its own hyadeos.json declares.
+app.post("/api/store/sideload", (req, res) => {
+  const { appId } = req.body || {};
+  if (!isValidAppId(appId) || appId.length > 80) return res.status(400).json({ success: false, error: "Invalid app ID (use letters, digits, - and _)" });
+  if (appId === "tiles") return res.status(400).json({ success: false, error: "This ID is reserved" });
+  if (isBuiltInAppId(appId)) return res.status(409).json({ success: false, error: `"${appId}" is a built-in app and cannot be replaced` });
+  const sourcePath = typeof req.body.path === "string" ? req.body.path : "";
+  const resolved = resolveVirtualPath(sourcePath);
+  if (!resolved || resolved.isReadOnly || !resolved.realPath || !isHomeVirtualPath(path.posix.normalize(sourcePath.replace(/\\/g, "/")))) {
+    return res.status(403).json({ success: false, error: "Apps can only be installed from your home partition" });
+  }
+  let sourceReal, stats;
+  try {
+    // A link in the home must not lead out of it either.
+    sourceReal = fs.realpathSync(resolved.realPath);
+    if (!isInside(fs.realpathSync(path.resolve(users.homeOf(users.current()))), sourceReal)) throw Object.assign(new Error("outside"), { code: "OUTSIDE" });
+    stats = fs.statSync(sourceReal);
+  } catch (e) {
+    if (e.code === "OUTSIDE") return res.status(403).json({ success: false, error: "Apps can only be installed from your home partition" });
+    return res.status(404).json({ success: false, error: `${sourcePath}: no such file or directory` });
+  }
+  const target = path.join(__dirname, "desktop", "apps", appId);
+  try {
+    if (stats.isDirectory()) {
+      if (!fs.existsSync(path.join(sourceReal, "index.html"))) return res.status(400).json({ success: false, error: `${sourcePath} has no index.html` });
+      if (isInside(sourceReal, target) || isInside(target, sourceReal)) return res.status(400).json({ success: false, error: "Choose a folder that is not the app's own install folder" });
+      fs.rmSync(target, { recursive: true, force: true });
+      fs.cpSync(sourceReal, target, { recursive: true, filter: sideloadCopyFilter });
+    } else {
+      if (!/\.html?$/i.test(sourceReal)) return res.status(400).json({ success: false, error: "Choose a folder with an index.html, or an .html file" });
+      fs.rmSync(target, { recursive: true, force: true });
+      fs.mkdirSync(target, { recursive: true });
+      fs.copyFileSync(sourceReal, path.join(target, "index.html"));
+    }
+  } catch (e) {
+    fs.rmSync(target, { recursive: true, force: true });
+    return res.status(500).json({ success: false, error: `Could not copy the app: ${e.message}` });
+  }
+  // An icon.png next to index.html becomes the app icon (copied to the shared assets,
+  // since an isolated app's own files are not served on the shell's origin).
+  const labels = sideloadLabels(appId, req.body);
+  let appIcon = labels.icon || "📦";
+  const iconFile = path.join(target, "icon.png");
+  if (!labels.icon && fs.existsSync(iconFile)) {
+    const fileName = `icon_${appId}_${Date.now()}.png`;
+    try { fs.copyFileSync(iconFile, path.join(__dirname, "desktop/assets", fileName)); appIcon = `/desktop/assets/${fileName}`; } catch (e) {}
+  }
+  const repoUrl = `local:${sourcePath}`.slice(0, 500);
+  if (!config.installedApps) config.installedApps = [];
+  const existing = config.installedApps.find(app => app.appId === appId);
+  const version = readInstalledAppVersion(appId);
+  const grantedPermissions = resolveGrantedPermissions(req.body.grantedPermissions, target);
+  if (existing) Object.assign(existing, { title: labels.title, icon: appIcon, repoUrl, version: version || null, grantedPermissions });
+  else config.installedApps.push({ appId, title: labels.title, icon: appIcon, url: `apps/${appId}/index.html`, repoUrl, version: version || null, grantedPermissions });
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
+  res.json({ success: true, app: { appId, title: labels.title, icon: appIcon, url: `apps/${appId}/index.html` }, updated: !!existing });
 });
 
 app.post("/api/store/uninstall", (req, res) => {
@@ -2816,6 +3048,12 @@ setInterval(() => {
 
 
 // --- SANDBOX VM ENGINE ---
+// Each VM lives in desktop/apps/sandbox/<vmId>/ with:
+//   disk/                 the extracted hyadeOS image (must contain a server.js)
+//   snapshots/<id>/disk/  full copies of disk/, plus meta.json { name, createdAt }
+// The guest runs as a separate `node` process on its own port. Its options (memory, port,
+// env, auto-restart) are sent by the Sandbox app with every start and kept here for restarts.
+const net = require("net");
 const sandboxBaseDir = path.join(__dirname, "desktop/apps/sandbox");
 // SECURITY (C-06): vmId is used to build filesystem paths and then code is executed
 // from the resulting directory. Without validation a value like "../../.." escapes
@@ -2823,8 +3061,17 @@ const sandboxBaseDir = path.join(__dirname, "desktop/apps/sandbox");
 function isValidVmId(vmId) {
   return typeof vmId === 'string' && /^[a-zA-Z0-9_-]+$/.test(vmId);
 }
-const activeVMs = {}; 
-let currentSandboxPort = 3001;
+const activeVMs = {};   // vmId -> { process, port, config, startedAt, restarts, stopping }
+const vmExits = {};     // vmId -> { code, at, crashed } for the last time a guest ended
+const vmLogs = {};      // vmId -> { seq, lines: [{ n, t, s, text }] }
+const SANDBOX_LOG_LINES = 1000;
+const SANDBOX_PORT_FIRST = PORT + 10;
+const SANDBOX_RESERVED_PORTS = new Set([PORT, APPS_PORT]);
+const SANDBOX_MEMORY_MB = [0, 256, 512, 1024, 2048, 4096, 8192];
+
+const vmDiskDir = vmId => path.join(sandboxBaseDir, vmId, "disk");
+const vmSnapshotsDir = vmId => path.join(sandboxBaseDir, vmId, "snapshots");
+const psQuote = value => `'${String(value).replace(/'/g, "''")}'`;
 
 function findServerJs(dir) {
   if (!fs.existsSync(dir)) return null;
@@ -2834,11 +3081,182 @@ function findServerJs(dir) {
     let files = fs.readdirSync(current);
     for (let f of files) {
        let fullPath = path.join(current, f);
+       if (f === 'node_modules') continue;
        if (fs.statSync(fullPath).isDirectory()) { queue.push(fullPath); }
        else if (f === 'server.js') { return fullPath; }
     }
   }
   return null;
+}
+
+async function dirSize(dir) {
+  let total = 0;
+  const stack = [dir];
+  while (stack.length) {
+    const current = stack.pop();
+    let entries;
+    try { entries = await fs.promises.readdir(current, { withFileTypes: true }); } catch (e) { continue; }
+    for (const entry of entries) {
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) stack.push(full);
+      else if (entry.isFile()) { try { total += (await fs.promises.stat(full)).size; } catch (e) {} }
+    }
+  }
+  return total;
+}
+
+function vmLog(vmId, stream, chunk) {
+  const log = vmLogs[vmId] || (vmLogs[vmId] = { seq: 0, lines: [] });
+  String(chunk).split(/\r?\n/).forEach(text => {
+    if (!text && stream !== 'sys') return;
+    log.lines.push({ n: ++log.seq, t: Date.now(), s: stream, text: text.slice(0, 4000) });
+  });
+  if (log.lines.length > SANDBOX_LOG_LINES) log.lines.splice(0, log.lines.length - SANDBOX_LOG_LINES);
+}
+
+function isPortFree(port) {
+  return new Promise(resolve => {
+    const probe = net.createServer();
+    probe.once('error', () => resolve(false));
+    probe.once('listening', () => probe.close(() => resolve(true)));
+    probe.listen(port);
+  });
+}
+
+function isPortListening(port) {
+  return new Promise(resolve => {
+    const socket = net.connect({ port, host: '127.0.0.1' });
+    const done = ok => { socket.destroy(); resolve(ok); };
+    socket.once('connect', () => done(true));
+    socket.once('error', () => done(false));
+    socket.setTimeout(500, () => done(false));
+  });
+}
+
+const portTakenByVm = (port, exceptVmId) =>
+  Object.keys(activeVMs).some(id => id !== exceptVmId && activeVMs[id].port === port);
+
+async function pickSandboxPort(vmId, wanted) {
+  if (wanted) {
+    if (SANDBOX_RESERVED_PORTS.has(wanted)) throw new Error(`Port ${wanted} is used by hyadeOS itself.`);
+    if (portTakenByVm(wanted, vmId)) throw new Error(`Port ${wanted} is already used by another sandbox.`);
+    if (!(await isPortFree(wanted))) throw new Error(`Port ${wanted} is already in use on this PC.`);
+    return wanted;
+  }
+  for (let port = SANDBOX_PORT_FIRST; port < SANDBOX_PORT_FIRST + 500; port++) {
+    if (SANDBOX_RESERVED_PORTS.has(port) || portTakenByVm(port, vmId)) continue;
+    if (await isPortFree(port)) return port;
+  }
+  throw new Error("No free port was found for the sandbox.");
+}
+
+// Only the options the backend can enforce, clamped to sane values.
+function normalizeVmConfig(raw) {
+  const cfg = raw && typeof raw === 'object' ? raw : {};
+  const memoryMB = SANDBOX_MEMORY_MB.includes(Number(cfg.memoryMB)) ? Number(cfg.memoryMB) : 0;
+  const port = Number(cfg.port);
+  const env = {};
+  if (cfg.env && typeof cfg.env === 'object') {
+    Object.keys(cfg.env).slice(0, 50).forEach(key => {
+      if (/^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(key) && key !== 'PORT') env[key] = String(cfg.env[key]).slice(0, 2000);
+    });
+  }
+  return {
+    memoryMB,
+    port: Number.isInteger(port) && port >= 1024 && port <= 65535 ? port : 0,
+    autoRestart: !!cfg.autoRestart,
+    env
+  };
+}
+
+function killVmProcess(vm) {
+  if (!vm || !vm.process) return;
+  vm.stopping = true;
+  const pid = vm.process.pid;
+  if (process.platform === 'win32' && pid) {
+    // The guest OS starts helpers of its own; take the whole tree down.
+    exec(`taskkill /pid ${pid} /T /F`, () => {});
+  } else {
+    try { vm.process.kill(); } catch (e) {}
+  }
+}
+
+async function startVm(vmId, config, restarts = 0) {
+  const targetServerJs = findServerJs(vmDiskDir(vmId));
+  if (!targetServerJs) throw new Error("No system kernel (server.js) found in this virtual disk.");
+
+  const port = await pickSandboxPort(vmId, config.port);
+  const vmCwd = path.dirname(targetServerJs);
+  const wrapperCode = `
+    const http = require('http');
+    const originalListen = http.Server.prototype.listen;
+    http.Server.prototype.listen = function(...args) {
+      if (typeof args[0] === 'number') {
+        args[0] = ${port};
+      } else if (typeof args[0] === 'object' && args[0] !== null && args[0].port) {
+        args[0].port = ${port};
+      }
+      return originalListen.apply(this, args);
+    };
+    require('./server.js');
+  `;
+  fs.writeFileSync(path.join(vmCwd, 'sandbox-wrapper.js'), wrapperCode);
+
+  const args = [];
+  if (config.memoryMB) args.push(`--max-old-space-size=${config.memoryMB}`);
+  args.push('sandbox-wrapper.js');
+
+  vmLog(vmId, 'sys', `Starting guest on port ${port}${config.memoryMB ? ` with ${config.memoryMB} MB of memory` : ''}…`);
+  const p = spawn('node', args, {
+    cwd: vmCwd,
+    env: { ...process.env, ...config.env, PORT: String(port), ...envPair('PORT', String(port)), ...envPair('SANDBOX', '1'), ...envPair('SANDBOX_PARENT', `http://127.0.0.1:${PORT} http://localhost:${PORT}`),
+      // Guests may be images of older mariowOS releases, which only know this prefix.
+      MARIOWOS_PORT: String(port), MARIOWOS_SANDBOX: '1', MARIOWOS_SANDBOX_PARENT: `http://127.0.0.1:${PORT} http://localhost:${PORT}` }
+  });
+  const vm = { process: p, port, config, startedAt: Date.now(), restarts, stopping: false };
+  activeVMs[vmId] = vm;
+  delete vmExits[vmId];
+
+  p.stdout.on('data', chunk => vmLog(vmId, 'out', chunk));
+  p.stderr.on('data', chunk => vmLog(vmId, 'err', chunk));
+  p.on('error', err => vmLog(vmId, 'sys', `Could not start the guest: ${err.message}`));
+  p.on('exit', code => {
+    if (activeVMs[vmId] === vm) delete activeVMs[vmId];
+    const crashed = !vm.stopping && code !== 0;
+    vmExits[vmId] = { code, at: Date.now(), crashed };
+    vmLog(vmId, 'sys', vm.stopping ? 'Guest shut down.' : `Guest exited with code ${code}.`);
+    // Give up after a few quick crashes in a row so a faulty disk can't loop forever.
+    const ranLong = Date.now() - vm.startedAt > 60000;
+    const nextRestarts = ranLong ? 0 : restarts + 1;
+    if (crashed && config.autoRestart && nextRestarts <= 3 && !activeVMs[vmId]) {
+      vmLog(vmId, 'sys', `Restarting automatically (${nextRestarts}/3)…`);
+      setTimeout(() => {
+        if (!activeVMs[vmId]) startVm(vmId, config, nextRestarts).catch(err => vmLog(vmId, 'sys', err.message));
+      }, 2000);
+    }
+  });
+
+  // Wait until the guest actually answers, so the app doesn't show a connection error.
+  const deadline = Date.now() + 20000;
+  while (Date.now() < deadline) {
+    if (activeVMs[vmId] !== vm) {
+      const tail = (vmLogs[vmId]?.lines || []).filter(l => l.s === 'err').slice(-3).map(l => l.text).join('\n');
+      throw new Error(`The guest stopped while booting.${tail ? '\n\n' + tail : ''}`);
+    }
+    if (await isPortListening(port)) break;
+    await new Promise(r => setTimeout(r, 250));
+  }
+  return vm;
+}
+
+function stopVm(vmId) {
+  return new Promise(resolve => {
+    const vm = activeVMs[vmId];
+    if (!vm) return resolve();
+    const timer = setTimeout(resolve, 5000);
+    vm.process.once('exit', () => { clearTimeout(timer); resolve(); });
+    killVmProcess(vm);
+  });
 }
 
 const sandboxUpload = multer({
@@ -2852,6 +3270,63 @@ const sandboxUpload = multer({
   })
 });
 
+// Totals from a zip's central directory, so extraction progress has something to count against.
+function zipTotals(zipPath) {
+  try {
+    const fd = fs.openSync(zipPath, 'r');
+    const size = fs.fstatSync(fd).size;
+    const tailLen = Math.min(size, 65557);
+    const tail = Buffer.alloc(tailLen);
+    fs.readSync(fd, tail, 0, tailLen, size - tailLen);
+    let eocd = -1;
+    for (let i = tailLen - 22; i >= 0; i--) if (tail.readUInt32LE(i) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) { fs.closeSync(fd); return null; }
+    const cdSize = tail.readUInt32LE(eocd + 12), cdOffset = tail.readUInt32LE(eocd + 16);
+    if (cdSize === 0xffffffff || cdOffset === 0xffffffff) { fs.closeSync(fd); return null; } // zip64: skip totals
+    const cd = Buffer.alloc(cdSize);
+    fs.readSync(fd, cd, 0, cdSize, cdOffset);
+    fs.closeSync(fd);
+    let files = 0, bytes = 0, p = 0;
+    while (p + 46 <= cd.length && cd.readUInt32LE(p) === 0x02014b50) {
+      const nameLen = cd.readUInt16LE(p + 28), extraLen = cd.readUInt16LE(p + 30), commentLen = cd.readUInt16LE(p + 32);
+      const name = cd.toString('utf8', p + 46, p + 46 + nameLen);
+      if (!name.endsWith('/')) { files++; bytes += cd.readUInt32LE(p + 24); }
+      p += 46 + nameLen + extraLen + commentLen;
+    }
+    return { files, bytes };
+  } catch (e) { return null; }
+}
+
+const sandboxMounts = {}; // vmId -> { name, totals, startedAt, measuring, done, bytes }
+const windowsTar = process.platform === 'win32' ? path.join(process.env.SystemRoot || 'C:\Windows', 'System32', 'tar.exe') : null;
+
+function extractZip(zipPath, dest, cb) {
+  if (process.platform !== 'win32') return exec(`unzip -o -q "${zipPath}" -d "${dest}"`, { maxBuffer: 16 * 1024 * 1024 }, cb);
+  const expand = () => exec(`powershell.exe -nologo -noprofile -command "Expand-Archive -LiteralPath ${psQuote(zipPath)} -DestinationPath ${psQuote(dest)} -Force"`, cb);
+  // Windows' own bsdtar reads zips and is many times faster than Expand-Archive.
+  if (!fs.existsSync(windowsTar)) return expand();
+  const t = spawn(windowsTar, ['-x', '-f', zipPath, '-C', dest]);
+  t.on('error', expand);
+  t.on('exit', code => code === 0 ? cb(null) : (fs.rmSync(dest, { recursive: true, force: true }), fs.mkdirSync(dest, { recursive: true }), expand()));
+}
+
+app.get("/api/sandbox/mount-progress", async (req, res) => {
+  const vmId = req.query.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const m = sandboxMounts[vmId];
+  if (!m) return res.json({ success: true, active: false });
+  if (!m.measuring) {
+    m.measuring = true;
+    try { m.bytes = await dirSize(vmDiskDir(vmId)); } finally { m.measuring = false; }
+  }
+  const total = m.totals ? m.totals.bytes : 0;
+  res.json({
+    success: true, active: true, name: m.name,
+    extractedBytes: m.bytes || 0, totalBytes: total, totalFiles: m.totals ? m.totals.files : 0,
+    percent: total ? Math.min(99, Math.round((m.bytes || 0) / total * 100)) : null
+  });
+});
+
 app.post("/api/sandbox/upload", sandboxUpload.single("vmZip"), (req, res) => {
   if (!req.file) return res.status(400).json({ success: false, error: "No file uploaded" });
   
@@ -2860,98 +3335,79 @@ app.post("/api/sandbox/upload", sandboxUpload.single("vmZip"), (req, res) => {
     fs.unlinkSync(req.file.path);
     return res.status(400).json({ success: false, error: "Valid Virtual Machine ID is required." });
   }
+  if (activeVMs[vmId] || sandboxMounts[vmId]) {
+    fs.unlinkSync(req.file.path);
+    return res.status(409).json({ success: false, error: activeVMs[vmId] ? "Shut down the sandbox before mounting another disk." : "A disk is already being mounted." });
+  }
 
-  const vmDisk = path.join(sandboxBaseDir, vmId, "disk");
-  
+  const vmDisk = vmDiskDir(vmId);
   if (fs.existsSync(vmDisk)) fs.rmSync(vmDisk, { recursive: true, force: true });
   fs.mkdirSync(vmDisk, { recursive: true });
 
   const zipPath = req.file.path;
-  
-  let extractCmd = "";
-  if (process.platform === "win32") {
-    extractCmd = `powershell.exe -nologo -noprofile -command "Expand-Archive -Path '${zipPath}' -DestinationPath '${vmDisk}' -Force"`;
-  } else {
-    extractCmd = `unzip -o "${zipPath}" -d "${vmDisk}"`;
-  }
+  sandboxMounts[vmId] = { name: req.file.originalname || 'disk.zip', totals: zipTotals(zipPath), startedAt: Date.now(), bytes: 0 };
+  vmLog(vmId, 'sys', `Extracting ${sandboxMounts[vmId].name}…`);
 
-  exec(extractCmd, (err, stdout, stderr) => {
+  extractZip(zipPath, vmDisk, err => {
+    delete sandboxMounts[vmId];
     if (fs.existsSync(zipPath)) fs.unlinkSync(zipPath); 
-    
     if (err) {
-      console.error("Extraction error:", err.message || stderr);
-      return res.status(500).json({ 
-        success: false, 
-        error: "Failed to extract zip file. Check backend console for details." 
-      });
+      console.error("Extraction error:", err.message);
+      vmLog(vmId, 'sys', `Couldn't extract the disk: ${err.message}`);
+      return res.status(500).json({ success: false, error: "Failed to extract zip file. Check the console for details." });
     }
-    
+    vmLog(vmId, 'sys', `Mounted ${req.file.originalname || 'a new disk'}.`);
+    if (!findServerJs(vmDisk)) {
+      return res.json({ success: true, warning: "The disk was mounted, but no server.js was found in it, so it won't boot." });
+    }
     res.json({ success: true, message: "VM Disk ready." });
   });
 });
 
-app.post("/api/sandbox/start", (req, res) => {
+app.post("/api/sandbox/start", async (req, res) => {
   const vmId = req.body.vmId;
   if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
-
   if (activeVMs[vmId]) return res.json({ success: true, running: true, port: activeVMs[vmId].port });
-  
-  const vmDisk = path.join(sandboxBaseDir, vmId, "disk");
-  const targetServerJs = findServerJs(vmDisk);
-  
-  if (!targetServerJs) {
-    return res.status(404).json({ success: false, error: "No system kernel (server.js) found in this virtual disk." });
+  try {
+    const vm = await startVm(vmId, normalizeVmConfig(req.body.config));
+    res.json({ success: true, running: true, port: vm.port });
+  } catch (err) {
+    vmLog(vmId, 'sys', err.message);
+    res.status(400).json({ success: false, error: err.message });
   }
-
-  const vmCwd = path.dirname(targetServerJs);
-  const wrapperPath = path.join(vmCwd, 'sandbox-wrapper.js');
-  const assignPort = currentSandboxPort++; 
-
-  const wrapperCode = `
-    const http = require('http');
-    const originalListen = http.Server.prototype.listen;
-    http.Server.prototype.listen = function(...args) {
-      if (typeof args[0] === 'number') {
-        args[0] = ${assignPort};
-      } else if (typeof args[0] === 'object' && args[0] !== null && args[0].port) {
-        args[0].port = ${assignPort};
-      }
-      return originalListen.apply(this, args);
-    };
-    require('./server.js');
-  `;
-  
-  fs.writeFileSync(wrapperPath, wrapperCode);
-
-  const p = spawn('node', ['sandbox-wrapper.js'], { 
-     cwd: vmCwd,
-     env: { ...process.env, PORT: assignPort }
-  });
-  
-  activeVMs[vmId] = { process: p, port: assignPort };
-
-  p.on('exit', () => { delete activeVMs[vmId]; });
-  
-  setTimeout(() => res.json({ success: true, running: true, port: assignPort }), 1000);
 });
 
-app.post("/api/sandbox/stop", (req, res) => {
+app.post("/api/sandbox/restart", async (req, res) => {
   const vmId = req.body.vmId;
-  if (vmId && activeVMs[vmId]) {
-    activeVMs[vmId].process.kill();
-    delete activeVMs[vmId];
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const config = req.body.config ? normalizeVmConfig(req.body.config) : (activeVMs[vmId]?.config || normalizeVmConfig({}));
+  // Catch a port that can never work before taking the running guest down.
+  if (config.port && (SANDBOX_RESERVED_PORTS.has(config.port) || portTakenByVm(config.port, vmId))) {
+    return res.status(400).json({ success: false, error: `Port ${config.port} is already used by hyadeOS or another sandbox.` });
   }
+  await stopVm(vmId);
+  try {
+    const vm = await startVm(vmId, config);
+    res.json({ success: true, running: true, port: vm.port });
+  } catch (err) {
+    vmLog(vmId, 'sys', err.message);
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/sandbox/stop", async (req, res) => {
+  const vmId = req.body.vmId;
+  if (isValidVmId(vmId)) await stopVm(vmId);
   res.json({ success: true, running: false });
 });
 
-app.post("/api/sandbox/delete", (req, res) => {
+app.post("/api/sandbox/delete", async (req, res) => {
   const vmId = req.body.vmId;
   if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
 
-  if (activeVMs[vmId]) {
-    activeVMs[vmId].process.kill();
-    delete activeVMs[vmId];
-  }
+  await stopVm(vmId);
+  delete vmLogs[vmId];
+  delete vmExits[vmId];
 
   const vmFolder = path.join(sandboxBaseDir, vmId);
   if (fs.existsSync(vmFolder)) {
@@ -2964,9 +3420,112 @@ app.post("/api/sandbox/delete", (req, res) => {
 app.get("/api/sandbox/status", (req, res) => {
   const statusMap = {};
   Object.keys(activeVMs).forEach(id => {
-    statusMap[id] = { running: true, port: activeVMs[id].port };
+    const vm = activeVMs[id];
+    statusMap[id] = { running: true, port: vm.port, startedAt: vm.startedAt, memoryMB: vm.config.memoryMB, pid: vm.process.pid };
   });
-  res.json({ active: statusMap });
+  res.json({ active: statusMap, exits: vmExits });
+});
+
+app.get("/api/sandbox/logs", (req, res) => {
+  const vmId = req.query.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const after = Number(req.query.after) || 0;
+  const log = vmLogs[vmId] || { seq: 0, lines: [] };
+  res.json({ success: true, seq: log.seq, lines: log.lines.filter(l => l.n > after) });
+});
+
+app.post("/api/sandbox/logs/clear", (req, res) => {
+  const vmId = req.body.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  if (vmLogs[vmId]) vmLogs[vmId].lines = [];
+  res.json({ success: true });
+});
+
+async function listSnapshots(vmId) {
+  const dir = vmSnapshotsDir(vmId);
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const id of fs.readdirSync(dir)) {
+    if (!isValidVmId(id)) continue;
+    let meta = {};
+    try { meta = JSON.parse(fs.readFileSync(path.join(dir, id, 'meta.json'), 'utf8')); } catch (e) {}
+    out.push({ id, name: meta.name || id, createdAt: meta.createdAt || 0, bytes: meta.bytes || 0 });
+  }
+  return out.sort((a, b) => b.createdAt - a.createdAt);
+}
+
+app.get("/api/sandbox/info", async (req, res) => {
+  const vmId = req.query.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const disk = vmDiskDir(vmId);
+  const hasDisk = fs.existsSync(disk);
+  res.json({
+    success: true,
+    hasDisk,
+    kernelFound: hasDisk && !!findServerJs(disk),
+    diskBytes: hasDisk ? await dirSize(disk) : 0,
+    snapshots: await listSnapshots(vmId)
+  });
+});
+
+app.post("/api/sandbox/snapshot", async (req, res) => {
+  const vmId = req.body.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const disk = vmDiskDir(vmId);
+  if (!fs.existsSync(disk)) return res.status(404).json({ success: false, error: "This sandbox has no disk to snapshot." });
+  const id = `snap_${Date.now()}`;
+  const target = path.join(vmSnapshotsDir(vmId), id);
+  try {
+    await fs.promises.cp(disk, path.join(target, 'disk'), { recursive: true });
+    const name = String(req.body.name || '').trim().slice(0, 80) || new Date().toLocaleString();
+    const meta = { name, createdAt: Date.now(), bytes: await dirSize(path.join(target, 'disk')) };
+    fs.writeFileSync(path.join(target, 'meta.json'), JSON.stringify(meta));
+    vmLog(vmId, 'sys', `Snapshot "${name}" taken.`);
+    res.json({ success: true, snapshot: { id, ...meta } });
+  } catch (err) {
+    fs.rmSync(target, { recursive: true, force: true });
+    res.status(500).json({ success: false, error: `Couldn't take the snapshot: ${err.message}` });
+  }
+});
+
+app.post("/api/sandbox/snapshot/restore", async (req, res) => {
+  const { vmId, snapshotId } = req.body;
+  if (!isValidVmId(vmId) || !isValidVmId(snapshotId)) return res.status(400).json({ success: false, error: "Invalid ID." });
+  if (activeVMs[vmId]) return res.status(409).json({ success: false, error: "Shut down the sandbox before restoring a snapshot." });
+  const source = path.join(vmSnapshotsDir(vmId), snapshotId, 'disk');
+  if (!fs.existsSync(source)) return res.status(404).json({ success: false, error: "That snapshot doesn't exist anymore." });
+  const disk = vmDiskDir(vmId);
+  try {
+    fs.rmSync(disk, { recursive: true, force: true });
+    await fs.promises.cp(source, disk, { recursive: true });
+    vmLog(vmId, 'sys', 'Disk restored from a snapshot.');
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: `Couldn't restore the snapshot: ${err.message}` });
+  }
+});
+
+app.post("/api/sandbox/snapshot/delete", (req, res) => {
+  const { vmId, snapshotId } = req.body;
+  if (!isValidVmId(vmId) || !isValidVmId(snapshotId)) return res.status(400).json({ success: false, error: "Invalid ID." });
+  fs.rmSync(path.join(vmSnapshotsDir(vmId), snapshotId), { recursive: true, force: true });
+  res.json({ success: true });
+});
+
+app.get("/api/sandbox/export", (req, res) => {
+  const vmId = req.query.vmId;
+  if (!isValidVmId(vmId)) return res.status(400).json({ success: false, error: "Invalid VM ID." });
+  const disk = vmDiskDir(vmId);
+  if (!fs.existsSync(disk)) return res.status(404).json({ success: false, error: "This sandbox has no disk." });
+  const zipPath = path.join(os.tmpdir(), `hyadeos-sandbox-${vmId}-${Date.now()}.zip`);
+  const cmd = process.platform === 'win32'
+    ? `powershell.exe -nologo -noprofile -command "Compress-Archive -Path ${psQuote(path.join(disk, '*'))} -DestinationPath ${psQuote(zipPath)} -Force"`
+    : `cd "${disk}" && zip -r -q "${zipPath}" .`;
+  exec(cmd, { maxBuffer: 16 * 1024 * 1024 }, err => {
+    if (err || !fs.existsSync(zipPath)) return res.status(500).json({ success: false, error: "Couldn't export the disk." });
+    const name = String(req.query.name || vmId).replace(/[^\w .-]/g, '').trim() || vmId;
+    res.download(zipPath, `${name}.zip`, () => fs.rm(zipPath, { force: true }, () => {}));
+  });
 });
 
 // --- SYSTEM & OTA UPDATES ---
@@ -3007,6 +3566,12 @@ const { matchesGitBlob, validateStagedRuntime, verifyReleaseSignature } = requir
 const stagedZipIndexes = new Map();
 function readStagedIndex(stagePath) {
   if (stagedZipIndexes.has(stagePath)) return Promise.resolve(stagedZipIndexes.get(stagePath));
+  // A downloaded (staged) update is installed by a later process: its ZIP index was saved next to it.
+  try {
+    const saved = fs.readFileSync(stagePath + ".index", "utf8");
+    stagedZipIndexes.set(stagePath, saved);
+    return Promise.resolve(saved);
+  } catch (e) { /* a Git clone: ask Git */ }
   return runGit(["-C", stagePath, "ls-files", "-s", "-z"], stagePath);
 }
 
@@ -3047,6 +3612,7 @@ async function fetchRelease(repo, stagePath, onProgress) {
 }
 function forgetStagedRelease(stagePath) {
   stagedZipIndexes.delete(stagePath);
+  fs.rmSync(stagePath + ".index", { force: true });
   fs.rmSync(stagePath, { recursive: true, force: true });
 }
 
@@ -3469,7 +4035,7 @@ app.get('/api/system/check-update', async (req, res) => {
     const older = offer.older === true;
     res.json(
       offer.offered
-        ? { updateAvailable: true, current: local, latest: remote.version, changelog: remote.changelog, reason: offer.reason, channel }
+        ? { updateAvailable: true, current: local, latest: remote.version, changelog: remote.changelog, reason: offer.reason, channel, staged: readStagedUpdate()?.version === remote.version }
         : { updateAvailable: false, current: local, latest: remote.version, rolloutWaiting: offer.reason === "rollout", older, channel,
             ...(older ? { changelog: remote.changelog } : {}) }
     );
@@ -3562,6 +4128,163 @@ app.get('/api/system/ota-update', (req, res) => {
     }
   })();
 });
+
+// --- UPDATING IN TWO STEPS: DOWNLOAD NOW, INSTALL AFTER A RESTART ---
+// "Update Now" in Settings downloads and checks the release in the background; nothing on
+// the system changes yet. "Restart Now" hands over to the launcher: the kernel exits with
+// INSTALL_UPDATE, the launcher shows the boot screen with a progress bar and starts the
+// kernel again in install mode (HYADEOS_APPLY_STAGED), which applies the downloaded files,
+// reports its progress on its output ("@@install {...}") and exits, so the launcher can
+// show "Rebooting…" and start the new version. Every check the one-step updater makes
+// still runs, at download and again right before installing.
+const STAGED_UPDATE_DIR = path.join(os.tmpdir(), `hyadeos-staged-${crypto.createHash("sha1").update(__dirname).digest("hex").slice(0, 10)}`);
+const STAGED_UPDATE_INFO = STAGED_UPDATE_DIR + ".json";
+function readStagedUpdate() {
+  try {
+    const info = JSON.parse(fs.readFileSync(STAGED_UPDATE_INFO, "utf8"));
+    const present = fs.existsSync(path.join(STAGED_UPDATE_DIR, ".git")) || fs.existsSync(STAGED_UPDATE_DIR + ".index");
+    return info && info.version && present ? info : null;
+  } catch (e) { return null; }
+}
+function discardStagedUpdate() {
+  fs.rmSync(STAGED_UPDATE_INFO, { force: true });
+  forgetStagedRelease(STAGED_UPDATE_DIR);
+}
+
+// What a downloaded release must pass before it may touch the system.
+async function verifyStagedRelease(stagePath, say = () => {}) {
+  const files = await getStagedUpdateFiles(stagePath);
+  if (files.length === 0) throw new Error("The update contains no files");
+  // A-07: with a public key installed, only a release signed by the maintainer is applied.
+  const publicKey = getUpdatePublicKey();
+  if (publicKey) {
+    say("Verifying the release signature...");
+    const auth = verifyReleaseSignature(stagePath, files, publicKey);
+    if (!auth.ok) throw new Error("Update rejected: " + auth.reason);
+  } else {
+    console.warn("[update] No update-pubkey.pem configured: this update is NOT signature-verified.");
+  }
+  const serverUpdate = files.find(file => file.relativePath === "server.js");
+  if (serverUpdate) await validateStagedServer(serverUpdate.stagedFile);
+  validateStagedRuntime(stagePath, files, __dirname);
+  return { files, serverUpdate };
+}
+
+app.get("/api/system/ota-download", (req, res) => {
+  if (systemUpdateInProgress) return res.status(409).json({ success: false, error: "updater is busy" });
+  systemUpdateInProgress = true;
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  const send = (percent, status, finished = false, extra = {}) => {
+    try { res.write(`data: ${JSON.stringify({ percent, status, finished, ...extra })}\n\n`); } catch (e) {}
+  };
+  (async () => {
+    try {
+      const channel = getUpdateChannel();
+      discardStagedUpdate();
+      send(0, "Downloading...");
+      let shown = -1;
+      await fetchRelease(channel, STAGED_UPDATE_DIR, (received, total) => {
+        // GitHub often streams the ZIP without a size: then only the megabytes move.
+        const mb = (received / 1048576).toFixed(1);
+        const value = total ? Math.round(85 * received / total) : 5;
+        if (value !== shown || !total) { shown = value; send(value, total ? `Downloading... ${mb} / ${(total / 1048576).toFixed(1)} MB` : `Downloading... ${mb} MB`); }
+      });
+      // Install mode runs in another process: a ZIP's file index has to survive until then.
+      if (stagedZipIndexes.has(STAGED_UPDATE_DIR)) fs.writeFileSync(STAGED_UPDATE_DIR + ".index", stagedZipIndexes.get(STAGED_UPDATE_DIR));
+      send(92, "Checking the download...");
+      const { files } = await verifyStagedRelease(STAGED_UPDATE_DIR, status => send(95, status));
+      const version = readStagedVersion(STAGED_UPDATE_DIR);
+      fs.writeFileSync(STAGED_UPDATE_INFO, JSON.stringify({ version, channel, files: files.length, downloadedAt: Date.now() }));
+      send(100, "Ready to install", true, { ready: true, version });
+    } catch (error) {
+      try { discardStagedUpdate(); } catch (cleanupError) { console.error("Could not clean the downloaded update:", cleanupError); }
+      console.error("System update download failed:", error);
+      send(0, `Download failed: ${error.message}`, true);
+    } finally {
+      systemUpdateInProgress = false;
+      res.end();
+    }
+  })();
+});
+
+app.get("/api/system/staged-update", (req, res) => {
+  const staged = readStagedUpdate();
+  res.set("Cache-Control", "no-store");
+  res.json({ ready: !!staged, version: staged ? staged.version : null });
+});
+
+app.post("/api/system/install-staged-update", async (req, res) => {
+  if (!readStagedUpdate()) return res.status(409).json({ success: false, error: "No downloaded update is waiting to be installed" });
+  if (systemUpdateInProgress) return res.status(409).json({ success: false, error: "updater is busy" });
+  if (envVar("MANAGED_BACKEND") === "1") {
+    res.status(202).json({ success: true, restarting: true });
+    setTimeout(() => exitAfterServerClose(SERVER_EXIT_CODES.INSTALL_UPDATE), 100);
+    return;
+  }
+  // Without the launcher there is no install screen: it installs right away.
+  systemUpdateInProgress = true;
+  try {
+    const result = await installStagedUpdate(() => {});
+    res.json({ success: true, restarting: result.serverReplaced });
+    if (result.serverReplaced) setTimeout(() => process.exit(SERVER_EXIT_CODES.UPDATE_RESTART), 300);
+    else systemUpdateInProgress = false;
+  } catch (error) {
+    systemUpdateInProgress = false;
+    console.error("Installing the update failed:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Applies the downloaded release. report(percent, status) follows along.
+async function installStagedUpdate(report) {
+  const info = readStagedUpdate();
+  if (!info) throw new Error("No downloaded update is waiting to be installed");
+  report(3, "Checking the update...");
+  const { files, serverUpdate } = await verifyStagedRelease(STAGED_UPDATE_DIR);
+  // Keep the files this update replaces: if the new kernel keeps crashing, the
+  // launcher puts them back (lib/rollback.js) instead of leaving a boot loop.
+  report(8, "Saving a restore point...");
+  createRollbackPoint(__dirname, files, {
+    toVersion: info.version,
+    isProtected: isUpdateProtectedFile,
+    isUnchanged: (contents, file) => matchesGitBlob(contents, file.blobHash)
+  });
+  const transaction = applyStagedFiles(files, (percent, status) => report(percent, status), 10, 96);
+  try {
+    if (serverUpdate) await launchServerReplacement(STAGED_UPDATE_DIR, serverUpdate.mode);
+    transaction.commit();
+  } catch (error) {
+    transaction.rollback();
+    throw error;
+  }
+  config.installedChannel = info.channel || getUpdateChannel();
+  saveConfig();
+  fs.rmSync(STAGED_UPDATE_INFO, { force: true });
+  // The server's own replacement helper removes the download once it has swapped server.js.
+  if (!serverUpdate) forgetStagedRelease(STAGED_UPDATE_DIR);
+  report(100, "Installed");
+  return { serverReplaced: !!serverUpdate, version: info.version };
+}
+
+// Install mode: no HTTP server; install, report, and hand back to the launcher.
+function runStagedInstall() {
+  const say = state => console.log("@@install " + JSON.stringify(state));
+  const version = readStagedUpdate()?.version || null;
+  say({ percent: 0, status: "Installing", version });
+  installStagedUpdate((percent, status) => say({ percent, status, version }))
+    .then(result => {
+      say({ percent: 100, done: true, version });
+      setTimeout(() => process.exit(result.serverReplaced ? SERVER_EXIT_CODES.UPDATE_RESTART : SERVER_EXIT_CODES.KERNEL_REBOOT), 300);
+    })
+    .catch(error => {
+      console.error("Installing the update failed:", error);
+      try { discardStagedUpdate(); } catch (cleanupError) { console.error("Could not clean the downloaded update:", cleanupError); }
+      say({ error: error.message, version });
+      setTimeout(() => process.exit(SERVER_EXIT_CODES.KERNEL_REBOOT), 300);
+    });
+}
 
 app.get("/api/system/check-sota-update", async (req, res) => {
   try {
@@ -3836,6 +4559,44 @@ app.post("/api/remote/exec", (req, res) => {
       });
     });
   });
+});
+
+// --- ACODE PREVIEWS ---
+// A project in the signed-in user's ~/ACode served as a real web page, so its relative
+// links, images and scripts work and errors name the right file and line. Read-only,
+// limited to ~/ACode, and under the same CSP as every other page. HTML pages get the
+// error reporter (desktop/assets/acode-preview-reporter.js) added right after <head>, on
+// the same line, so line numbers in error messages still match the file.
+const ACODE_REPORTER_TAG = '<script src="/desktop/assets/acode-preview-reporter.js"></script>';
+app.use("/acode-preview", (req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+  let relative;
+  try { relative = decodeURIComponent(req.path); } catch (e) { return res.status(400).send("Bad path"); }
+  const virtualPath = path.posix.normalize(path.posix.join("/home/ACode", relative));
+  if (!virtualPath.startsWith("/home/ACode/")) return res.status(403).send("Only ACode projects can be previewed");
+  const resolved = resolveVirtualPath(virtualPath);
+  if (!resolved || resolved.isReadOnly || !resolved.realPath) return res.status(403).send("Access denied");
+  let file = resolved.realPath;
+  try {
+    if (fs.statSync(file).isDirectory()) {
+      // A project folder opens its index.html; the trailing slash keeps relative links right.
+      if (!req.path.endsWith("/")) return res.redirect(`${req.baseUrl}${req.path}/${req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : ""}`);
+      file = path.join(file, "index.html");
+    }
+    if (!fs.statSync(file).isFile()) throw new Error("not a file");
+  } catch (e) {
+    return res.status(404).type("text").send(`ACode preview: ${virtualPath.slice("/home/ACode/".length)} is not in this project`);
+  }
+  res.setHeader("Cache-Control", "no-store");
+  if (/\.html?$/i.test(file)) {
+    let html = fs.readFileSync(file, "utf8");
+    const head = html.match(/<head\b[^>]*>/i);
+    const doctype = html.match(/^\s*<!doctype[^>]*>/i);
+    const at = head ? head.index + head[0].length : doctype ? doctype[0].length : 0;
+    html = html.slice(0, at) + ACODE_REPORTER_TAG + html.slice(at);
+    return res.type("html").send(html);
+  }
+  res.sendFile(file, { dotfiles: "allow" });
 });
 
 // "/device" is the window onto the machine hyadeOS is running on. Everything below
@@ -4330,7 +5091,9 @@ function pruneLogs() {
 pruneLogs();
 cron.schedule("0 3 * * *", pruneLogs);
 
-httpServer = app.listen(PORT, BIND_HOST, () => console.log(`kernel booted on [${currentOS}] at http://${BIND_HOST}:${PORT}`));
+// Install mode (see "UPDATING IN TWO STEPS") never serves anything.
+const INSTALLING_UPDATE = envVar("APPLY_STAGED") === "1";
+httpServer = INSTALLING_UPDATE ? null : app.listen(PORT, BIND_HOST, () => console.log(`kernel booted on [${currentOS}] at http://${BIND_HOST}:${PORT}`));
 
 // Third-party Store apps (see THIRD-PARTY APP ISOLATION): static files only, on their
 // own origin. Nothing here can reach the shell's API, cookies or storage.
@@ -4364,9 +5127,10 @@ for (const shared of ["fonts", "icons", "sdk"]) {
   appsApp.use(`/desktop/assets/${shared}`, express.static(path.join(__dirname, "desktop", "assets", shared), { fallthrough: false }));
 }
 appsApp.use((req, res) => res.status(404).end());
-const appsServer = appsApp.listen(APPS_PORT, BIND_HOST);
-appsServer.on("error", error => console.error("[apps] isolated app server could not start:", error.message));
-httpServer.on('error', error => {
+const appsServer = INSTALLING_UPDATE ? null : appsApp.listen(APPS_PORT, BIND_HOST);
+appsServer?.on("error", error => console.error("[apps] isolated app server could not start:", error.message));
+if (INSTALLING_UPDATE) runStagedInstall();
+httpServer?.on('error', error => {
   console.error('kernel failed to bind its HTTP server:', error);
   process.exit(1);
 });

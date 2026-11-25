@@ -1,6 +1,6 @@
 // hyadeOS Electron entry point. The backend owns the web shell; Electron owns
 // the fullscreen window and supervises the backend's explicit lifecycle codes.
-const { app, BrowserWindow, ipcMain, shell, powerMonitor, clipboard, ClipboardItem } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, powerMonitor, clipboard, ClipboardItem, globalShortcut } = require('electron');
 const { spawn } = require('child_process');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -20,7 +20,7 @@ if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
 }
 const HEALTH_PATH = '/api/system/health';
 const SHELL_URL = `http://127.0.0.1:${PORT}/`;
-const EXIT_CODES = Object.freeze({ SHUTDOWN: 20, UPDATE_RESTART: 21, KERNEL_REBOOT: 22 });
+const EXIT_CODES = Object.freeze({ SHUTDOWN: 20, UPDATE_RESTART: 21, KERNEL_REBOOT: 22, INSTALL_UPDATE: 23 });
 const bootPage = path.join(__dirname, 'boot.html');
 const kernelRecoveryPage = path.join(__dirname, 'kernel-recovery.html');
 const rollback = require('./lib/rollback');
@@ -137,6 +137,15 @@ ipcMain.handle('hyadeos:shutdown', async (event) => {
         timeoutMs: 3000
     });
     return { accepted: true };
+});
+
+// Privacy mode: while it is on, screenshots, screen recordings and screen sharing see
+// hyadeOS as a blank window (Windows and macOS honour this; elsewhere it does nothing).
+ipcMain.handle('hyadeos:set-privacy', (event, on) => {
+    if (!isTrustedRendererEvent(event)) throw new Error('privacy request rejected for an untrusted renderer');
+    if (!mainWindow || mainWindow.isDestroyed()) return { protected: false };
+    mainWindow.setContentProtection(!!on);
+    return { protected: !!on && (process.platform === 'win32' || process.platform === 'darwin') };
 });
 
 ipcMain.handle('hyadeos:clear-browser-data', async (event) => {
@@ -293,6 +302,29 @@ const bootWatchdog = kernelGuard.createWatchdog(KERNEL_START_LIMIT_MS, () => {
     showKernelRecovery();
 });
 
+// Set when the kernel asks to install a downloaded update: the next kernel starts in install mode.
+let installingUpdate = false;
+
+// The install screen: boot.html in update mode, following the installer's progress
+// (the kernel prints it as "@@install {...}" lines).
+let installState = null;
+function showUpdateScreen() {
+    installState = null;
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    mainWindow.loadFile(bootPage, { query: { update: '1' } }).catch(error => {
+        console.error('[sniffer]: could not show the update screen:', error);
+    });
+}
+function sendInstallState(state) {
+    installState = { ...(installState || {}), ...state };
+    pushInstallState();
+}
+function pushInstallState() {
+    if (!installState || !mainWindow || mainWindow.isDestroyed()) return;
+    if (!mainWindow.webContents.getURL().includes('update=1')) return;
+    mainWindow.webContents.executeJavaScript(`window.hyadeOSInstall && window.hyadeOSInstall(${JSON.stringify(installState)})`).catch(() => {});
+}
+
 function showBootScreen() {
     bootWatchdog.arm();
     if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -394,7 +426,10 @@ function startBackend() {
             return;
         }
     }
-    bootWatchdog.arm();
+    const installNext = installingUpdate;
+    installingUpdate = false;
+    // Install mode has no HTTP server to wait for: the watchdog must not take a long install for a hung start.
+    if (installNext) bootWatchdog.disarm(); else bootWatchdog.arm();
     const instanceId = crypto.randomBytes(16).toString('hex');
     const updateMarker = path.join(os.tmpdir(), `hyadeos-update-${process.pid}-${instanceId}.json`);
     const child = spawn(envVar('NODE_EXECUTABLE') || 'node', ['server.js'], {
@@ -406,7 +441,8 @@ function startBackend() {
             ...envPair('MANAGED_BACKEND', '1'),
             ...envPair('BACKEND_INSTANCE_ID', instanceId),
             ...envPair('SHUTDOWN_TOKEN', shutdownToken),
-            ...envPair('UPDATE_MARKER', updateMarker)
+            ...envPair('UPDATE_MARKER', updateMarker),
+            ...(installNext ? envPair('APPLY_STAGED', '1') : {})
         },
         stdio: ['ignore', 'pipe', 'pipe'],
         windowsHide: true
@@ -414,8 +450,17 @@ function startBackend() {
     backendProcess = child;
     backendReady = false;
     child.updateMarker = updateMarker;
+    child.installing = installNext;
 
-    child.stdout.on('data', data => console.log(`[kernel]: ${data.toString().trim()}`));
+    child.stdout.on('data', data => {
+        for (const line of data.toString().split(/\r?\n/)) {
+            if (line.startsWith('@@install ')) {
+                try { sendInstallState(JSON.parse(line.slice(10))); } catch {}
+                continue;
+            }
+            if (line.trim()) console.log(`[kernel]: ${line.trim()}`);
+        }
+    });
     child.stderr.on('data', data => {
         const text = data.toString().trim();
         console.error(`[kernel]: ${text}`);
@@ -442,6 +487,41 @@ function startBackend() {
             backendRestartTimer = null;
             fs.rmSync(updateMarker, { force: true });
             app.quit();
+            return;
+        }
+
+        // An update was being installed: "Rebooting…", then the new version starts.
+        if (child.installing) {
+            const failed = code !== EXIT_CODES.KERNEL_REBOOT && code !== EXIT_CODES.UPDATE_RESTART;
+            if (failed && !installState?.error) sendInstallState({ error: 'The installer stopped unexpectedly.' });
+            sendInstallState({ rebooting: true });
+            console.log(installState?.error ? `[sniffer]: the update was not installed: ${installState.error}` : '[sniffer]: update installed; rebooting.');
+            backendRestartAttempt = 0;
+            setTimeout(() => {
+                if (shuttingDown || backendProcess) return;
+                if (code === EXIT_CODES.UPDATE_RESTART) {
+                    void restartAfterUpdate(updateMarker).then(() => {
+                        if (shellFilesChanged()) relaunchHyadeOS('the update changed launcher.js or preload.js');
+                    }, error => {
+                        console.error('[sniffer]: could not complete kernel restart:', error);
+                        fs.rmSync(updateMarker, { force: true });
+                        startBackend();
+                    });
+                } else {
+                    fs.rmSync(updateMarker, { force: true });
+                    startBackend();
+                }
+            }, 1800);
+            return;
+        }
+
+        if (code === EXIT_CODES.INSTALL_UPDATE) {
+            console.log('[sniffer]: installing the downloaded update...');
+            fs.rmSync(updateMarker, { force: true });
+            backendRestartAttempt = 0;
+            installingUpdate = true;
+            showUpdateScreen();
+            setTimeout(() => { if (!shuttingDown && !backendProcess) startBackend(); }, 700);
             return;
         }
 
@@ -497,7 +577,7 @@ function startBackend() {
         scheduleBackendRestart();
     });
 
-    void waitForBackendHealth(child, instanceId).then(() => {
+    if (!child.installing) void waitForBackendHealth(child, instanceId).then(() => {
         if (!isLiveChild(child) || shuttingDown) return;
         backendReady = true;
         bootWatchdog.disarm();
@@ -608,6 +688,8 @@ function systemKeysEnabled() {
 }
 
 function sendSystemKey(name) {
+    // Alt+Tab taken by the keyboard hook: it drives the window switcher, not a desktop shortcut.
+    if (name === 'alt+tab' || name === 'alt+shift+tab') { sendSwitcher(name === 'alt+tab' ? 'next' : 'prev'); return; }
     if (SYSTEM_KEYS.has(name) && mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('system:key', name);
 }
 
@@ -772,6 +854,49 @@ function catchSystemKeys(contents) {
     });
 }
 
+// --- Alt+Tab: the desktop's window switcher ---
+// Windows keeps Alt+Tab for itself, so while hyadeOS is the active window it claims the
+// combination (and gives it back the moment another app is active). The keys that follow
+// (more Tabs, the arrows, Esc, letting go of Alt) are read here too, because keyboard focus
+// inside an app or a Browser page never reaches the desktop page.
+let switcherActive = false, lastSwitcherStep = 0;
+function sendSwitcher(action) {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (action === 'next' || action === 'prev') {
+        const now = Date.now();
+        if (now - lastSwitcherStep < 25) return; // the same press seen by both routes
+        lastSwitcherStep = now;
+        switcherActive = true;
+    } else {
+        if (!switcherActive) return;
+        switcherActive = false;
+    }
+    mainWindow.webContents.send('shell:switcher', action);
+}
+function switcherInput(event, input) {
+    const key = (input.key || '').toLowerCase();
+    if (input.type === 'keyDown' && input.alt && key === 'tab') { event.preventDefault(); sendSwitcher(input.shift ? 'prev' : 'next'); return; }
+    if (!switcherActive) return;
+    if (input.type === 'keyDown' && key === 'escape') { event.preventDefault(); sendSwitcher('cancel'); }
+    else if (input.type === 'keyDown' && (key === 'arrowleft' || key === 'arrowright')) { event.preventDefault(); sendSwitcher(key === 'arrowleft' ? 'prev' : 'next'); }
+    else if (input.type === 'keyUp' && key === 'alt') { event.preventDefault(); sendSwitcher('commit'); }
+}
+function claimSwitcherKeys(claim) {
+    try {
+        if (claim) {
+            if (!globalShortcut.isRegistered('Alt+Tab')) globalShortcut.register('Alt+Tab', () => sendSwitcher('next'));
+            if (!globalShortcut.isRegistered('Alt+Shift+Tab')) globalShortcut.register('Alt+Shift+Tab', () => sendSwitcher('prev'));
+        } else {
+            globalShortcut.unregister('Alt+Tab');
+            globalShortcut.unregister('Alt+Shift+Tab');
+            if (switcherActive) sendSwitcher('cancel');
+        }
+    } catch (error) {
+        console.error('[sniffer]: could not claim Alt+Tab:', error.message);
+    }
+}
+app.on('will-quit', () => globalShortcut.unregisterAll());
+
 function bootHyadeOS() {
     if (mainWindow && !mainWindow.isDestroyed()) return;
     shuttingDown = false;
@@ -790,6 +915,20 @@ function bootHyadeOS() {
             sandbox: true
         }
     });
+    // Windows can put its taskbar back over a fullscreen frameless window (after a focus change,
+    // or an edge swipe on touch screens), covering the shell's own bottom bar. While the shell
+    // is the active window it stays above the taskbar; once another app is active it steps back.
+    mainWindow.on('focus', () => {
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+        mainWindow.setAlwaysOnTop(true, 'screen-saver');
+        if (!mainWindow.isFullScreen()) mainWindow.setFullScreen(true);
+        claimSwitcherKeys(true);
+    });
+    mainWindow.on('blur', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) mainWindow.setAlwaysOnTop(false);
+        claimSwitcherKeys(false);
+    });
+    mainWindow.webContents.on('before-input-event', switcherInput);
     mainWindow.webContents.on('context-menu', event => event.preventDefault());
     blockMouseHistoryNavigation(mainWindow);
     catchSystemKeys(mainWindow.webContents);
@@ -839,6 +978,7 @@ app.on('web-contents-created', (_event, contents) => {
     if (isWebview) {
         contents.on('dom-ready', () => contents.executeJavaScript(WEBVIEW_MOUSE_NAV).catch(() => {}));
         catchSystemKeys(contents);
+        contents.on('before-input-event', switcherInput);
         contents.on('before-input-event', (event, input) => {
             if (input.type !== 'keyDown' || systemKeyFor(input)) return;
             const shortcut = browserShortcutFor(input);
@@ -856,6 +996,8 @@ function browserShortcutFor(input) {
     if (input.alt && key === 'arrowleft') return 'back';
     if (input.alt && key === 'arrowright') return 'forward';
     if (!ctrl) return null;
+    if (input.shift && key === 'b') return 'toggle-sidebar';
+    if (/^[1-9]$/.test(key)) return 'favorite-' + key;
     if (key === 'tab') return input.shift ? 'prev-tab' : 'next-tab';
     return { t: 'new-tab', w: 'close-tab', l: 'focus-url', f: 'find',
         '=': 'zoom-in', '+': 'zoom-in', '-': 'zoom-out', '0': 'zoom-reset' }[key] || null;

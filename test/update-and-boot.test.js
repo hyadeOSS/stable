@@ -88,3 +88,26 @@ test("the kernel says whether an update is running", async () => {
     try { fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch (error) { /* left behind in the temp folder */ }
   }
 });
+
+test("an update is downloaded first and installed on the next start, with its own boot screen", () => {
+  const server = read("server.js");
+  const launcher = read("launcher.js");
+  const boot = read("boot.html");
+  // The three routes of the two-step update, all for administrators only.
+  for (const route of ["ota-download", "staged-update", "install-staged-update"]) {
+    assert.match(server, new RegExp(`app\\.(get|post)\\("/api/system/${route}"`));
+  }
+  assert.match(server, /ADMIN_ONLY_ROUTES[\s\S]*?ota-download\|install-staged-update/);
+  // The kernel asks the launcher to install, and install mode serves nothing.
+  assert.match(server, /INSTALL_UPDATE: 23/);
+  assert.match(launcher, /INSTALL_UPDATE: 23/);
+  assert.match(server, /INSTALLING_UPDATE \? null : app\.listen/);
+  // A downloaded ZIP's file index must survive until the install process reads it.
+  assert.match(server, /STAGED_UPDATE_DIR \+ "\.index"/);
+  // The launcher shows the install screen and feeds it the installer's progress.
+  assert.match(launcher, /query: \{ update: '1' \}/);
+  assert.match(launcher, /@@install /);
+  assert.match(boot, /window\.hyadeOSInstall = /);
+  // The slow install must not be taken for a kernel that hangs while starting.
+  assert.match(launcher, /if \(installNext\) bootWatchdog\.disarm\(\)/);
+});

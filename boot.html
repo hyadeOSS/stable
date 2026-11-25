@@ -33,6 +33,15 @@
     .boot-log.error { color: #ffb4ab; }
     .boot-log.error::before { color: #ff6b6b; content: "[ FAIL ] "; }
     @keyframes logoAppear { from { opacity: 0; translate: 0 8px; scale: .96; } to { opacity: 1; translate: 0 0; scale: 1; } }
+    /* Installing an update (boot.html?update=1): a progress bar under the logo, then "Rebooting…". */
+    #install { display: none; position: absolute; left: 50%; top: auto; bottom: max(64px, 9vh); width: min(240px, 60vw); transform: translateX(-50%); }
+    body.updating #install { display: block; animation: logoAppear .8s cubic-bezier(.2,.8,.2,1) .15s both; }
+    .ins-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .2); overflow: hidden; transition: opacity .35s ease; }
+    .ins-fill { width: 0; height: 100%; border-radius: inherit; background: #f5f6fa; transition: width .7s cubic-bezier(.3, .7, .3, 1); }
+    .ins-text { margin-top: 14px; min-height: 1.4em; color: rgba(245, 246, 250, .6); font-size: 12.5px; transition: opacity .25s ease; }
+    #install.rebooting .ins-track { opacity: 0; }
+    #install.rebooting .ins-text { margin-top: -12px; color: #f5f6fa; font-size: 14px; }
+    #install.failed .ins-text { color: #ffb4ab; }
     /* Boot animation (Settings › Functions Lab › Boot animation), passed as ?anim= by the launcher. */
     body[data-anim="zoom"] #bootLogo { animation: logoZoom .9s cubic-bezier(.2, 0, 0, 1) both; }
     @keyframes logoZoom { from { opacity: 0; scale: 1.6; filter: blur(10px); } 70% { opacity: 1; filter: blur(0); } to { opacity: 1; scale: 1; } }
@@ -53,6 +62,7 @@
   <main role="status" aria-live="polite">
     <div id="bootOrbit" aria-hidden="true"><i></i><i></i><i></i></div>
     <img id="bootLogo" src="desktop/assets/icons/stars.png" alt="">
+    <div id="install"><div class="ins-track"><div class="ins-fill"></div></div><div class="ins-text"></div></div>
     <p id="status"></p>
     <div id="bootLogs" aria-hidden="true"></div>
   </main>
@@ -201,7 +211,30 @@
       }
     }
 
-    start();
+    // Installing an update: the launcher feeds the installer's progress to hyadeOSInstall().
+    if (new URLSearchParams(location.search).get('update') === '1') {
+      document.body.classList.add('updating');
+      const box = document.getElementById('install');
+      const fill = box.querySelector('.ins-fill'), text = box.querySelector('.ins-text');
+      let shown = 0;
+      text.textContent = 'Preparing to install…';
+      window.hyadeOSInstall = state => {
+        if (state.rebooting) {
+          const reboot = () => {
+            box.classList.add('rebooting');
+            box.classList.toggle('failed', !!state.error);
+            text.textContent = state.error ? 'The update could not be installed. Restarting…' : 'Rebooting…';
+          };
+          // The bar reaches the end before it gives way.
+          if (state.error) reboot(); else { fill.style.width = '100%'; setTimeout(reboot, 700); }
+          return;
+        }
+        if (typeof state.percent === 'number') { shown = Math.max(shown, Math.min(100, state.percent)); fill.style.width = shown + '%'; }
+        text.textContent = state.version ? `Installing hyadeOS ${state.version}…` : 'Installing update…';
+      };
+    } else {
+      start();
+    }
   </script>
 </body>
 </html>

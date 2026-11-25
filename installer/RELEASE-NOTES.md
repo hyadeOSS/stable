@@ -1,3 +1,31 @@
+## hyadeOS 2.1.0
+
+### New
+- **Tablet mode and tiling mode.** A full-screen tablet shell (home, dock, recents) and tiled windows (Ctrl+Alt+T; Ctrl+Alt+arrows move the focus).
+- **Privacy mode.** A tile in the Control Panel: notifications hide their text, windows in the background are frosted and, in the app, screenshots and screen sharing see a blank window.
+- **Alt+Tab.** hyadeOS has its own window switcher, in order of last use.
+- **A new Browser** with a sidebar: spaces, favourites (Ctrl+1 to 9), Shift+B to fold the sidebar, and a photo on the new tab page.
+- **Updates in two steps.** "Update now" downloads and checks the update in the background; "Restart now" installs it on a progress screen and starts the new version.
+- **A much more capable Terminal:** pipes, redirections, variables, loops and scripts, plus network commands (`curl`, `ping`, `dig`...).
+- **Sandbox** snapshots, logs, restart and export; **Store** sources, app versions, screenshots and sideload; **Activation** in Settings > About.
+
+**Full Changelog**: https://github.com/hyadeOSS/stable/compare/v2.0.5...v2.1.0
+
+---
+
+## hyadeOS 2.1.0 (italiano)
+
+### Novità
+- **Modalità tablet e tiling.** Una shell a schermo intero per tablet (home, dock, recenti) e finestre affiancate (Ctrl+Alt+T; Ctrl+Alt+frecce spostano il focus).
+- **Modalità privacy.** Una tessera nel Pannello di controllo: le notifiche nascondono il testo, le finestre in secondo piano sono sfocate e, nell'app, screenshot e condivisione schermo vedono una finestra nera.
+- **Alt+Tab.** hyadeOS ha il suo selettore di finestre, in ordine di ultimo uso.
+- **Un nuovo Browser** con barra laterale: spazi, preferiti (Ctrl+1…9), Shift+B per chiuderla e una foto nella pagina della nuova scheda.
+- **Aggiornamenti in due passaggi.** "Aggiorna ora" scarica e controlla l'aggiornamento in background; "Riavvia ora" lo installa su una schermata di avanzamento e avvia la nuova versione.
+- **Un Terminal molto più potente:** pipe, redirezioni, variabili, cicli e script, più comandi di rete (`curl`, `ping`, `dig`...).
+- **Sandbox** con snapshot, log, riavvio ed export; **Store** con sorgenti, versioni delle app, screenshot e sideload; **Attivazione** in Impostazioni > Informazioni.
+
+---
+
 ## hyadeOS 2.0.5
 
 ### Fixes
