@@ -1,6 +1,6 @@
 {
-  "version": "2.1.0",
+  "version": "2.1.1",
   "codename": "hottestChocolate",
-  "changelog": "New: tablet mode and tiling mode; privacy mode (hides notification text and, in the app, screenshots and screen sharing); the Alt+Tab window switcher; a new Browser with a sidebar (spaces, favourites, a photo on the new tab page); updates in two steps (the update is downloaded in the background, then installed on restart with a progress screen); a much more capable Terminal (pipes, scripts, network commands); Sandbox snapshots, logs and export; Store sources, app versions, screenshots and sideload; Activation in Settings > About. The project is spelled hyadeOS everywhere; the GitHub address stays hyadeOSS.",
+  "changelog": "Fixes: the Updater could stop working for good after one failed download (the folder of the failed attempt could not be removed, so every later \"Update\" failed with a permission error): each download now has a folder of its own and cleaning up can no longer stop an update; the apps check in the Updater no longer shows an error on a fresh install (\"no such file sota-installed.json\").",
   "_comment": "obb."
 }

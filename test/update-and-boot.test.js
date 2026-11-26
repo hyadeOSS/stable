@@ -103,7 +103,12 @@ test("an update is downloaded first and installed on the next start, with its ow
   assert.match(launcher, /INSTALL_UPDATE: 23/);
   assert.match(server, /INSTALLING_UPDATE \? null : app\.listen/);
   // A downloaded ZIP's file index must survive until the install process reads it.
-  assert.match(server, /STAGED_UPDATE_DIR \+ "\.index"/);
+  assert.match(server, /stageDir \+ "\.index"/);
+  // Every download has a folder of its own, and removing a folder never decides whether an update works:
+  // a folder that could not be removed once used to block every later attempt (EPERM on Windows).
+  assert.match(server, /`\$\{STAGED_UPDATE_PREFIX\}-\$\{Date\.now\(\)\.toString\(36\)\}`/);
+  assert.match(server, /function removeQuietly/);
+  assert.doesNotMatch(server, /STAGED_UPDATE_DIR/);
   // The launcher shows the install screen and feeds it the installer's progress.
   assert.match(launcher, /query: \{ update: '1' \}/);
   assert.match(launcher, /@@install /);
