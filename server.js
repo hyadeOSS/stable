@@ -3588,7 +3588,7 @@ async function fetchGithubZip(owner, repo, stagePath, onProgress, branches = ["m
       return stageReleaseZip(buffer, stagePath);
     } catch (error) {
       lastError = error;
-      fs.rmSync(stagePath, { recursive: true, force: true });
+      removeQuietly(stagePath);
     }
   }
   throw lastError;
@@ -3599,7 +3599,7 @@ async function fetchRelease(repo, stagePath, onProgress) {
     stagedZipIndexes.set(stagePath, await fetchGithubZip("hyadeOSS", repo, stagePath, onProgress));
     return "zip";
   } catch (zipError) {
-    fs.rmSync(stagePath, { recursive: true, force: true });
+    removeQuietly(stagePath);
     stagedZipIndexes.delete(stagePath);
     console.warn(`[update] ZIP download of ${repo} failed (${zipError.message}); trying Git.`);
     try {
@@ -3610,10 +3610,16 @@ async function fetchRelease(repo, stagePath, onProgress) {
     }
   }
 }
+// Removing a folder can fail on Windows (a scanner or Explorer holds a file, a Git file is read-only): that
+// must never decide whether an update works. It retries briefly, then only logs.
+function removeQuietly(target) {
+  try { fs.rmSync(target, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); return true; }
+  catch (error) { console.warn(`[update] could not remove ${target}: ${error.message}`); return false; }
+}
 function forgetStagedRelease(stagePath) {
   stagedZipIndexes.delete(stagePath);
-  fs.rmSync(stagePath + ".index", { force: true });
-  fs.rmSync(stagePath, { recursive: true, force: true });
+  removeQuietly(stagePath + ".index");
+  removeQuietly(stagePath);
 }
 
 function getStagedUpdateFiles(stagePath) {
@@ -3682,9 +3688,14 @@ function validateSotaManifest(manifest) {
   return manifest;
 }
 
+// sota-installed.json is local state: neither the repository nor an update ships it, so a fresh install has
+// none. Returns null then ("no app versions recorded yet"), which is not an error.
 function readInstalledSotaVersions() {
   const installedPath = path.join(__dirname, "sota-installed.json");
-  return validateSotaManifest(JSON.parse(fs.readFileSync(installedPath, "utf8")));
+  let text;
+  try { text = fs.readFileSync(installedPath, "utf8"); }
+  catch (error) { if (error.code === "ENOENT") return null; throw error; }
+  return validateSotaManifest(JSON.parse(text));
 }
 
 async function fetchSotaManifest() {
@@ -4137,18 +4148,34 @@ app.get('/api/system/ota-update', (req, res) => {
 // reports its progress on its output ("@@install {...}") and exits, so the launcher can
 // show "Rebooting…" and start the new version. Every check the one-step updater makes
 // still runs, at download and again right before installing.
-const STAGED_UPDATE_DIR = path.join(os.tmpdir(), `hyadeos-staged-${crypto.createHash("sha1").update(__dirname).digest("hex").slice(0, 10)}`);
-const STAGED_UPDATE_INFO = STAGED_UPDATE_DIR + ".json";
+// Each download gets a folder of its own (hyadeos-staged-<id>-<time>) and the info file names it: a folder that
+// could not be removed after an earlier attempt can then never block the next one.
+const STAGED_UPDATE_PREFIX = `hyadeos-staged-${crypto.createHash("sha1").update(__dirname).digest("hex").slice(0, 10)}`;
+const STAGED_UPDATE_INFO = path.join(os.tmpdir(), STAGED_UPDATE_PREFIX + ".json");
+// Only a folder of ours, directly in the temp folder, may be used or removed.
+const isStagedDir = dir => typeof dir === "string" && path.dirname(dir) === os.tmpdir() && path.basename(dir).startsWith(STAGED_UPDATE_PREFIX + "-");
 function readStagedUpdate() {
   try {
     const info = JSON.parse(fs.readFileSync(STAGED_UPDATE_INFO, "utf8"));
-    const present = fs.existsSync(path.join(STAGED_UPDATE_DIR, ".git")) || fs.existsSync(STAGED_UPDATE_DIR + ".index");
-    return info && info.version && present ? info : null;
+    if (!info || !info.version || !isStagedDir(info.dir)) return null;
+    const present = fs.existsSync(path.join(info.dir, ".git")) || fs.existsSync(info.dir + ".index");
+    return present ? info : null;
   } catch (e) { return null; }
 }
+// Removes the downloaded update and any leftover of earlier downloads. Never throws.
 function discardStagedUpdate() {
-  fs.rmSync(STAGED_UPDATE_INFO, { force: true });
-  forgetStagedRelease(STAGED_UPDATE_DIR);
+  let current = null;
+  try { current = JSON.parse(fs.readFileSync(STAGED_UPDATE_INFO, "utf8")).dir; } catch (e) { /* no info file */ }
+  removeQuietly(STAGED_UPDATE_INFO);
+  if (isStagedDir(current)) forgetStagedRelease(current);
+  try {
+    for (const name of fs.readdirSync(os.tmpdir())) {
+      if (name.startsWith(STAGED_UPDATE_PREFIX + "-") && !name.endsWith(".json")) {
+        const leftover = path.join(os.tmpdir(), name.replace(/\.index$/, ""));
+        forgetStagedRelease(leftover);
+      }
+    }
+  } catch (e) { /* the temp folder cannot be listed: nothing to clean */ }
 }
 
 // What a downloaded release must pass before it may touch the system.
@@ -4183,20 +4210,21 @@ app.get("/api/system/ota-download", (req, res) => {
     try {
       const channel = getUpdateChannel();
       discardStagedUpdate();
+      const stageDir = path.join(os.tmpdir(), `${STAGED_UPDATE_PREFIX}-${Date.now().toString(36)}`);
       send(0, "Downloading...");
       let shown = -1;
-      await fetchRelease(channel, STAGED_UPDATE_DIR, (received, total) => {
+      await fetchRelease(channel, stageDir, (received, total) => {
         // GitHub often streams the ZIP without a size: then only the megabytes move.
         const mb = (received / 1048576).toFixed(1);
         const value = total ? Math.round(85 * received / total) : 5;
         if (value !== shown || !total) { shown = value; send(value, total ? `Downloading... ${mb} / ${(total / 1048576).toFixed(1)} MB` : `Downloading... ${mb} MB`); }
       });
       // Install mode runs in another process: a ZIP's file index has to survive until then.
-      if (stagedZipIndexes.has(STAGED_UPDATE_DIR)) fs.writeFileSync(STAGED_UPDATE_DIR + ".index", stagedZipIndexes.get(STAGED_UPDATE_DIR));
+      if (stagedZipIndexes.has(stageDir)) fs.writeFileSync(stageDir + ".index", stagedZipIndexes.get(stageDir));
       send(92, "Checking the download...");
-      const { files } = await verifyStagedRelease(STAGED_UPDATE_DIR, status => send(95, status));
-      const version = readStagedVersion(STAGED_UPDATE_DIR);
-      fs.writeFileSync(STAGED_UPDATE_INFO, JSON.stringify({ version, channel, files: files.length, downloadedAt: Date.now() }));
+      const { files } = await verifyStagedRelease(stageDir, status => send(95, status));
+      const version = readStagedVersion(stageDir);
+      fs.writeFileSync(STAGED_UPDATE_INFO, JSON.stringify({ version, channel, dir: stageDir, files: files.length, downloadedAt: Date.now() }));
       send(100, "Ready to install", true, { ready: true, version });
     } catch (error) {
       try { discardStagedUpdate(); } catch (cleanupError) { console.error("Could not clean the downloaded update:", cleanupError); }
@@ -4242,7 +4270,7 @@ async function installStagedUpdate(report) {
   const info = readStagedUpdate();
   if (!info) throw new Error("No downloaded update is waiting to be installed");
   report(3, "Checking the update...");
-  const { files, serverUpdate } = await verifyStagedRelease(STAGED_UPDATE_DIR);
+  const { files, serverUpdate } = await verifyStagedRelease(info.dir);
   // Keep the files this update replaces: if the new kernel keeps crashing, the
   // launcher puts them back (lib/rollback.js) instead of leaving a boot loop.
   report(8, "Saving a restore point...");
@@ -4253,7 +4281,7 @@ async function installStagedUpdate(report) {
   });
   const transaction = applyStagedFiles(files, (percent, status) => report(percent, status), 10, 96);
   try {
-    if (serverUpdate) await launchServerReplacement(STAGED_UPDATE_DIR, serverUpdate.mode);
+    if (serverUpdate) await launchServerReplacement(info.dir, serverUpdate.mode);
     transaction.commit();
   } catch (error) {
     transaction.rollback();
@@ -4261,9 +4289,10 @@ async function installStagedUpdate(report) {
   }
   config.installedChannel = info.channel || getUpdateChannel();
   saveConfig();
-  fs.rmSync(STAGED_UPDATE_INFO, { force: true });
+  removeQuietly(STAGED_UPDATE_INFO);
   // The server's own replacement helper removes the download once it has swapped server.js.
-  if (!serverUpdate) forgetStagedRelease(STAGED_UPDATE_DIR);
+  if (!serverUpdate) forgetStagedRelease(info.dir);
+  else removeQuietly(info.dir + ".index");
   report(100, "Installed");
   return { serverReplaced: !!serverUpdate, version: info.version };
 }
@@ -4289,6 +4318,8 @@ function runStagedInstall() {
 app.get("/api/system/check-sota-update", async (req, res) => {
   try {
     const current = readInstalledSotaVersions();
+    // Nothing recorded (a fresh install): the apps came with the system, so there is nothing to compare with.
+    if (!current) return res.json({ success: true, updateAvailable: false, updates: [] });
     const latest = await fetchSotaManifest();
     const updates = [...SOTA_COMPONENTS]
       .filter(name => isNewerVersion(latest[name], current[name]))
@@ -4325,7 +4356,8 @@ app.get("/api/system/sota-update", (req, res) => {
       const allFiles = await getStagedSotaFiles(stagePath);
       const latest = JSON.parse(fs.readFileSync(path.join(stagePath, "version.json"), "utf8"));
       validateSotaManifest(latest);
-      const current = readInstalledSotaVersions();
+      // Nothing recorded (a fresh install): the apps came with the system, so there is nothing to replace.
+      const current = readInstalledSotaVersions() || latest;
       const changedComponents = [...SOTA_COMPONENTS].filter(name => isNewerVersion(latest[name], current[name]));
 
       if (changedComponents.length === 0) {

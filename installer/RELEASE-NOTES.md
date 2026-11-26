@@ -1,3 +1,25 @@
+## hyadeOS 2.1.1
+
+### Fixes
+- **Updater.** After one failed download the Updater could stay broken: the folder of the failed attempt could not be removed (a permission error on Windows) and every later "Update" failed the same way. Each download now has its own folder and cleaning up can no longer stop an update.
+- **Apps check.** On a fresh install the Updater no longer shows "no such file or directory ... sota-installed.json" under Apps.
+
+If you already have 2.1.0 and the Updater says "The update could not be downloaded", install this version with the installer, or close hyadeOS and delete the `hyadeos-staged-...` folders in `%LOCALAPPDATA%\Temp`.
+
+**Full Changelog**: https://github.com/hyadeOSS/stable/compare/v2.1.0...v2.1.1
+
+---
+
+## hyadeOS 2.1.1 (italiano)
+
+### Correzioni
+- **Updater.** Dopo un download fallito l'Updater poteva restare rotto: la cartella del tentativo fallito non si riusciva a cancellare (errore di permessi su Windows) e ogni "Aggiorna" successivo falliva allo stesso modo. Ogni download ora ha una cartella propria e la pulizia non può più bloccare un aggiornamento.
+- **Controllo delle app.** Su una nuova installazione l'Updater non mostra più "no such file or directory ... sota-installed.json" sotto Apps.
+
+Se hai già la 2.1.0 e l'Updater dice "The update could not be downloaded", installa questa versione con l'installer, oppure chiudi hyadeOS e cancella le cartelle `hyadeos-staged-...` in `%LOCALAPPDATA%\Temp`.
+
+---
+
 ## hyadeOS 2.1.0
 
 ### New
