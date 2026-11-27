@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/desktop/assets/i18n-data.js"></script>
+  <script src="/desktop/assets/i18n.js"></script>
+  <script src="/desktop/assets/accent.js"></script>
+  <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
+  <script src="/desktop/assets/mw-theme.js"></script>
+  <link href="legal.css" rel="stylesheet">
+  <title>hyadeOS - Legal & privacy</title>
+  <style>
+    .cards { display: grid; gap: 10px; margin-top: 8px; }
+    .card { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 14px; color: #fff; text-decoration: none; background: rgba(255,255,255,0.05); transition: background .15s; }
+    .card:hover { background: rgba(255,255,255,0.09); }
+    .card .material-symbols-outlined { font-size: 24px; color: rgba(255,255,255,.85); }
+    .card .t { font-size: 0.98rem; font-weight: 600; }
+    .card .d { font-size: 0.83rem; color: #9a9aa1; }
+    .card .go { margin-left: auto; color: #6e6e75; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="embed-header"><button type="button" data-back aria-label="Back"><span class="material-symbols-outlined">arrow_back_ios_new</span></button><h2 data-en="Legal &amp; privacy" data-it="Note legali e privacy">Legal &amp; privacy</h2></div>
+  <h1 data-en="Legal &amp; privacy" data-it="Note legali e privacy">Legal &amp; privacy</h1>
+  <div class="lang"><button type="button" data-set="it">Italiano</button><button type="button" data-set="en">English</button></div>
+
+  <section data-lang="en">
+    <p>hyadeOS is free and open source. These documents say what you can do with it, the terms for using it, and how your data is handled. Questions: <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a> or <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">Discord</a>.</p>
+    <div class="cards">
+      <a class="card" href="license.html" data-legal><span class="material-symbols-outlined">gavel</span><span><span class="t">License</span><br><span class="d">Apache 2.0 and the open-source parts inside hyadeOS</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+      <a class="card" href="terms.html" data-legal><span class="material-symbols-outlined">description</span><span><span class="t">Terms of use</span><br><span class="d">No warranty, backups, acceptable use, age</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+      <a class="card" href="privacy.html" data-legal><span class="material-symbols-outlined">shield_lock</span><span><span class="t">Privacy</span><br><span class="d">What stays on your device, what doesn't, privacy mode</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+    </div>
+  </section>
+
+  <section data-lang="it">
+    <p>hyadeOS è gratuito e open source. Questi documenti dicono cosa puoi farne, le condizioni per usarlo e come vengono trattati i tuoi dati. Domande: <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a> oppure <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">Discord</a>.</p>
+    <div class="cards">
+      <a class="card" href="license.html" data-legal><span class="material-symbols-outlined">gavel</span><span><span class="t">Licenza</span><br><span class="d">Apache 2.0 e i componenti open source di hyadeOS</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+      <a class="card" href="terms.html" data-legal><span class="material-symbols-outlined">description</span><span><span class="t">Termini d'uso</span><br><span class="d">Nessuna garanzia, backup, uso consentito, età</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+      <a class="card" href="privacy.html" data-legal><span class="material-symbols-outlined">shield_lock</span><span><span class="t">Privacy</span><br><span class="d">Cosa resta sul tuo dispositivo, cosa no, modalità privacy</span></span><span class="material-symbols-outlined go">chevron_right</span></a>
+    </div>
+  </section>
+
+  <p class="standalone-only"><a href="#" class="back" data-back>← Back</a></p>
+</main>
+<script src="legal.js"></script>
+</body>
+</html>

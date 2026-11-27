@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/desktop/assets/i18n-data.js"></script>
+  <script src="/desktop/assets/i18n.js"></script>
+  <script src="/desktop/assets/mw-theme.js"></script>
+  <link rel="stylesheet" href="/desktop/assets/mw-design.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="settings.credits.title">Credits</title>
+  <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
+  <!-- Film-style rolling credits. Who is listed lives in CREDITS below: add sections or names there. -->
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; -webkit-font-smoothing: antialiased; }
+    body { box-sizing: border-box; display: flex; flex-direction: column; padding: 10px 20px 0; font-family: 'Poppins', sans-serif; color: var(--mw-text); }
+    /* Same back header as the other Settings sub-pages (settings-submenu.css). */
+    .settings-page-header { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; color: var(--sys-accent-text, #64d2ff); }
+    .settings-page-header h1 { margin: 0 0 0 4px; color: var(--mw-text); font-size: 20px; font-weight: 500; }
+    .settings-page-back { display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; }
+    .settings-page-back:hover { opacity: .8; }
+    /* The roll fades in at the bottom and out at the top, like a cinema screen. */
+    .screen { position: relative; flex: 1; min-height: 0; overflow: hidden;
+      -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent); }
+    .roll { position: absolute; left: 0; right: 0; top: 0; display: flex; flex-direction: column; align-items: center; text-align: center; will-change: transform; }
+    .roll img.logo { width: 260px; max-width: 70%; margin-bottom: 70px; }
+    .section { margin-bottom: 56px; }
+    .role { margin-bottom: 12px; font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: rgba(var(--mw-ink),.5); }
+    .name { font-size: 22px; font-weight: 500; line-height: 1.6; }
+    .small .name { font-size: 15px; font-weight: 400; color: rgba(var(--mw-ink),.8); }
+    .person { margin-bottom: 10px; }
+    .person .name { line-height: 1.3; }
+    .person .what { font-size: 12.5px; color: rgba(var(--mw-ink),.5); }
+    /* Closing: the tribute logos, a thin line, then 22. */
+    /* Both logos are wide wordmarks (dosvm.png 314x78, projectkagerou.png 968x121): same height so they match. */
+    .tribute-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px 48px; margin: 10px 0 70px; padding: 0 16px; }
+    .tribute-logos img { height: 34px; width: auto; max-width: 100%; object-fit: contain; }
+    .end-line { width: 160px; height: 1px; margin-bottom: 60px; background: rgba(var(--mw-ink),.25); }
+    .end-image { width: 150px; height: 150px; object-fit: contain; }
+    .end-text { margin: 18px 0 40px; font-size: 24px; font-weight: 600; letter-spacing: .5px; }
+    /* The last word: a big "mariowstech" that fades in once the roll is over, then slowly fades out. */
+    .finale { position: absolute; left: 0; right: 0; top: 55%; transform: translateY(-50%) scale(.96); text-align: center; pointer-events: none;
+      font-size: clamp(40px, 9vw, 92px); font-weight: 700; letter-spacing: -1px; opacity: 0; }
+    .finale.shown { opacity: 1; transform: translateY(-50%) scale(1); }
+    /* A small line under it, a moment later; it leaves together with the big text (the whole .finale fades). */
+    .finale-sub { margin-top: 6px; font-size: 17px; font-weight: 400; letter-spacing: .3px; color: rgba(var(--mw-ink),.75);
+      opacity: 0; transform: translateY(6px); transition: opacity 1.2s ease, transform 1.2s cubic-bezier(.16,1,.3,1); }
+    .finale.sub-shown .finale-sub { opacity: 1; transform: none; }
+    .finale:not(.sub-shown) .finale-sub { transition: none; }
+    /* Reduced motion: no rolling, the list just scrolls. */
+    body.static .screen { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
+    body.static .roll { position: static; padding: 30px 0; }
+    body.static .finale { position: static; margin: 20px 0 40px; transform: none; opacity: 1; }
+    body.static .finale-sub { opacity: 1; transform: none; }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="settings-page-header">
+    <button class="settings-page-back" type="button" onclick="location.href = 'about.html'" aria-label="Back to About" data-i18n-aria-label="settings.about.back">
+      <span class="material-symbols-outlined">arrow_back_ios_new</span>
+    </button>
+    <h1 data-i18n="settings.credits.title">Credits</h1>
+  </div>
+  <div class="screen" id="screen">
+    <div class="roll" id="roll" aria-live="off"></div>
+  </div>
+  <div class="finale" id="finale"><div>mariowstech</div><div class="finale-sub">lily ti amo 💗</div></div>
+<script>
+  // Sections in the order they roll. A name is a string, or [name, what they did].
+  // small: true for long lists set in a smaller size.
+  const CREDITS = [
+    { role: hyadeOSI18n.t("settings.credits.founded", "Founded, developed and backed by"), names: ['mariowstech'] },
+    { role: hyadeOSI18n.t("settings.credits.helped", "Developed, helped by"), names: [
+      ['davidjone16', hyadeOSI18n.t("settings.credits.what.channels", "stable and beta channels")],
+      ['diegosss48', hyadeOSI18n.t("settings.credits.what.website", "website")],
+      ['erti', hyadeOSI18n.t("settings.credits.what.windowing", "windowing system")],
+      ['kianish', hyadeOSI18n.t("settings.credits.what.community", "community edition")],
+      ['oliv', hyadeOSI18n.t("settings.credits.what.helper", "helper")]
+    ] },
+    { role: hyadeOSI18n.t("settings.credits.globalizers", "Globalizers"), names: [
+      ['kevadesu', hyadeOSI18n.t("settings.credits.what.french", "French translations")],
+      ['iker_ezq', hyadeOSI18n.t("settings.credits.what.spanish", "Spanish translations")]
+    ] },
+    { role: hyadeOSI18n.t("settings.credits.insiders", "Insiders"), small: true, names: [
+      'liliaanxyy', 'fedyy', 'snows.in.july', 'urfavvadamdevv', 'exeedtias', 'a70haip', 'killuabqotn', 'snake400', 'nezu', 'francyden', 'vkvanz'
+    ] },
+    { role: hyadeOSI18n.t("settings.credits.dedicated", "Dedicated to"), names: ['liliaanxyy'] },
+    { role: hyadeOSI18n.t("settings.credits.tributed", "Tributed to"), names: ['The DosVM Project', 'Project Kagerou'] },
+    { role: hyadeOSI18n.t("settings.credits.open-source", "Open source code"), small: true,
+      names: ['Electron', 'Node.js', 'Express', 'body-parser', 'bcrypt', 'multer', 'node-cron', 'nodemailer', 'Monaco Editor', 'Material Symbols', 'Poppins'] }
+  ];
+  // Logos of the projects in "Tributed to" (PNG files next to this page). A missing file is left out.
+  const TRIBUTE_LOGOS = [['dosvm.png', 'The DosVM Project'], ['projectkagerou.png', 'Project Kagerou']];
+
+  const roll = document.getElementById('roll');
+  const screen = document.getElementById('screen');
+  const logo = document.createElement('img');
+  logo.className = 'logo';
+  logo.src = 'branding.png';
+  logo.alt = 'hyadeOS';
+  roll.append(logo);
+  for (const section of CREDITS) {
+    const block = document.createElement('div');
+    block.className = 'section' + (section.small ? ' small' : '');
+    const role = document.createElement('div');
+    role.className = 'role';
+    role.textContent = section.role;
+    block.append(role);
+    for (const entry of section.names) {
+      const [who, what] = Array.isArray(entry) ? entry : [entry, null];
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = who;
+      if (!what) { block.append(name); continue; }
+      const person = document.createElement('div');
+      person.className = 'person';
+      const role = document.createElement('div');
+      role.className = 'what';
+      role.textContent = what;
+      person.append(name, role);
+      block.append(person);
+    }
+    roll.append(block);
+  }
+
+  const logos = document.createElement('div');
+  logos.className = 'tribute-logos';
+  for (const [file, alt] of TRIBUTE_LOGOS) {
+    const img = document.createElement('img');
+    img.src = file;
+    img.alt = alt;
+    img.onerror = () => { img.remove(); if (!logos.children.length) logos.remove(); };
+    logos.append(img);
+  }
+  const line = document.createElement('div');
+  line.className = 'end-line';
+  const hope = document.createElement('img');
+  hope.className = 'end-image';
+  hope.src = '22.webp';
+  hope.alt = '22';
+  const words = document.createElement('div');
+  words.className = 'end-text';
+  words.textContent = '22 è Speranza';
+  roll.append(logos, line, hope, words);
+
+  // Rolls from below the screen to above it. When the last line has gone, a big "mariowstech"
+  // fades in, holds, fades out slowly, and the roll starts again. The wheel moves the roll.
+  const SPEED = 38; // pixels per second
+  const FINALE = { in: 1600, hold: 2200, out: 4500 }; // ms
+  const finale = document.getElementById('finale');
+  let offset = 0, last = performance.now(), finaleUntil = 0;
+  const start = () => screen.clientHeight;            // first line just below the bottom edge
+  const end = () => -roll.offsetHeight;               // last line just above the top edge
+
+  function playFinale() {
+    finaleUntil = performance.now() + FINALE.in + FINALE.hold + FINALE.out;
+    finale.style.transition = `opacity ${FINALE.in}ms ease, transform ${FINALE.in + FINALE.hold + FINALE.out}ms cubic-bezier(.16,1,.3,1)`;
+    finale.classList.add('shown');
+    setTimeout(() => finale.classList.add('sub-shown'), 700); // "lily ti amo" a moment after
+    setTimeout(() => {
+      finale.style.transition = `opacity ${FINALE.out}ms ease, transform ${FINALE.out}ms ease`;
+      finale.classList.remove('shown');
+    }, FINALE.in + FINALE.hold);
+  }
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.body.classList.add('static');
+    roll.append(finale); // shown as the last line of the list
+  } else {
+    offset = start() * 0.35; // begin with the logo already on screen
+    const frame = now => {
+      const dt = Math.min(100, now - last) / 1000;
+      last = now;
+      if (finaleUntil) {
+        if (now >= finaleUntil) { finaleUntil = 0; offset = start(); finale.classList.remove('sub-shown'); } // hidden by now: reset for next time
+      } else {
+        offset -= SPEED * dt;
+        if (offset < end()) playFinale();
+        if (offset > start()) offset = start();
+      }
+      roll.style.transform = `translateY(${offset}px)`;
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    screen.addEventListener('wheel', event => { event.preventDefault(); if (!finaleUntil) offset -= event.deltaY * 0.6; }, { passive: false });
+  }
+</script>
+</body>
+</html>

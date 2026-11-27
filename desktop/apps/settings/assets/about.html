@@ -14,9 +14,14 @@
 
   <style>
     #systemVersion { user-select: text; }
+    /* With the legal rows the page can be taller than Settings: the body scrolls (scrollbar hidden). */
+    body { overflow-y: auto !important; }
+    .info-box.link-list { padding: 6px; }
     .link-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 9px; color: var(--mw-text); text-decoration: none; transition: background .15s; }
     .link-row:hover { background: rgba(var(--mw-ink), 0.07); }
-    .link-icon { display: flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 9px; background: rgba(var(--mw-ink), 0.08); }
+    .link-row + .link-row { box-shadow: 0 -1px 0 rgba(var(--mw-ink), 0.05); }
+    .link-icon { display: flex; width: 28px; height: 28px; flex: 0 0 28px; align-items: center; justify-content: center; color: rgba(var(--mw-ink), 0.85); }
+    .link-icon .material-symbols-outlined { font-size: 22px; }
     .link-text { display: flex; flex: 1; min-width: 0; flex-direction: column; }
     .link-title { font-size: 14px; font-weight: 500; }
     .link-sub { font-size: 12px; color: rgba(var(--mw-ink), 0.5); }
@@ -24,7 +29,43 @@
     .link-status[hidden] { display: none !important; }
     .link-status.pending { color: #ff9f0a; }
     .link-status.done { color: #30d158; }
-    .link-arrow { color: rgba(var(--mw-ink), 0.4); }
+    .link-arrow { font-size: 20px !important; color: rgba(var(--mw-ink), 0.45); }
+    /* Easter egg: hold the logo for fireworks, then 22.webp for a few seconds. */
+    .brand-header { position: relative; }
+    .brand-header #brandLogo {
+      cursor: pointer;
+      -webkit-user-drag: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      transition: transform 0.7s ease, opacity 0.3s ease;
+    }
+    .brand-header #brandLogo.holding { transform: scale(0.92); }
+    .brand-header #brandLogo.hidden-logo { opacity: 0; }
+    .brand-header #brandEgg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      max-width: none;
+      transform: translate(-50%, -50%) scale(0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .brand-header #brandEgg.shown {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    #fireworks {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
     html, body {
       margin: 0 !important;
       padding: 0 !important;
@@ -136,7 +177,8 @@
 <div class="container">
 
   <div class="brand-header">
-    <img src="branding.png" alt="hyadeOS">
+    <img src="branding.png" alt="hyadeOS" id="brandLogo" draggable="false">
+    <img src="22.webp" alt="" id="brandEgg" aria-hidden="true">
   </div>
 
   <div class="info-box">
@@ -158,7 +200,7 @@
     </div>
   </div>
 
-  <div class="info-box">
+  <div class="info-box link-list">
     <a class="link-row" href="activation.html">
       <span class="link-icon"><span class="material-symbols-outlined">key</span></span>
       <span class="link-text">
@@ -168,15 +210,31 @@
       <span class="material-symbols-outlined link-status" id="activationStatus" hidden></span>
       <span class="material-symbols-outlined link-arrow">chevron_right</span>
     </a>
-  </div>
-
-  <div class="info-box">
-    <div class="title" data-i18n="settings.about.credits">Credits</div>
-    <div class="content">
-      <strong data-i18n="settings.about.main-owner">main owner:</strong> mariowstech<br>
-      <strong data-i18n="settings.about.developers">developers:</strong> kianish, davidjone16, ertyplax<br>
-      <strong data-i18n="settings.about.contributors">contributors:</strong> kevadesu
-    </div>
+    <a class="link-row" href="credits.html">
+      <span class="link-icon"><span class="material-symbols-outlined">movie</span></span>
+      <span class="link-text">
+        <span class="link-title" data-i18n="settings.about.credits">Credits</span>
+        <span class="link-sub" data-i18n="settings.about.credits-sub">The people behind hyadeOS</span>
+      </span>
+      <span class="material-symbols-outlined link-arrow">chevron_right</span>
+    </a>
+    <!-- The legal documents live in /desktop/legal/ (shared with setup); ?embed=settings gives them About's back header. -->
+    <a class="link-row" href="/desktop/legal/index.html?embed=settings">
+      <span class="link-icon"><span class="material-symbols-outlined">gavel</span></span>
+      <span class="link-text">
+        <span class="link-title" data-i18n="settings.about.legal">Legal &amp; privacy</span>
+        <span class="link-sub" data-i18n="settings.about.legal-sub">License, terms of use, privacy</span>
+      </span>
+      <span class="material-symbols-outlined link-arrow">chevron_right</span>
+    </a>
+    <a class="link-row" href="/desktop/legal/safety.html?embed=settings">
+      <span class="link-icon"><span class="material-symbols-outlined">health_and_safety</span></span>
+      <span class="link-text">
+        <span class="link-title" data-i18n="settings.about.health">Health &amp; safety</span>
+        <span class="link-sub" data-i18n="settings.about.health-sub">Your health, device care and cooling</span>
+      </span>
+      <span class="material-symbols-outlined link-arrow">chevron_right</span>
+    </a>
   </div>
 
 </div>
@@ -221,6 +279,128 @@
       if (built) document.getElementById('buildDate').textContent = built;
     } catch (err) {
       // Older kernel or no connection: keep the values from the markup.
+    }
+  })();
+  // Easter egg: hold the logo -> fireworks explode and fade -> 22.webp for 4 s -> back to the logo.
+  (() => {
+    const logo = document.getElementById('brandLogo');
+    const egg = document.getElementById('brandEgg');
+    const HOLD_MS = 700;
+    const EGG_MS = 4050; // one full spin of 22.webp (150 frames x 27 ms)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let holdTimer = null;
+    let running = false;
+
+    const cancelHold = () => {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      logo.classList.remove('holding');
+    };
+
+    logo.addEventListener('pointerdown', e => {
+      if (running || e.button > 0) return;
+      logo.classList.add('holding');
+      holdTimer = setTimeout(() => { cancelHold(); start(); }, HOLD_MS);
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => logo.addEventListener(t, cancelHold));
+    logo.addEventListener('contextmenu', e => e.preventDefault());
+
+    async function start() {
+      running = true;
+      if (!reduceMotion) await fireworks(logo.getBoundingClientRect());
+      logo.classList.add('hidden-logo');
+      egg.src = '22.webp?t=' + Date.now(); // restart the animation from its first frame
+      egg.classList.add('shown');
+      await new Promise(r => setTimeout(r, EGG_MS));
+      egg.classList.remove('shown');
+      logo.classList.remove('hidden-logo');
+      await new Promise(r => setTimeout(r, 300));
+      running = false;
+    }
+
+    // Rockets rise from the bottom, burst around the logo, and the canvas is removed once every spark has faded.
+    function fireworks(around) {
+      return new Promise(resolve => {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'fireworks';
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const W = window.innerWidth, H = window.innerHeight;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.scale(dpr, dpr);
+
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        const palette = ['#ff453a', '#ffd60a', '#30d158', '#64d2ff', '#bf5af2', '#ff9f0a', '#ffffff'];
+        if (accent) palette.push(accent);
+        const pick = a => a[Math.floor(Math.random() * a.length)];
+
+        const cx = around.left + around.width / 2;
+        const cy = around.top + around.height / 2;
+        const rockets = [];
+        const sparks = [];
+        const COUNT = 6;
+        for (let i = 0; i < COUNT; i++) {
+          const tx = cx + (Math.random() - 0.5) * Math.max(around.width * 1.4, 220);
+          const ty = Math.max(30, cy + (Math.random() - 0.5) * 120);
+          rockets.push({ x: tx + (Math.random() - 0.5) * 80, y: H + 10, tx, ty, delay: i * 180, color: pick(palette), trail: [] });
+        }
+
+        const start = performance.now();
+        let last = start;
+        function frame(now) {
+          const dt = Math.min(32, now - last) / 16.67;
+          last = now;
+          ctx.clearRect(0, 0, W, H);
+          ctx.globalCompositeOperation = 'lighter';
+
+          for (let i = rockets.length - 1; i >= 0; i--) {
+            const r = rockets[i];
+            if (now - start < r.delay) continue;
+            r.trail.push({ x: r.x, y: r.y });
+            if (r.trail.length > 8) r.trail.shift();
+            r.x += (r.tx - r.x) * 0.08 * dt;
+            r.y += (r.ty - r.y) * 0.08 * dt;
+            ctx.strokeStyle = r.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            r.trail.forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+            ctx.lineTo(r.x, r.y);
+            ctx.stroke();
+            if (Math.abs(r.y - r.ty) < 6) {
+              const n = 55 + Math.floor(Math.random() * 25);
+              const second = pick(palette);
+              for (let k = 0; k < n; k++) {
+                const a = (k / n) * Math.PI * 2 + Math.random() * 0.2;
+                const speed = 1.5 + Math.random() * 3.2;
+                sparks.push({ x: r.x, y: r.y, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, life: 1, decay: 0.012 + Math.random() * 0.012, color: Math.random() < 0.7 ? r.color : second });
+              }
+              rockets.splice(i, 1);
+            }
+          }
+
+          for (let i = sparks.length - 1; i >= 0; i--) {
+            const s = sparks[i];
+            s.vx *= 0.97;
+            s.vy = s.vy * 0.97 + 0.06 * dt; // gravity
+            s.x += s.vx * dt;
+            s.y += s.vy * dt;
+            s.life -= s.decay * dt;
+            if (s.life <= 0) { sparks.splice(i, 1); continue; }
+            ctx.globalAlpha = s.life;
+            ctx.fillStyle = s.color;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 1.2 + s.life * 1.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+
+          if (rockets.length || sparks.length) requestAnimationFrame(frame);
+          else { canvas.remove(); resolve(); }
+        }
+        requestAnimationFrame(frame);
+      });
     }
   })();
 </script>

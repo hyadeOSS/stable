@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/desktop/assets/i18n-data.js"></script>
+  <script src="/desktop/assets/i18n.js"></script>
+  <script src="/desktop/assets/accent.js"></script>
+  <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
+  <script src="/desktop/assets/mw-theme.js"></script>
+  <link href="legal.css" rel="stylesheet">
+  <title>hyadeOS - Privacy</title>
+</head>
+<body>
+<main>
+  <div class="embed-header"><button type="button" data-back aria-label="Back"><span class="material-symbols-outlined">arrow_back_ios_new</span></button><h2 data-en="Privacy" data-it="Privacy">Privacy</h2></div>
+  <h1 data-en="Privacy" data-it="Privacy">Privacy</h1>
+  <div class="lang"><button type="button" data-set="it">Italiano</button><button type="button" data-set="en">English</button></div>
+
+  <section data-lang="en">
+    <p class="muted">Notice under Articles 13-14 of Regulation (EU) 2016/679 (GDPR) and Italian Legislative Decree 196/2003. Version 2026-11-25 · Last updated: 25 November 2026.</p>
+
+    <h2>1. In short</h2>
+    <p>hyadeOS runs on your computer. Your accounts, files, notes, calendar and settings stay on your device and are not sent to the developers. There are no ads, no analytics and no telemetry. Some features you choose to use contact other services, listed in section 5.</p>
+
+    <h2>2. Who is responsible (data controller)</h2>
+    <p>You (or the organisation that provided your device) are the controller of the data stored on your device. For the emails described in section 4, the controller is mariowstech and the hyadeOS team. Contact: <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a> or the hyadeOS Discord server, <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">dsc.gg/mariowOS</a>.</p>
+
+    <h2>3. Data stored on your device</h2>
+    <ul>
+      <li>For each account: username, email address, and the password stored only as a bcrypt hash, never in clear text.</li>
+      <li>Whether your email is verified and the date this device was activated (Settings → About → Activation).</li>
+      <li>The date and version of the license and terms you accepted during setup.</li>
+      <li>Files, notes, calendar events, wallpaper, avatar, browser favorites, spaces, tabs and history, and preferences.</li>
+      <li>One technical session cookie (<code>mw_session</code>, 12 hours), needed to sign in. Technical cookies need no consent.</li>
+      <li>Technical error logs, rotated and deleted automatically.</li>
+      <li>While a window wobbles or goes into the dock, hyadeOS takes a picture of it in memory to draw the animation. It never leaves your device and is thrown away when the animation ends.</li>
+    </ul>
+
+    <h2>4. Email</h2>
+    <p>If you add an email address, it is used to send you verification and password-recovery codes (legal basis: providing the service you asked for) and, only if you turn it on, a daily digest (legal basis: consent, which you can withdraw at any time in Settings). Emails are sent through the hyadeOS mail service, a relay run by the hyadeOS team on Cloudflare (USA), which receives your email address and username and sends the message through its email delivery provider. Codes are valid for 10 minutes. Transfers outside the EU rely on the safeguards the GDPR provides (EU-US Data Privacy Framework or standard contractual clauses).</p>
+
+    <h2>5. External services</h2>
+    <p>Fonts, icons and libraries are part of the system: starting hyadeOS contacts no external server. Some features, when you use them, contact third-party services, which receive your IP address and follow their own privacy policies:</p>
+    <ul>
+      <li><strong>Updates and Store</strong>: GitHub (USA), to check for and download updates and apps.</li>
+      <li><strong>Browser</strong>: the websites you visit. Searches go to the engine chosen in the browser menu (Google by default, or DuckDuckGo or Bing). You can clear cookies and site data from the browser menu.</li>
+      <li><strong>New tab page</strong>: a photo from Microsoft Bing (USA). hyadeOS fetches the list of recent Bing photos every few hours, and each new tab loads one photo from bing.com.</li>
+      <li><strong>Browser extensions</strong>: the Chrome Web Store (Google, USA), only when you install or update an extension.</li>
+      <li><strong>Weather</strong> app: Open-Meteo (Switzerland/EU) receives the city you search for, or your coordinates if you use your current location; BigDataCloud (Australia) receives those coordinates to name your city.</li>
+      <li><strong>Messages</strong>: Element (app.element.io) and Minnit (minnit.chat), loaded only after you confirm.</li>
+      <li><strong>Music</strong>: SomaFM radio (USA), the radio-browser.info list and the stations you play, and Audius, each after you confirm; Last.fm (USA) only if you enter a username and API key; Spotify (Sweden/USA) only if you connect your account (the access token stays on your device; you can disconnect at any time); web players such as YouTube Music or SoundCloud open in the hyadeOS browser.</li>
+    </ul>
+    <p>You can withdraw your confirmations for external services with the button at the bottom of this page.</p>
+
+    <h2>6. Privacy mode</h2>
+    <p>Privacy mode is a switch in Quick Settings (the shield). It is for when other people can see your screen, for example when you share it, record it or present. While it is on:</p>
+    <ul>
+      <li>notifications show only their title; what they say is replaced by "Content hidden";</li>
+      <li>Task View frosts the windows, so their content can't be read;</li>
+      <li>in the hyadeOS app on Windows and macOS, screenshots, screen recordings and screen sharing see a blank window instead of hyadeOS (other systems don't support this);</li>
+      <li>a shield in the taskbar shows that it is on.</li>
+    </ul>
+    <p>Privacy mode works entirely on your device and sends nothing anywhere. It doesn't encrypt your files, hide them from other accounts, or stop someone next to you from looking at your screen.</p>
+
+    <h2>7. How long data is kept</h2>
+    <p>Data stays on your device until you delete it. You can erase everything with a factory reset (Settings → General).</p>
+
+    <h2>8. Your rights</h2>
+    <p>You can access, correct, delete and export your data (Settings → Backup & Restore), restrict processing, object, and withdraw consent. For data handled by the controller named in section 2, write to <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a>. You have the right to lodge a complaint with the Italian Data Protection Authority (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>) or the authority where you live.</p>
+
+    <h2>9. Children</h2>
+    <p>In Italy, people aged 14 or over can consent to online services themselves (Art. 2-quinquies, Legislative Decree 196/2003). Under 14, a parent's consent is needed to add an email address or turn on the daily digest.</p>
+
+    <h2>10. Changes</h2>
+    <p>If this notice changes, the version and date above change too. Important changes may be shown when hyadeOS starts.</p>
+  </section>
+
+  <section data-lang="it">
+    <p class="muted">Informativa ai sensi degli artt. 13-14 del Regolamento (UE) 2016/679 (GDPR) e del D.Lgs. 196/2003. Versione 2026-11-25 · Ultimo aggiornamento: 25 novembre 2026.</p>
+
+    <h2>1. In breve</h2>
+    <p>hyadeOS funziona sul tuo computer. Account, file, note, calendario e impostazioni restano sul tuo dispositivo e non vengono inviati agli sviluppatori. Non ci sono pubblicità, analytics o telemetria. Alcune funzioni che scegli di usare contattano altri servizi, elencati al punto 5.</p>
+
+    <h2>2. Chi è responsabile (titolare del trattamento)</h2>
+    <p>Per i dati salvati sul tuo dispositivo, il titolare sei tu (o l'organizzazione che ti ha fornito il dispositivo). Per le email descritte al punto 4, il titolare è mariowstech e il team di hyadeOS. Contatti: <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a> oppure il server Discord di hyadeOS, <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">dsc.gg/mariowOS</a>.</p>
+
+    <h2>3. Dati salvati sul dispositivo</h2>
+    <ul>
+      <li>Per ogni account: nome utente, indirizzo email e password, salvata solo come hash bcrypt e mai in chiaro.</li>
+      <li>Se la tua email è verificata e la data di attivazione del dispositivo (Impostazioni → Informazioni → Attivazione).</li>
+      <li>La data e la versione della licenza e dei termini accettati durante la configurazione.</li>
+      <li>File, note, eventi del calendario, sfondo, avatar, preferiti, spazi, schede e cronologia del browser, e preferenze.</li>
+      <li>Un cookie tecnico di sessione (<code>mw_session</code>, 12 ore), necessario per l'accesso. Non servono consensi per i cookie tecnici.</li>
+      <li>Log tecnici degli errori, ruotati e cancellati automaticamente.</li>
+      <li>Mentre una finestra ondeggia o va nella barra, hyadeOS ne fa un'immagine in memoria per disegnare l'animazione. Non lascia mai il dispositivo e viene eliminata alla fine dell'animazione.</li>
+    </ul>
+
+    <h2>4. Email</h2>
+    <p>Se aggiungi un indirizzo email, viene usato per inviarti i codici di verifica e di recupero password (base giuridica: esecuzione del servizio richiesto) e, solo se lo attivi, il riepilogo giornaliero (base giuridica: consenso, revocabile in qualsiasi momento dalle Impostazioni). Le email sono inviate tramite il servizio email di hyadeOS, un inoltro gestito dal team di hyadeOS su Cloudflare (USA), che riceve il tuo indirizzo email e il nome utente e spedisce il messaggio tramite il proprio fornitore di invio email. I codici sono validi 10 minuti. I trasferimenti fuori dall'UE si basano sulle garanzie previste dal GDPR (EU-US Data Privacy Framework o clausole contrattuali standard).</p>
+
+    <h2>5. Servizi esterni</h2>
+    <p>Font, icone e librerie fanno parte del sistema: all'avvio hyadeOS non contatta nessun server esterno. Alcune funzioni, quando le usi, contattano servizi di terze parti, che ricevono il tuo indirizzo IP e seguono le proprie informative:</p>
+    <ul>
+      <li><strong>Aggiornamenti e Store</strong>: GitHub (USA), per controllare e scaricare aggiornamenti e app.</li>
+      <li><strong>Browser</strong>: i siti che visiti. Le ricerche vanno al motore scelto nel menu del browser (Google di default, oppure DuckDuckGo o Bing). Puoi cancellare cookie e dati dei siti dal menu del browser.</li>
+      <li><strong>Pagina Nuova scheda</strong>: una foto di Microsoft Bing (USA). hyadeOS scarica l'elenco delle foto recenti di Bing ogni qualche ora e ogni nuova scheda carica una foto da bing.com.</li>
+      <li><strong>Estensioni del browser</strong>: il Chrome Web Store (Google, USA), solo quando installi o aggiorni un'estensione.</li>
+      <li>App <strong>Meteo</strong>: Open-Meteo (Svizzera/UE) riceve la città cercata o le coordinate, se usi la posizione attuale; BigDataCloud (Australia) riceve quelle coordinate per trovare il nome della città.</li>
+      <li><strong>Messaggi</strong>: Element (app.element.io) e Minnit (minnit.chat), caricati solo dopo la tua conferma.</li>
+      <li><strong>Musica</strong>: le radio SomaFM (USA), l'elenco di radio-browser.info e le stazioni che ascolti, e Audius, ciascuno dopo la tua conferma; Last.fm (USA) solo se inserisci nome utente e chiave API; Spotify (Svezia/USA) solo se colleghi il tuo account (il token resta sul tuo dispositivo; puoi scollegarti in qualsiasi momento); i web player come YouTube Music o SoundCloud si aprono nel browser di hyadeOS.</li>
+    </ul>
+    <p>Puoi revocare le conferme ai servizi esterni con il pulsante in fondo a questa pagina.</p>
+
+    <h2>6. Modalità privacy</h2>
+    <p>La modalità privacy è un interruttore nelle Impostazioni rapide (lo scudo). Serve quando altre persone possono vedere il tuo schermo, ad esempio quando lo condividi, lo registri o fai una presentazione. Mentre è attiva:</p>
+    <ul>
+      <li>le notifiche mostrano solo il titolo; il contenuto è sostituito da "Contenuto nascosto";</li>
+      <li>la Vista attività sfoca le finestre, così il loro contenuto non si legge;</li>
+      <li>nell'app hyadeOS su Windows e macOS, screenshot, registrazioni e condivisione dello schermo vedono una finestra vuota al posto di hyadeOS (gli altri sistemi non lo supportano);</li>
+      <li>uno scudo nella barra delle applicazioni indica che è attiva.</li>
+    </ul>
+    <p>La modalità privacy funziona interamente sul tuo dispositivo e non invia nulla. Non cifra i tuoi file, non li nasconde agli altri account e non impedisce a chi ti sta accanto di guardare lo schermo.</p>
+
+    <h2>7. Conservazione</h2>
+    <p>I dati restano sul dispositivo finché non li cancelli. Puoi eliminarli tutti con il ripristino di fabbrica (Impostazioni → Generali).</p>
+
+    <h2>8. I tuoi diritti</h2>
+    <p>Puoi accedere ai tuoi dati, correggerli, cancellarli ed esportarli (Impostazioni → Backup e ripristino), limitarne il trattamento, opporti e revocare il consenso. Per i dati trattati dal titolare indicato al punto 2, scrivi a <a href="mailto:contact.hyadeos@protonmail.com">contact.hyadeos@protonmail.com</a>. Hai diritto di proporre reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>) o all'autorità del Paese in cui vivi.</p>
+
+    <h2>9. Minori</h2>
+    <p>In Italia il consenso ai servizi online può essere dato da chi ha almeno 14 anni (art. 2-quinquies D.Lgs. 196/2003). Sotto i 14 anni serve il consenso di un genitore per aggiungere un indirizzo email o attivare il riepilogo giornaliero.</p>
+
+    <h2>10. Modifiche</h2>
+    <p>Se questa informativa cambia, cambiano anche versione e data qui sopra. Le modifiche importanti possono essere mostrate all'avvio di hyadeOS.</p>
+  </section>
+
+  <p style="margin-top:28px"><button id="revoke" type="button" style="all:unset;cursor:pointer;color:#0a84ff;font-size:0.93rem">Revoca consensi ai servizi esterni / Withdraw external service consents</button></p>
+  <p class="standalone-only"><a href="#" class="back" data-back>← Back</a></p>
+</main>
+<script src="/desktop/assets/hyadeos-dialogs.js"></script>
+<script src="/desktop/assets/external-consent.js"></script>
+<script src="legal.js"></script>
+<script>
+  document.getElementById('revoke').onclick = async () => {
+    mwRevokeExternalConsents();
+    const it = document.documentElement.lang === 'it';
+    const text = it ? 'Fatto: ti verrà chiesta di nuovo la conferma prima di usare un servizio esterno.' : 'Done: you will be asked again before an external service is used.';
+    window.mDialog ? await mDialog.alert(text) : alert(text);
+  };
+</script>
+</body>
+</html>
