@@ -1,6 +1,6 @@
 {
-  "version": "2.1.2",
+  "version": "2.1.3",
   "codename": "hottestChocolate",
-  "changelog": "Settings > About has a new look: Credits now roll like film credits, Legal & privacy holds the License, Terms of use and Privacy, and Health & safety explains device care. Hold the logo for a surprise.",
+  "changelog": "The installer now replaces an Insiders build: installing hyadeOS over a PC that had an Insiders version (for example 2.5.1_DEVPREVIEW5) kept running the old Insiders code, because its number looked newer than 2.1. The code is now replaced by the installed release, your data is kept, and the update channel goes back to stable.",
   "_comment": "obb."
 }
