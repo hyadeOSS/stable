@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/desktop/assets/i18n-data.js"></script>
+  <script src="/desktop/assets/i18n.js"></script>
+  <script src="/desktop/assets/accent.js"></script>
+  <link href="/desktop/assets/fonts/fonts.css" rel="stylesheet">
+  <script src="/desktop/assets/mw-theme.js"></script>
+  <link href="legal.css" rel="stylesheet">
+  <title>hyadeOS - Device care & cooling</title>
+  <style>
+    figure { margin: 14px 0 18px; padding: 14px; border-radius: 14px; background: #0e0e11; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+    figure svg { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 8px; font-size: 0.82rem; color: #8e8e95; }
+    .steps { counter-reset: step; list-style: none; padding-left: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 34px; margin-top: 10px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #0a84ff; color: #fff; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .danger { background: rgba(255, 69, 58, 0.1); box-shadow: inset 0 0 0 1px rgba(255, 69, 58, 0.35); }
+    .danger p, .danger li { color: #f5b4ae; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="embed-header"><button type="button" data-back aria-label="Back"><span class="material-symbols-outlined">arrow_back_ios_new</span></button><h2 data-en="Device care &amp; cooling" data-it="Cura del dispositivo">Device care &amp; cooling</h2></div>
+  <h1 data-en="Device care &amp; cooling" data-it="Cura del dispositivo e raffreddamento">Device care &amp; cooling</h1>
+  <div class="lang"><button type="button" data-set="it">Italiano</button><button type="button" data-set="en">English</button></div>
+
+  <!-- Illustrations (shared by both languages; their captions are translated). -->
+  <template id="fig-laptop">
+    <svg viewBox="0 0 640 220" role="img" aria-labelledby="figLaptopT">
+      <title id="figLaptopT">A laptop on a hard, flat desk with air flowing freely, and a laptop on a soft cushion with its vents blocked</title>
+      <!-- good: on a desk -->
+      <rect x="20" y="150" width="270" height="12" rx="3" fill="#3a3a40"/>
+      <path d="M70 146 L240 146 L252 150 L58 150 Z" fill="#8e8e95"/>
+      <path d="M84 58 L226 58 Q232 58 232 64 L240 146 L70 146 L78 64 Q78 58 84 58 Z" fill="#2c2c32" stroke="#c7c7cc" stroke-width="3"/>
+      <rect x="92" y="70" width="126" height="64" rx="4" fill="#0a84ff" opacity=".35"/>
+      <g stroke="#64d2ff" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M120 176 q8 -10 0 -20"/><path d="M150 180 q8 -12 0 -24"/><path d="M180 176 q8 -10 0 -20"/>
+      </g>
+      <path d="M200 172 l14 -10 l6 0" stroke="#ff9f0a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M254 100 q22 -6 30 -20" stroke="#ff9f0a" stroke-width="3" fill="none" stroke-linecap="round" marker-end="url(#arrowW)"/>
+      <circle cx="270" cy="40" r="18" fill="#30d158"/><path d="M261 40 l6 6 l12 -13" stroke="#000" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- bad: on a cushion -->
+      <path d="M350 168 Q350 140 400 140 L570 140 Q620 140 620 168 Q620 196 570 196 L400 196 Q350 196 350 168 Z" fill="#5e5ce6" opacity=".55"/>
+      <path d="M400 140 L570 140 L578 146 L392 146 Z" fill="#8e8e95"/>
+      <path d="M414 52 L556 52 Q562 52 562 58 L570 140 L400 140 L408 58 Q408 52 414 52 Z" fill="#2c2c32" stroke="#c7c7cc" stroke-width="3"/>
+      <rect x="422" y="64" width="126" height="64" rx="4" fill="#ff453a" opacity=".3"/>
+      <g stroke="#ff453a" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M455 38 q8 -10 0 -20"/><path d="M485 34 q8 -12 0 -24"/><path d="M515 38 q8 -10 0 -20"/>
+      </g>
+      <circle cx="610" cy="40" r="18" fill="#ff453a"/><path d="M603 33 l14 14 M617 33 l-14 14" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+      <defs><marker id="arrowW" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff9f0a"/></marker></defs>
+    </svg>
+  </template>
+
+  <template id="fig-airflow">
+    <svg viewBox="0 0 640 260" role="img" aria-labelledby="figAirT">
+      <title id="figAirT">A desktop case seen from the side: cool air comes in through filtered front fans, warm air leaves through the rear and top fans</title>
+      <defs>
+        <marker id="aC" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64d2ff"/></marker>
+        <marker id="aW" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff9f0a"/></marker>
+      </defs>
+      <rect x="170" y="30" width="300" height="200" rx="12" fill="#1c1c21" stroke="#c7c7cc" stroke-width="3"/>
+      <!-- front fans (right side = front) with dust filter -->
+      <line x1="478" y1="50" x2="478" y2="210" stroke="#8e8e95" stroke-width="3" stroke-dasharray="4 5"/>
+      <circle cx="448" cy="90" r="22" fill="none" stroke="#64d2ff" stroke-width="3"/><circle cx="448" cy="160" r="22" fill="none" stroke="#64d2ff" stroke-width="3"/>
+      <path d="M600 90 L500 90" stroke="#64d2ff" stroke-width="4" marker-end="url(#aC)"/>
+      <path d="M600 160 L500 160" stroke="#64d2ff" stroke-width="4" marker-end="url(#aC)"/>
+      <!-- inside: board, CPU cooler, GPU -->
+      <rect x="230" y="60" width="150" height="110" rx="6" fill="#2a2f36"/>
+      <rect x="280" y="80" width="44" height="44" rx="4" fill="#3a3a40" stroke="#8e8e95"/>
+      <rect x="232" y="180" width="170" height="20" rx="4" fill="#3a3a40" stroke="#8e8e95"/>
+      <path d="M430 125 C390 125 360 110 330 100" stroke="#64d2ff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>
+      <!-- rear and top exhaust -->
+      <circle cx="195" cy="80" r="20" fill="none" stroke="#ff9f0a" stroke-width="3"/>
+      <circle cx="300" cy="44" r="18" fill="none" stroke="#ff9f0a" stroke-width="3"/>
+      <path d="M170 80 L60 80" stroke="#ff9f0a" stroke-width="4" marker-end="url(#aW)"/>
+      <path d="M300 26 L300 2" stroke="#ff9f0a" stroke-width="4" marker-end="url(#aW)"/>
+      <!-- psu at bottom -->
+      <rect x="180" y="205" width="40" height="18" rx="3" fill="#3a3a40"/>
+    </svg>
+  </template>
+
+  <template id="fig-aio">
+    <svg viewBox="0 0 640 230" role="img" aria-labelledby="figAioT">
+      <title id="figAioT">Three ways to mount an all-in-one liquid cooler, seen from the side. The pump sits on the CPU and both tubes run to the same end of the radiator. Radiator on top: good. Radiator at the front with the tubes at the bottom: good. Radiator on the floor, below the pump: bad, air collects in the pump.</title>
+      <!-- Each case seen from the side (front on the right): the pump sits on the CPU on the motherboard,
+           and both tubes run side by side into the same end tank of the radiator, as on real AIOs. -->
+      <g>
+      <!-- 1: radiator on top -->
+      <rect x="20" y="40" width="170" height="150" rx="10" fill="#1c1c21" stroke="#c7c7cc" stroke-width="2.5"/>
+      <rect x="32" y="56" width="96" height="120" rx="4" fill="#2a2f36"/>
+      <rect x="40" y="46" width="118" height="14" rx="3" fill="#64d2ff" opacity=".8"/>
+      <rect x="158" y="43" width="16" height="20" rx="3" fill="#3f8fb8"/>
+      <path d="M94 92 C130 92 162 88 162 63" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M94 102 C138 102 170 94 170 63" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <rect x="64" y="82" width="30" height="30" rx="6" fill="#8e8e95"/><circle cx="79" cy="97" r="7" fill="#5e5ce6"/>
+      <circle cx="160" cy="20" r="14" fill="#30d158"/><path d="M153 20 l5 5 l9 -10" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- 2: radiator at the front, end tank (tubes) at the bottom -->
+      <rect x="235" y="40" width="170" height="150" rx="10" fill="#1c1c21" stroke="#c7c7cc" stroke-width="2.5"/>
+      <rect x="247" y="56" width="96" height="120" rx="4" fill="#2a2f36"/>
+      <rect x="377" y="50" width="14" height="104" rx="3" fill="#64d2ff" opacity=".8"/>
+      <rect x="374" y="154" width="20" height="16" rx="3" fill="#3f8fb8"/>
+      <path d="M309 92 C345 92 350 158 374 158" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M309 102 C337 102 342 166 374 166" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <rect x="279" y="82" width="30" height="30" rx="6" fill="#8e8e95"/><circle cx="294" cy="97" r="7" fill="#5e5ce6"/>
+      <circle cx="375" cy="20" r="14" fill="#30d158"/><path d="M368 20 l5 5 l9 -10" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- 3: radiator on the floor, below the pump: the pump is the highest point and air gathers in it -->
+      <rect x="450" y="40" width="170" height="150" rx="10" fill="#1c1c21" stroke="#c7c7cc" stroke-width="2.5"/>
+      <rect x="462" y="56" width="96" height="120" rx="4" fill="#2a2f36"/>
+      <rect x="470" y="168" width="118" height="14" rx="3" fill="#64d2ff" opacity=".8"/>
+      <rect x="588" y="165" width="16" height="20" rx="3" fill="#3f8fb8"/>
+      <path d="M524 80 C566 80 592 120 592 165" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M524 90 C560 90 600 128 600 165" stroke="#5e5ce6" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <rect x="494" y="70" width="30" height="30" rx="6" fill="#8e8e95"/><circle cx="509" cy="85" r="7" fill="#5e5ce6"/>
+      <circle cx="502" cy="76" r="4.5" fill="#fff"/><circle cx="514" cy="75" r="3" fill="#fff"/>
+      <circle cx="590" cy="20" r="14" fill="#ff453a"/><path d="M584 14 l12 12 M596 14 l-12 12" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </template>
+
+  <template id="fig-clean">
+    <svg viewBox="0 0 640 200" role="img" aria-labelledby="figCleanT">
+      <title id="figCleanT">Unplug the computer, hold the fan still with a finger, and clean it with short bursts of compressed air</title>
+      <g font-family="Poppins, sans-serif">
+      <!-- plug pulled out -->
+      <rect x="30" y="80" width="60" height="40" rx="6" fill="#3a3a40" stroke="#c7c7cc" stroke-width="2.5"/>
+      <path d="M90 92 h14 M90 108 h14" stroke="#c7c7cc" stroke-width="4"/>
+      <rect x="128" y="84" width="40" height="32" rx="6" fill="#8e8e95"/>
+      <path d="M168 100 C200 100 210 140 240 140" stroke="#8e8e95" stroke-width="5" fill="none"/>
+      <path d="M108 70 l10 10 M118 70 l-10 10" stroke="#ff453a" stroke-width="4" stroke-linecap="round"/>
+      <text x="44" y="150" fill="#c7c7cc" font-size="22">1</text>
+      <!-- fan held with finger -->
+      <circle cx="340" cy="100" r="54" fill="none" stroke="#c7c7cc" stroke-width="3"/>
+      <circle cx="340" cy="100" r="10" fill="#c7c7cc"/>
+      <path d="M340 100 q30 -10 40 -40 M340 100 q-10 30 -40 40 M340 100 q-30 -14 -36 -42 M340 100 q14 30 44 34" stroke="#c7c7cc" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M390 56 q20 -4 34 8 q8 8 -4 14 l-26 6" fill="#f2c4a0" stroke="#c49a7a" stroke-width="2"/>
+      <text x="270" y="190" fill="#c7c7cc" font-size="22">2</text>
+      <!-- compressed air can, short bursts -->
+      <rect x="520" y="70" width="44" height="90" rx="8" fill="#0a84ff"/>
+      <rect x="530" y="56" width="24" height="16" rx="3" fill="#8e8e95"/>
+      <path d="M530 62 L486 62" stroke="#8e8e95" stroke-width="5"/>
+      <g stroke="#64d2ff" stroke-width="3" stroke-linecap="round"><path d="M478 54 l-14 -6"/><path d="M476 62 l-16 0"/><path d="M478 70 l-14 6"/></g>
+      <text x="584" y="150" fill="#c7c7cc" font-size="22">3</text>
+      </g>
+    </svg>
+  </template>
+
+  <section data-lang="en">
+    <p class="muted">Last updated: 25 November 2026 · General guidance. Always follow your computer maker's instructions first.</p>
+
+    <h2>Using a laptop</h2>
+    <figure data-fig="fig-laptop"><figcaption>Use it on a hard, flat surface (left). Beds, pillows and blankets block the vents and trap heat (right).</figcaption></figure>
+    <ul>
+      <li><strong>Keep the vents free.</strong> Use the laptop on a desk or table. If you use it on your lap for long, put a hard tray or a laptop stand under it.</li>
+      <li><strong>Mind the heat on your skin.</strong> Long contact with a warm laptop can cause low-temperature burns even when it doesn't feel very hot.</li>
+      <li><strong>Battery:</strong> avoid running it to 0% often and don't leave it in a hot car or in the sun. Many laptops can limit charging to about 80%, which helps the battery last if it is always plugged in.</li>
+      <li><strong>A swollen battery is dangerous.</strong> If the case bulges, the trackpad lifts or the lid doesn't close, stop using and charging it, unplug it, and take it to a repair shop. Don't press on it or puncture it.</li>
+      <li>Use the original charger or a certified replacement with the right power.</li>
+      <li>Carry it in a padded bag, close the lid gently, and don't leave anything (pens, earphones) on the keyboard when you close it.</li>
+      <li>Clean the screen and keyboard with a dry microfiber cloth; never spray liquid directly on it.</li>
+    </ul>
+
+    <h2>Using a desktop computer</h2>
+    <figure data-fig="fig-airflow"><figcaption>Cool air in through filtered front fans, warm air out through the rear and top.</figcaption></figure>
+    <ul>
+      <li><strong>Give it room to breathe:</strong> leave about 10 cm free around the vents. Don't close it in a cabinet without airflow or push it against a wall.</li>
+      <li><strong>Dust is the main enemy.</strong> Clean the dust filters every month or two and the inside every 3-6 months (more often with pets or carpets).</li>
+      <li>Keep it off thick carpet, which blocks bottom intakes and builds up dust and static.</li>
+      <li>Use a surge protector, and a UPS if power cuts are common where you live.</li>
+      <li>Tidy cables so they don't block the fans.</li>
+      <li>Shut down and unplug it before moving it, opening it or plugging in internal parts.</li>
+    </ul>
+
+    <h2>Heat</h2>
+    <p>Computers get warm when they work hard; that is normal. Processors protect themselves by slowing down when they get too hot ("thermal throttling"), so the usual first sign of a cooling problem is a slow, stuttering computer with loud fans.</p>
+    <div class="callout"><p><strong>Shut down at once</strong> if you smell burning, see smoke, hear crackling, or a part is too hot to touch. Unplug it and don't turn it on again until it has been checked.</p></div>
+
+    <h2>Liquid coolers</h2>
+    <figure data-fig="fig-aio"><figcaption>All-in-one coolers: radiator on top or at the front with the tubes at the bottom is fine. Don't mount the radiator below the pump: air gathers in the pump, making it noisy and cooling worse.</figcaption></figure>
+    <ul>
+      <li><strong>All-in-one (AIO) coolers</strong> are sealed: no refilling needed. Most last about 5-7 years; replace yours if the pump gets loud, the CPU runs much hotter than before, or you see any moisture.</li>
+      <li>Check the tubes and fittings now and then for cracks, kinks or crusty deposits.</li>
+      <li>Plug the pump into the right power header (often "AIO_PUMP" or "PUMP") so it always runs at full speed.</li>
+      <li><strong>Custom loops</strong> need maintenance: change the coolant every 6-12 months, don't mix different metals (like copper and aluminium), and leak-test with only the pump powered before switching the whole computer on.</li>
+    </ul>
+    <div class="callout danger"><p><strong>If it leaks:</strong> switch off and unplug at the wall immediately. Don't turn it back on. Disconnect and dry everything thoroughly (at least 24-48 hours) and have the parts that got wet checked before using them again.</p></div>
+
+    <h2>Need help with cooling?</h2>
+    <p>If your computer is hot, loud or slows down under load, go through these steps in order:</p>
+    <ol class="steps">
+      <li><strong>Check the temperatures.</strong> Use your computer's own tools or a monitor like HWMonitor (Windows), Stats (macOS) or <code>sensors</code> (Linux). Under load, most CPUs and GPUs are fine up to about 80-85 °C; much higher than that means a cooling problem.</li>
+      <li><strong>Close what you don't need.</strong> In hyadeOS, turn off live wallpapers and heavy effects (Settings → Functions Lab → Performance Tuning, or Settings → Accessibility → Reduce motion).</li>
+      <li><strong>Free the vents.</strong> Move a laptop onto a hard surface; give a desktop room around it.</li>
+      <li><strong>Clean the dust.</strong> Unplug it, hold each fan still and use short bursts of compressed air. Don't use a vacuum cleaner inside.</li>
+      <li><strong>Check the fans spin</strong> and, on a desktop, that the CPU cooler is firmly mounted.</li>
+      <li><strong>Laptops:</strong> a cooling pad and a balanced power plan help.</li>
+      <li><strong>Still hot?</strong> Old thermal paste may need replacing. That means opening the computer and may affect the warranty: if you're not sure, ask a repair shop.</li>
+    </ol>
+    <figure data-fig="fig-clean"><figcaption>1. Unplug it. 2. Hold the fan still (letting it spin with air can damage it). 3. Short bursts of compressed air, can held upright.</figcaption></figure>
+    <p><strong>Ask for help</strong> on the hyadeOS Discord server, <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">dsc.gg/mariowOS</a>. Tell us your computer model, the temperatures you see (idle and under load), what you were doing when it got hot, and whether you have an air or liquid cooler. A photo of the inside helps.</p>
+    <p class="muted">Never open a power supply (PSU) or a laptop charger: they hold dangerous charge even when unplugged. Touch a metal part of the case before handling components, to avoid static damage.</p>
+  </section>
+
+  <section data-lang="it">
+    <p class="muted">Ultimo aggiornamento: 25 novembre 2026 · Indicazioni generali. Segui sempre prima le istruzioni del produttore del tuo computer.</p>
+
+    <h2>Usare un portatile</h2>
+    <figure data-fig="fig-laptop"><figcaption>Usalo su una superficie rigida e piana (a sinistra). Letti, cuscini e coperte coprono le prese d'aria e trattengono il calore (a destra).</figcaption></figure>
+    <ul>
+      <li><strong>Lascia libere le prese d'aria.</strong> Usa il portatile su una scrivania o un tavolo. Se lo tieni a lungo sulle gambe, mettici sotto un vassoio rigido o un supporto.</li>
+      <li><strong>Attenzione al calore sulla pelle.</strong> Il contatto prolungato con un portatile caldo può causare ustioni da bassa temperatura anche se non sembra molto caldo.</li>
+      <li><strong>Batteria:</strong> evita di scaricarla spesso fino allo 0% e non lasciarla in un'auto calda o al sole. Molti portatili possono limitare la carica a circa l'80%, che aiuta la batteria a durare se resta sempre collegata.</li>
+      <li><strong>Una batteria gonfia è pericolosa.</strong> Se la scocca si deforma, il touchpad si solleva o lo schermo non si chiude, smetti di usarla e di caricarla, scollegala e portala in assistenza. Non premerla e non forarla.</li>
+      <li>Usa il caricatore originale o un ricambio certificato con la potenza giusta.</li>
+      <li>Trasportalo in una borsa imbottita, chiudi lo schermo con delicatezza e non lasciare nulla (penne, auricolari) sulla tastiera quando lo chiudi.</li>
+      <li>Pulisci schermo e tastiera con un panno in microfibra asciutto; non spruzzare mai liquidi direttamente sul computer.</li>
+    </ul>
+
+    <h2>Usare un computer fisso</h2>
+    <figure data-fig="fig-airflow"><figcaption>Aria fresca dalle ventole anteriori con filtro, aria calda fuori dal retro e dall'alto.</figcaption></figure>
+    <ul>
+      <li><strong>Lascialo respirare:</strong> tieni circa 10 cm liberi intorno alle prese d'aria. Non chiuderlo in un mobile senza ricircolo d'aria e non spingerlo contro il muro.</li>
+      <li><strong>La polvere è il nemico principale.</strong> Pulisci i filtri antipolvere ogni uno o due mesi e l'interno ogni 3-6 mesi (più spesso con animali o tappeti).</li>
+      <li>Non appoggiarlo su moquette o tappeti spessi, che chiudono le prese d'aria in basso e accumulano polvere ed elettricità statica.</li>
+      <li>Usa una ciabatta con protezione dalle sovratensioni e un gruppo di continuità (UPS) se dove vivi la corrente salta spesso.</li>
+      <li>Sistema i cavi in modo che non blocchino le ventole.</li>
+      <li>Spegnilo e scollegalo prima di spostarlo, aprirlo o collegare componenti interni.</li>
+    </ul>
+
+    <h2>Calore</h2>
+    <p>I computer si scaldano quando lavorano molto; è normale. I processori si proteggono rallentando quando diventano troppo caldi ("thermal throttling"), quindi il primo segno di un problema di raffreddamento è di solito un computer lento, che scatta, con le ventole rumorose.</p>
+    <div class="callout"><p><strong>Spegnilo subito</strong> se senti odore di bruciato, vedi fumo, senti scoppiettii o un componente è troppo caldo da toccare. Scollegalo e non riaccenderlo finché non è stato controllato.</p></div>
+
+    <h2>Raffreddamento a liquido</h2>
+    <figure data-fig="fig-aio"><figcaption>Dissipatori a liquido all-in-one: radiatore in alto, oppure davanti con i tubi in basso, va bene. Non montare il radiatore più in basso della pompa: l'aria si raccoglie nella pompa, che diventa rumorosa e raffredda peggio.</figcaption></figure>
+    <ul>
+      <li><strong>I dissipatori all-in-one (AIO)</strong> sono sigillati: non vanno rabboccati. Di solito durano circa 5-7 anni; sostituiscilo se la pompa diventa rumorosa, la CPU scalda molto più di prima o vedi tracce di umidità.</li>
+      <li>Controlla ogni tanto tubi e raccordi: crepe, pieghe o incrostazioni.</li>
+      <li>Collega la pompa al connettore giusto (spesso "AIO_PUMP" o "PUMP"), così gira sempre alla massima velocità.</li>
+      <li><strong>I loop personalizzati</strong> richiedono manutenzione: cambia il liquido ogni 6-12 mesi, non mescolare metalli diversi (come rame e alluminio) e fai una prova di tenuta alimentando solo la pompa prima di accendere tutto il computer.</li>
+    </ul>
+    <div class="callout danger"><p><strong>Se perde:</strong> spegni e scollega subito dalla presa. Non riaccenderlo. Scollega e asciuga tutto con cura (almeno 24-48 ore) e fai controllare i componenti bagnati prima di riusarli.</p></div>
+
+    <h2>Serve aiuto con il raffreddamento?</h2>
+    <p>Se il computer è caldo, rumoroso o rallenta sotto carico, segui questi passaggi in ordine:</p>
+    <ol class="steps">
+      <li><strong>Controlla le temperature.</strong> Usa gli strumenti del computer o un programma come HWMonitor (Windows), Stats (macOS) o <code>sensors</code> (Linux). Sotto carico la maggior parte di CPU e GPU va bene fino a circa 80-85 °C; molto di più indica un problema di raffreddamento.</li>
+      <li><strong>Chiudi ciò che non ti serve.</strong> In hyadeOS disattiva sfondi animati ed effetti pesanti (Impostazioni → Funzioni sperimentali → Ottimizzazione prestazioni, oppure Impostazioni → Accessibilità → Riduci movimento).</li>
+      <li><strong>Libera le prese d'aria.</strong> Sposta il portatile su una superficie rigida; lascia spazio intorno al computer fisso.</li>
+      <li><strong>Pulisci la polvere.</strong> Scollegalo, tieni ferma ogni ventola e usa brevi getti di aria compressa. Non usare l'aspirapolvere all'interno.</li>
+      <li><strong>Controlla che le ventole girino</strong> e, su un fisso, che il dissipatore della CPU sia ben fissato.</li>
+      <li><strong>Portatili:</strong> una base di raffreddamento e un profilo di risparmio energetico bilanciato aiutano.</li>
+      <li><strong>Ancora caldo?</strong> La pasta termica vecchia potrebbe andare sostituita. Significa aprire il computer e può influire sulla garanzia: se non sei sicuro, rivolgiti a un centro assistenza.</li>
+    </ol>
+    <figure data-fig="fig-clean"><figcaption>1. Scollegalo. 2. Tieni ferma la ventola (farla girare con l'aria può danneggiarla). 3. Brevi getti di aria compressa, con la bomboletta dritta.</figcaption></figure>
+    <p><strong>Chiedi aiuto</strong> sul server Discord di hyadeOS, <a href="https://dsc.gg/mariowOS" target="_blank" rel="noopener">dsc.gg/mariowOS</a>. Indicaci il modello del computer, le temperature che vedi (a riposo e sotto carico), cosa stavi facendo quando si è scaldato e se hai un dissipatore ad aria o a liquido. Una foto dell'interno aiuta.</p>
+    <p class="muted">Non aprire mai un alimentatore (PSU) o il caricatore di un portatile: trattengono cariche pericolose anche quando sono scollegati. Tocca una parte metallica del case prima di maneggiare i componenti, per evitare danni da elettricità statica.</p>
+  </section>
+
+  <p class="standalone-only"><a href="#" class="back" data-back>← Back</a></p>
+</main>
+<script>
+  // Put each illustration into the figures that ask for it (one drawing, used by both languages).
+  document.querySelectorAll('figure[data-fig]').forEach(fig => {
+    const tpl = document.getElementById(fig.dataset.fig);
+    if (tpl) fig.prepend(tpl.content.cloneNode(true));
+  });
+</script>
+<script src="legal.js"></script>
+</body>
+</html>
