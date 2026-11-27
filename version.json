@@ -1,6 +1,6 @@
 {
-  "version": "2.1.1",
+  "version": "2.1.2",
   "codename": "hottestChocolate",
-  "changelog": "Fixes: the Updater could stop working for good after one failed download (the folder of the failed attempt could not be removed, so every later \"Update\" failed with a permission error): each download now has a folder of its own and cleaning up can no longer stop an update; the apps check in the Updater no longer shows an error on a fresh install (\"no such file sota-installed.json\").",
+  "changelog": "Settings > About has a new look: Credits now roll like film credits, Legal & privacy holds the License, Terms of use and Privacy, and Health & safety explains device care. Hold the logo for a surprise.",
   "_comment": "obb."
 }
