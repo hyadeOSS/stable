@@ -31,10 +31,49 @@ test("version order is semantic: a release is newer than its own betas, beta.10 
   assert.equal(m.isNewer("2.0.5", null), true);
 });
 
-test("a name that is not a semantic version keeps the old behaviour (Insiders builds)", () => {
+test("the version order of a name that is not a semantic version stays the old one (Insiders builds)", () => {
   assert.equal(m.isNewer("2.0.5", "2.5.1_DEVPREVIEW3"), false);
   assert.equal(m.isNewer("3.0.0", "2.5.1_DEVPREVIEW3"), true);
   assert.equal(m.isNewer("2.5.1_DEVPREVIEW3", "2.0.4"), m.naiveIsNewer("2.5.1_DEVPREVIEW3", "2.0.4"));
+});
+
+test("installing a release over an Insiders build replaces its code, keeps the data and leaves the Insiders channel", () => {
+  const bundled = tmp(), data = tmp(), runtime = path.join(data, "system");
+  try {
+    system(bundled, "2.1.3", { "lib/new.js": "new" });
+    system(runtime, "2.5.1_DEVPREVIEW5", { "config.json": JSON.stringify({ updateChannel: "insiders", theme: "light" }), "keys.json": "MY KEYS", "desktop/home/notes.txt": "MY NOTES" });
+    assert.equal(m.prepareRuntimeSystem({ bundledSystem: bundled, runtimeSystem: runtime, log: quiet }), true);
+    assert.equal(read(runtime, "server.js"), "server 2.1.3");
+    assert.equal(read(runtime, "lib/new.js"), "new");
+    assert.deepEqual(JSON.parse(read(runtime, "config.json")), { updateChannel: "stable", theme: "light" });
+    assert.equal(read(runtime, "keys.json"), "MY KEYS");
+    assert.equal(read(runtime, "desktop/home/notes.txt"), "MY NOTES");
+    // Now it is a release: the same installer leaves it alone.
+    assert.equal(m.prepareRuntimeSystem({ bundledSystem: bundled, runtimeSystem: runtime, log: quiet }), false);
+  } finally { cleanup(bundled, data); }
+});
+
+test("the update channel is only reset when it is insiders, and a broken config.json is left alone", () => {
+  const dir = tmp();
+  try {
+    write(dir, "config.json", JSON.stringify({ updateChannel: "beta" }));
+    assert.equal(m.resetInsiderChannel(dir, { log: quiet }), false);
+    assert.equal(JSON.parse(read(dir, "config.json")).updateChannel, "beta");
+    write(dir, "config.json", "{ not json");
+    assert.equal(m.resetInsiderChannel(dir, { log: quiet }), false);
+    assert.equal(read(dir, "config.json"), "{ not json");
+    assert.equal(m.resetInsiderChannel(path.join(dir, "missing"), { log: quiet }), false);
+  } finally { cleanup(dir); }
+});
+
+test("upgrading a release never touches its update channel", () => {
+  const bundled = tmp(), data = tmp(), runtime = path.join(data, "system");
+  try {
+    system(bundled, "2.1.3");
+    system(runtime, "2.1.2", { "config.json": JSON.stringify({ updateChannel: "insiders" }) });
+    assert.equal(m.prepareRuntimeSystem({ bundledSystem: bundled, runtimeSystem: runtime, log: quiet }), true);
+    assert.equal(JSON.parse(read(runtime, "config.json")).updateChannel, "insiders", "only a replaced Insiders build is reset");
+  } finally { cleanup(bundled, data); }
 });
 
 test("a fresh install copies the bundled system", () => {

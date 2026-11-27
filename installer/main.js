@@ -106,13 +106,40 @@ function migrateLegacyData({ appData, userData, runtimeSystem, bundledSystem, fi
   return null;
 }
 
+// An Insiders build ("2.5.1_DEVPREVIEW5") is not a semantic version, and its number (2.5) looks newer than any
+// release (2.1), so comparing them would keep the Insiders code for ever after installing a release over it.
+// Installing a release is a deliberate choice: the installer's code replaces it (the data stays).
+function isInsiderBuild(version) {
+  return !!version && !parseVersion(version);
+}
+
+// The Insiders channel is only reachable from an Insiders build; on a release the Updater would offer the
+// Insiders build again. Only that one key of config.json changes. Returns true when it was changed.
+function resetInsiderChannel(runtimeSystem, { fileSystem = fs, log = console } = {}) {
+  const file = path.join(runtimeSystem, "config.json");
+  try {
+    if (!fileSystem.existsSync(file)) return false;
+    const config = JSON.parse(fileSystem.readFileSync(file, "utf8"));
+    if (!config || typeof config !== "object" || String(config.updateChannel || "").toLowerCase() !== "insiders") return false;
+    config.updateChannel = "stable";
+    fileSystem.writeFileSync(file, JSON.stringify(config, null, 2));
+    log.log("[installer]: update channel set back to stable");
+    return true;
+  } catch (error) {
+    log.error(`[installer]: could not reset the update channel: ${error.message}`);
+    return false;
+  }
+}
+
 function prepareRuntimeSystem({ bundledSystem, runtimeSystem, fileSystem = fs, log = console }) {
   const bundled = readVersion(bundledSystem, fileSystem);
   const installed = fileSystem.existsSync(path.join(runtimeSystem, "server.js")) ? readVersion(runtimeSystem, fileSystem) : null;
-  if (installed && !isNewer(bundled, installed)) return false;
-  log.log(`[installer]: ${installed ? `upgrading ${installed} -> ${bundled}` : `installing ${bundled}`} in ${runtimeSystem}`);
+  const fromInsiders = isInsiderBuild(installed) && !!parseVersion(bundled);
+  if (installed && !fromInsiders && !isNewer(bundled, installed)) return false;
+  log.log(`[installer]: ${installed ? `${fromInsiders ? "replacing the Insiders build" : "upgrading"} ${installed} -> ${bundled}` : `installing ${bundled}`} in ${runtimeSystem}`);
   fileSystem.mkdirSync(runtimeSystem, { recursive: true });
   fileSystem.cpSync(bundledSystem, runtimeSystem, { recursive: true, force: true });
+  if (fromInsiders) resetInsiderChannel(runtimeSystem, { fileSystem, log });
   return true;
 }
 
@@ -138,7 +165,7 @@ function run() {
   require(path.join(runtimeSystem, "launcher.js"));
 }
 
-module.exports = { parseVersion, compareVersions, isNewer, naiveIsNewer, readVersion, migrateLegacyData, prepareRuntimeSystem, setLauncherEnvironment, LEGACY_DATA_FOLDERS };
+module.exports = { parseVersion, compareVersions, isNewer, naiveIsNewer, readVersion, migrateLegacyData, prepareRuntimeSystem, isInsiderBuild, resetInsiderChannel, setLauncherEnvironment, LEGACY_DATA_FOLDERS };
 
 // Inside Electron this file is the entry point; under Node (the tests) it only exports the functions above.
 if (process.versions.electron) run();
