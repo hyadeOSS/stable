@@ -60,3 +60,9 @@ html[data-theme="light"] body.embed-settings .card:hover { background: rgba(0, 0
 html[data-theme="light"] body.embed-settings .card .material-symbols-outlined { color: rgba(0, 0, 0, 0.7); }
 html[data-theme="light"] body.embed-settings .callout p { color: #7a4b00; }
 html[data-theme="light"] body.embed-settings .notice-table td { box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08); }
+
+/* Inside Settings the page is transparent over the window. A frame whose colour-scheme differs from the page
+   that holds it gets an opaque (white) canvas, so say which scheme this page is in: dark by default, light
+   when the system theme (mw-theme.js sets data-theme) is light. */
+:root { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }

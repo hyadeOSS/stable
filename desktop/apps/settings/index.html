@@ -406,7 +406,7 @@ Licensed under the Apache License, Version 2.0; you can use this file if you giv
 
     let html = "";
     if (title) html += `<h2>${title}</h2>`;
-    html += `<iframe src="${src}" class="popup-frame"${pageKey === 'about' ? ' scrolling="no"' : ''}></iframe>`;
+    html += `<iframe src="${src}" class="popup-frame"></iframe>`;
 
     contentDiv.innerHTML = html;
     document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));

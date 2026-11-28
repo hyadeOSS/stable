@@ -1,3 +1,23 @@
+## hyadeOS 2.1.4
+
+### Fixes
+- **Settings > About.** The whole page now scrolls when it is taller than the window.
+- **Credits and Legal pages.** They follow the system theme: in dark mode they no longer show a white background.
+- **Logos.** The logos in About and Credits are sharper.
+
+**Full Changelog**: https://github.com/hyadeOSS/stable/compare/v2.1.3...v2.1.4
+
+---
+
+## hyadeOS 2.1.4 (italiano)
+
+### Correzioni
+- **Impostazioni > Informazioni.** Tutta la pagina ora scorre quando è più alta della finestra.
+- **Pagine Crediti e Note legali.** Seguono il tema del sistema: in modalità scura non hanno più lo sfondo bianco.
+- **Loghi.** I loghi in Informazioni e Crediti sono più nitidi.
+
+---
+
 ## hyadeOS 2.1.3
 
 ### Fixes

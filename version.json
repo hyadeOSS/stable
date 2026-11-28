@@ -1,6 +1,6 @@
 {
-  "version": "2.1.3",
+  "version": "2.1.4",
   "codename": "hottestChocolate",
-  "changelog": "The installer now replaces an Insiders build: installing hyadeOS over a PC that had an Insiders version (for example 2.5.1_DEVPREVIEW5) kept running the old Insiders code, because its number looked newer than 2.1. The code is now replaced by the installed release, your data is kept, and the update channel goes back to stable.",
+  "changelog": "Settings > About: the whole page now scrolls, the new Credits and Legal pages follow the system theme (no more white background in dark mode), and the logos are sharper.",
   "_comment": "obb."
 }
