@@ -1,6 +1,6 @@
 {
   "version": "2.1.4",
   "codename": "hottestChocolate",
-  "changelog": "Settings > About: the whole page now scrolls, the new Credits and Legal pages follow the system theme (no more white background in dark mode), and the logos are sharper.",
+  "changelog": "Settings > About: the whole page now scrolls, the new Credits and Legal pages follow the system theme (no more white background in dark mode), and there is a new hyadeOS logo.",
   "_comment": "obb."
 }
